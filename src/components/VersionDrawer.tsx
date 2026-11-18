@@ -28,17 +28,17 @@ export const VersionDrawer: React.FC<VersionDrawerProps> = ({
       />
 
       {/* Drawer */}
-      <div className="relative w-full max-w-sm bg-[#FDFBF7] h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-250 border-l border-[#E8E4D9]">
-        <div className="p-4 border-b border-[#E8E4D9] flex items-center justify-between bg-[#FCFAF7]">
+      <div className="relative w-full max-w-sm bg-[#F8FAFC] h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-250 border-l border-[#E5E9F0]">
+        <div className="p-4 border-b border-[#E5E9F0] flex items-center justify-between bg-[#FFFFFF]">
           <div className="flex items-center gap-2">
-            <span className="text-base font-bold text-[#4A4E44]">🕐 版本控制中心</span>
-            <span className="text-xs bg-[#E8EAE3] text-[#5A634D] font-semibold px-2.5 py-0.5 rounded-full">
+            <span className="text-base font-bold text-[#1E293B]">🕐 版本控制中心</span>
+            <span className="text-xs bg-[#EBF2FF] text-[#1E40AF] font-semibold px-2.5 py-0.5 rounded-full">
               {currentVersion}
             </span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-full hover:bg-[#F0EEE6] text-[#9DA391] transition"
+            className="p-1 rounded-full hover:bg-[#EDF2F7] text-[#64748B] transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -53,26 +53,26 @@ export const VersionDrawer: React.FC<VersionDrawerProps> = ({
                 onClick={() => onSelectVersion(v.tag)}
                 className={`p-3.5 rounded-2xl border transition cursor-pointer relative ${
                   isActive
-                    ? 'border-[#7D8471] bg-[#E8EAE3] shadow-xs'
-                    : 'border-[#E8E4D9] bg-white hover:border-[#7D8471] hover:bg-[#FCFAF7]'
+                    ? 'border-[#2563EB] bg-[#EBF2FF] shadow-xs'
+                    : 'border-[#E5E9F0] bg-white hover:border-[#2563EB] hover:bg-[#FFFFFF]'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-bold text-[#5A634D] flex items-center gap-1.5">
+                  <span className="text-sm font-bold text-[#1E40AF] flex items-center gap-1.5">
                     {v.tag}
                     {isActive && (
-                      <span className="bg-[#7D8471] text-white rounded-full p-0.5">
+                      <span className="bg-[#2563EB] text-white rounded-full p-0.5">
                         <Check className="w-3 h-3" />
                       </span>
                     )}
                   </span>
-                  <span className="text-xs text-[#9DA391] font-mono">{v.date}</span>
+                  <span className="text-xs text-[#64748B] font-mono">{v.date}</span>
                 </div>
-                <div className="text-xs font-semibold text-[#4A4E44] mb-2">{v.desc}</div>
-                <ul className="space-y-1 text-xs text-[#5A634D]">
+                <div className="text-xs font-semibold text-[#1E293B] mb-2">{v.desc}</div>
+                <ul className="space-y-1 text-xs text-[#1E40AF]">
                   {v.changes.map((c, i) => (
                     <li key={i} className="flex items-start gap-1 leading-snug">
-                      <span className="font-bold text-[#7D8471] shrink-0">+</span>
+                      <span className="font-bold text-[#2563EB] shrink-0">+</span>
                       <span>{c}</span>
                     </li>
                   ))}

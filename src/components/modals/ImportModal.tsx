@@ -133,15 +133,15 @@ export const ImportModal: React.FC<ImportModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-2xs">
-      <div className="bg-[#FDFBF7] rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200 border border-[#E8E4D9]">
-        <div className="p-4 px-5 border-b border-[#E8E4D9] flex items-center justify-between bg-[#FCFAF7]">
-          <div className="text-base font-bold text-[#4A4E44] flex items-center gap-2">
-            <FileSpreadsheet className="w-5 h-5 text-[#7D8471]" />
+      <div className="bg-[#F8FAFC] rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200 border border-[#E5E9F0]">
+        <div className="p-4 px-5 border-b border-[#E5E9F0] flex items-center justify-between bg-[#FFFFFF]">
+          <div className="text-base font-bold text-[#1E293B] flex items-center gap-2">
+            <FileSpreadsheet className="w-5 h-5 text-[#2563EB]" />
             <span>导入排产（半自动排产批导）</span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[#9DA391] hover:text-[#4A4E44] rounded-lg hover:bg-[#F0EEE6] transition"
+            className="p-1 text-[#64748B] hover:text-[#1E293B] rounded-lg hover:bg-[#EDF2F7] transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -162,15 +162,15 @@ export const ImportModal: React.FC<ImportModalProps> = ({
             onClick={() => document.getElementById('importFileInput')?.click()}
             className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition flex flex-col items-center justify-center gap-2 ${
               isDragOver
-                ? 'border-[#7D8471] bg-[#E8EAE3]/50'
-                : 'border-[#E8E4D9] bg-white hover:border-[#7D8471] hover:bg-[#FCFAF7]'
+                ? 'border-[#2563EB] bg-[#EBF2FF]/50'
+                : 'border-[#E5E9F0] bg-white hover:border-[#2563EB] hover:bg-[#FFFFFF]'
             }`}
           >
-            <Upload className="w-8 h-8 text-[#7D8471]" />
-            <span className="font-semibold text-[#4A4E44] text-sm">
+            <Upload className="w-8 h-8 text-[#2563EB]" />
+            <span className="font-semibold text-[#1E293B] text-sm">
               📁 点击或拖拽 Excel 文件到此处
             </span>
-            <span className="text-[#9DA391]">
+            <span className="text-[#64748B]">
               支持半自动排产批导 .xlsx / .xls 模版文件
             </span>
             <input
@@ -185,44 +185,44 @@ export const ImportModal: React.FC<ImportModalProps> = ({
           </div>
 
           {infoText && (
-            <div className="p-2.5 bg-[#FCFAF7] border border-[#E8E4D9] rounded-xl font-medium text-[#4A4E44]">
+            <div className="p-2.5 bg-[#FFFFFF] border border-[#E5E9F0] rounded-xl font-medium text-[#1E293B]">
               {infoText}
             </div>
           )}
 
           {parsedRows && (
-            <div className="border border-[#E8E4D9] rounded-xl overflow-x-auto max-h-60 bg-white">
+            <div className="border border-[#E5E9F0] rounded-xl overflow-x-auto max-h-60 bg-white">
               <table className="w-full text-left border-collapse text-xs">
-                <thead className="bg-[#FCFAF7] text-[#5A634D] sticky top-0 border-b border-[#E8E4D9]">
+                <thead className="bg-[#FFFFFF] text-[#1E40AF] sticky top-0 border-b border-[#E5E9F0]">
                   <tr>
-                    <th className="p-2 border-b border-[#E8E4D9]">版本</th>
-                    <th className="p-2 border-b border-[#E8E4D9]">产线</th>
-                    <th className="p-2 border-b border-[#E8E4D9]">工单号</th>
-                    <th className="p-2 border-b border-[#E8E4D9]">物料号</th>
-                    <th className="p-2 border-b border-[#E8E4D9] text-right">排产数量</th>
-                    <th className="p-2 border-b border-[#E8E4D9]">开始</th>
-                    <th className="p-2 border-b border-[#E8E4D9]">结束</th>
+                    <th className="p-2 border-b border-[#E5E9F0]">版本</th>
+                    <th className="p-2 border-b border-[#E5E9F0]">产线</th>
+                    <th className="p-2 border-b border-[#E5E9F0]">工单号</th>
+                    <th className="p-2 border-b border-[#E5E9F0]">物料号</th>
+                    <th className="p-2 border-b border-[#E5E9F0] text-right">排产数量</th>
+                    <th className="p-2 border-b border-[#E5E9F0]">开始</th>
+                    <th className="p-2 border-b border-[#E5E9F0]">结束</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F0EEE6]">
+                <tbody className="divide-y divide-[#EDF2F7]">
                   {parsedRows.slice(0, 15).map((r, i) => (
-                    <tr key={i} className="hover:bg-[#F9F7F2]">
-                      <td className="p-2 text-[#4A4E44]">V{r.ver}</td>
-                      <td className="p-2 text-[#4A4E44]">{r.line}</td>
-                      <td className="p-2 font-mono font-semibold text-[#5A634D]">{r.wo}</td>
-                      <td className="p-2 text-[#9DA391]">{r.mat}</td>
-                      <td className="p-2 text-right font-mono font-bold text-[#7D8471]">
+                    <tr key={i} className="hover:bg-[#F4F6F9]">
+                      <td className="p-2 text-[#1E293B]">V{r.ver}</td>
+                      <td className="p-2 text-[#1E293B]">{r.line}</td>
+                      <td className="p-2 font-mono font-semibold text-[#1E40AF]">{r.wo}</td>
+                      <td className="p-2 text-[#64748B]">{r.mat}</td>
+                      <td className="p-2 text-right font-mono font-bold text-[#2563EB]">
                         {r.qty?.toLocaleString()}
                       </td>
-                      <td className="p-2 text-[#4A4E44]">{r.start}</td>
-                      <td className="p-2 text-[#4A4E44]">{r.end}</td>
+                      <td className="p-2 text-[#1E293B]">{r.start}</td>
+                      <td className="p-2 text-[#1E293B]">{r.end}</td>
                     </tr>
                   ))}
                   {parsedRows.length > 15 && (
                     <tr>
                       <td
                         colSpan={7}
-                        className="p-2 text-center text-[#9DA391] bg-[#FCFAF7]"
+                        className="p-2 text-center text-[#64748B] bg-[#FFFFFF]"
                       >
                         …共 {parsedRows.length} 行数据
                       </td>
@@ -234,17 +234,17 @@ export const ImportModal: React.FC<ImportModalProps> = ({
           )}
         </div>
 
-        <div className="p-4 border-t border-[#E8E4D9] flex justify-end gap-2 bg-[#FCFAF7]">
+        <div className="p-4 border-t border-[#E5E9F0] flex justify-end gap-2 bg-[#FFFFFF]">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-[#E8E4D9] rounded-xl text-xs font-medium text-[#5A634D] bg-white hover:bg-[#F0EEE6] transition"
+            className="px-4 py-2 border border-[#E5E9F0] rounded-xl text-xs font-medium text-[#1E40AF] bg-white hover:bg-[#EDF2F7] transition"
           >
             取消
           </button>
           {parsedRows && (
             <button
               onClick={handleConfirm}
-              className="px-4 py-2 bg-[#7D8471] text-white rounded-xl text-xs font-medium hover:bg-[#5A634D] transition flex items-center gap-1 shadow-2xs"
+              className="px-4 py-2 bg-[#2563EB] text-white rounded-xl text-xs font-medium hover:bg-[#165DFF] transition flex items-center gap-1 shadow-2xs"
             >
               <Check className="w-3.5 h-3.5" />
               <span>确认导入（写入 {selectedDate}）</span>

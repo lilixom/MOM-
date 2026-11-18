@@ -2,33 +2,33 @@
 
 @layer base {
   body {
-    background-color: #F9F7F2;
-    color: #4A4E44;
+    background-color: #F4F6F9;
+    color: #1E293B;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   }
 }
 
-/* Custom theme color utilities for Natural Tones */
-.bg-natural-canvas { background-color: #F9F7F2; }
+/* Custom theme color utilities for Enterprise MES/MOM Blue-Slate Tones */
+.bg-natural-canvas { background-color: #F4F6F9; }
 .bg-natural-card { background-color: #FFFFFF; }
-.bg-natural-card-warm { background-color: #FDFBF7; }
-.bg-natural-surface { background-color: #FCFAF7; }
-.bg-natural-muted { background-color: #E8EAE3; }
+.bg-natural-card-warm { background-color: #F8FAFC; }
+.bg-natural-surface { background-color: #F7F9FC; }
+.bg-natural-muted { background-color: #EDF2F7; }
 
-.border-natural { border-color: #E8E4D9; }
-.border-natural-light { border-color: #F0EEE6; }
+.border-natural { border-color: #E5E9F0; }
+.border-natural-light { border-color: #EEF2F7; }
 
-.text-natural-primary { color: #4A4E44; }
-.text-natural-dark { color: #5A634D; }
-.text-natural-muted { color: #9DA391; }
-.text-natural-olive { color: #7D8471; }
-.text-natural-moss { color: #A4B494; }
+.text-natural-primary { color: #1E293B; }
+.text-natural-dark { color: #0F3C8A; }
+.text-natural-muted { color: #64748B; }
+.text-natural-olive { color: #165DFF; }
+.text-natural-moss { color: #93B4FA; }
 
-.bg-natural-olive { background-color: #7D8471; }
-.bg-natural-dark { background-color: #5A634D; }
-.bg-natural-moss { background-color: #A4B494; }
-.bg-natural-sand { background-color: #D9C5B2; }
-.bg-natural-terracotta { background-color: #F27D52; }
+.bg-natural-olive { background-color: #2563EB; }
+.bg-natural-dark { background-color: #165DFF; }
+.bg-natural-moss { background-color: #6096FF; }
+.bg-natural-sand { background-color: #CBD5E1; }
+.bg-natural-terracotta { background-color: #EA580C; }
 
 /* Custom Gantt scrollbar: strictly dedicated to the Gantt chart column */
 .custom-gantt-scrollbar::-webkit-scrollbar {
@@ -45,5 +45,3 @@
 .custom-gantt-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
-
-

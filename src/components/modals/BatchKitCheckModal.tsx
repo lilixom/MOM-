@@ -139,9 +139,9 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-2xs animate-in fade-in duration-200">
-      <div className="bg-white h-full w-full max-w-2xl md:max-w-3xl lg:max-w-4xl shadow-2xl border-l border-[#E8E4D9] flex flex-col animate-in slide-in-from-right duration-300">
+      <div className="bg-white h-full w-full max-w-2xl md:max-w-3xl lg:max-w-4xl shadow-2xl border-l border-[#E5E9F0] flex flex-col animate-in slide-in-from-right duration-300">
         {/* Header */}
-        <div className="p-4 px-6 border-b border-[#E8E4D9] flex items-center justify-between bg-teal-50/80 shrink-0">
+        <div className="p-4 px-6 border-b border-[#E5E9F0] flex items-center justify-between bg-teal-50/80 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-2xs">
               <Calculator className="w-4 h-4" />
@@ -167,17 +167,17 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
         </div>
 
         {/* Date Filter & Control Bar */}
-        <div className="p-4 border-b border-[#E8E4D9] bg-[#FCFAF7] space-y-3 shrink-0 text-xs">
+        <div className="p-4 border-b border-[#E5E9F0] bg-[#FFFFFF] space-y-3 shrink-0 text-xs">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-[#4A4E44]">运算范围：</span>
-              <div className="inline-flex border border-[#E8E4D9] rounded-xl overflow-hidden bg-white p-0.5">
+              <span className="font-semibold text-[#1E293B]">运算范围：</span>
+              <div className="inline-flex border border-[#E5E9F0] rounded-xl overflow-hidden bg-white p-0.5">
                 <button
                   onClick={() => setFilterMode('single')}
                   className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer ${
                     filterMode === 'single'
                       ? 'bg-teal-600 text-white font-medium shadow-2xs'
-                      : 'text-[#5A634D] hover:bg-[#F0EEE6]'
+                      : 'text-[#1E40AF] hover:bg-[#EDF2F7]'
                   }`}
                 >
                   按指定单日
@@ -187,7 +187,7 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
                   className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer ${
                     filterMode === 'range'
                       ? 'bg-teal-600 text-white font-medium shadow-2xs'
-                      : 'text-[#5A634D] hover:bg-[#F0EEE6]'
+                      : 'text-[#1E40AF] hover:bg-[#EDF2F7]'
                   }`}
                 >
                   按日期区间
@@ -197,29 +197,29 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
 
             {filterMode === 'single' ? (
               <div className="flex items-center gap-2">
-                <span className="text-[#9DA391]">选择排产日期:</span>
+                <span className="text-[#64748B]">选择排产日期:</span>
                 <input
                   type="date"
                   value={targetDate}
                   onChange={(e) => setTargetDate(e.target.value)}
-                  className="p-1.5 border border-[#E8E4D9] rounded-xl bg-white text-[#4A4E44] font-mono text-xs focus:ring-1 focus:ring-teal-600"
+                  className="p-1.5 border border-[#E5E9F0] rounded-xl bg-white text-[#1E293B] font-mono text-xs focus:ring-1 focus:ring-teal-600"
                 />
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <span className="text-[#9DA391]">日期区间:</span>
+                <span className="text-[#64748B]">日期区间:</span>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="p-1.5 border border-[#E8E4D9] rounded-xl bg-white text-[#4A4E44] font-mono text-xs focus:ring-1 focus:ring-teal-600"
+                  className="p-1.5 border border-[#E5E9F0] rounded-xl bg-white text-[#1E293B] font-mono text-xs focus:ring-1 focus:ring-teal-600"
                 />
-                <span className="text-[#9DA391]">至</span>
+                <span className="text-[#64748B]">至</span>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="p-1.5 border border-[#E8E4D9] rounded-xl bg-white text-[#4A4E44] font-mono text-xs focus:ring-1 focus:ring-teal-600"
+                  className="p-1.5 border border-[#E5E9F0] rounded-xl bg-white text-[#1E293B] font-mono text-xs focus:ring-1 focus:ring-teal-600"
                 />
               </div>
             )}
@@ -245,17 +245,17 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
 
           {/* Stats Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
-            <div className="bg-white p-2.5 rounded-xl border border-[#E8E4D9] flex items-center justify-between">
+            <div className="bg-white p-2.5 rounded-xl border border-[#E5E9F0] flex items-center justify-between">
               <div>
-                <div className="text-[10px] text-[#9DA391]">待运算工单</div>
-                <div className="text-base font-bold text-[#4A4E44] font-mono">{totalOrders} <span className="text-[11px] font-normal text-[#9DA391]">张</span></div>
+                <div className="text-[10px] text-[#64748B]">待运算工单</div>
+                <div className="text-base font-bold text-[#1E293B] font-mono">{totalOrders} <span className="text-[11px] font-normal text-[#64748B]">张</span></div>
               </div>
               <Layers className="w-4 h-4 text-teal-600 opacity-60" />
             </div>
-            <div className="bg-white p-2.5 rounded-xl border border-[#E8E4D9] flex items-center justify-between">
+            <div className="bg-white p-2.5 rounded-xl border border-[#E5E9F0] flex items-center justify-between">
               <div>
-                <div className="text-[10px] text-[#9DA391]">排产总量</div>
-                <div className="text-base font-bold text-blue-700 font-mono">{totalQty.toLocaleString()} <span className="text-[11px] font-normal text-[#9DA391]">件</span></div>
+                <div className="text-[10px] text-[#64748B]">排产总量</div>
+                <div className="text-base font-bold text-blue-700 font-mono">{totalQty.toLocaleString()} <span className="text-[11px] font-normal text-[#64748B]">件</span></div>
               </div>
               <Box className="w-4 h-4 text-blue-600 opacity-60" />
             </div>
@@ -279,15 +279,15 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
         {/* Content Body: Work Order List & Component Breakdown */}
         <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-0 text-xs">
           {/* Left Column: Work Orders List */}
-          <div className="md:col-span-6 border-r border-[#E8E4D9] overflow-y-auto p-3 space-y-2 bg-white">
-            <div className="text-xs font-bold text-[#4A4E44] px-1 flex items-center justify-between">
+          <div className="md:col-span-6 border-r border-[#E5E9F0] overflow-y-auto p-3 space-y-2 bg-white">
+            <div className="text-xs font-bold text-[#1E293B] px-1 flex items-center justify-between">
               <span>📋 工单齐套状态清单 ({totalOrders})</span>
-              <span className="text-[10px] font-normal text-[#9DA391]">点击可查看右侧组件明细</span>
+              <span className="text-[10px] font-normal text-[#64748B]">点击可查看右侧组件明细</span>
             </div>
 
             {totalOrders === 0 ? (
-              <div className="text-center py-12 text-[#9DA391] space-y-2">
-                <Calendar className="w-8 h-8 mx-auto text-[#9DA391]/50" />
+              <div className="text-center py-12 text-[#64748B] space-y-2">
+                <Calendar className="w-8 h-8 mx-auto text-[#64748B]/50" />
                 <p>所选日期范围内暂无排产工单</p>
               </div>
             ) : (
@@ -301,19 +301,19 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
                       className={`p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 ${
                         isSelected
                           ? 'border-teal-600 bg-teal-50/60 shadow-2xs ring-1 ring-teal-600'
-                          : 'border-[#E8E4D9] bg-white hover:bg-[#FCFAF7]'
+                          : 'border-[#E5E9F0] bg-white hover:bg-[#FFFFFF]'
                       }`}
                     >
                       <div className="space-y-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-[#2D3325] font-mono">{item.wo.id}</span>
-                          <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-[#E8EAE3] text-[#5A634D]">
+                          <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-[#EBF2FF] text-[#1E40AF]">
                             {item.wo.team}线
                           </span>
-                          <span className="text-[10px] text-[#9DA391] font-mono">{item.wo.date}</span>
+                          <span className="text-[10px] text-[#64748B] font-mono">{item.wo.date}</span>
                         </div>
-                        <div className="text-[11px] text-[#4A4E44] truncate">{item.wo.product}</div>
-                        <div className="text-[10px] text-[#9DA391] flex items-center gap-2">
+                        <div className="text-[11px] text-[#1E293B] truncate">{item.wo.product}</div>
+                        <div className="text-[10px] text-[#64748B] flex items-center gap-2">
                           <span>排产: <b className="text-blue-700 font-mono">{item.q.toLocaleString()}</b> 件</span>
                           <span>时段: {item.wo.start} ~ {item.wo.end}</span>
                         </div>
@@ -329,7 +329,7 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
                             <AlertTriangle className="w-3 h-3" /> 缺 {item.shortCount} 项
                           </span>
                         )}
-                        <ChevronRight className={`w-4 h-4 transition ${isSelected ? 'text-teal-600' : 'text-[#9DA391]'}`} />
+                        <ChevronRight className={`w-4 h-4 transition ${isSelected ? 'text-teal-600' : 'text-[#64748B]'}`} />
                       </div>
                     </div>
                   );
@@ -339,16 +339,16 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
           </div>
 
           {/* Right Column: Selected Work Order BOM Component Details */}
-          <div className="md:col-span-6 overflow-y-auto p-4 bg-[#FCFAF7] space-y-3">
+          <div className="md:col-span-6 overflow-y-auto p-4 bg-[#FFFFFF] space-y-3">
             {activeResult ? (
               <>
-                <div className="flex items-center justify-between border-b border-[#E8E4D9] pb-2.5">
+                <div className="flex items-center justify-between border-b border-[#E5E9F0] pb-2.5">
                   <div>
-                    <div className="text-xs font-bold text-[#4A4E44] flex items-center gap-2">
+                    <div className="text-xs font-bold text-[#1E293B] flex items-center gap-2">
                       <span>工单组件运算明细:</span>
                       <span className="font-mono text-teal-700">{activeResult.wo.id}</span>
                     </div>
-                    <div className="text-[11px] text-[#9DA391] truncate max-w-xs">
+                    <div className="text-[11px] text-[#64748B] truncate max-w-xs">
                       {activeResult.wo.product}
                     </div>
                   </div>
@@ -365,9 +365,9 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
                   </div>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-[#E8E4D9] bg-white">
+                <div className="overflow-x-auto rounded-xl border border-[#E5E9F0] bg-white">
                   <table className="w-full text-left border-collapse text-xs">
-                    <thead className="bg-[#FCFAF7] text-[#5A634D] border-b border-[#E8E4D9]">
+                    <thead className="bg-[#FFFFFF] text-[#1E40AF] border-b border-[#E5E9F0]">
                       <tr>
                         <th className="p-2 font-semibold">物料组件</th>
                         <th className="p-2 text-right font-semibold">需求数</th>
@@ -377,13 +377,13 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
                         <th className="p-2 text-center font-semibold">状态</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#F0EEE6]">
+                    <tbody className="divide-y divide-[#EDF2F7]">
                       {activeResult.comps.map((c, idx) => (
                         <tr key={idx} className={c.ok ? 'hover:bg-gray-50' : 'bg-amber-50/60'}>
-                          <td className="p-2 font-medium text-[#4A4E44]">{c.name}</td>
+                          <td className="p-2 font-medium text-[#1E293B]">{c.name}</td>
                           <td className="p-2 text-right font-mono text-[#2D3325]">{c.req.toLocaleString()}</td>
-                          <td className="p-2 text-right font-mono text-[#5A634D]">{c.wh.toLocaleString()}</td>
-                          <td className="p-2 text-right font-mono text-[#5A634D]">{c.transit.toLocaleString()}</td>
+                          <td className="p-2 text-right font-mono text-[#1E40AF]">{c.wh.toLocaleString()}</td>
+                          <td className="p-2 text-right font-mono text-[#1E40AF]">{c.transit.toLocaleString()}</td>
                           <td className="p-2 text-right font-mono font-bold text-[#2D3325]">{c.avail.toLocaleString()}</td>
                           <td className="p-2 text-center">
                             {c.ok ? (
@@ -423,7 +423,7 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
                 </div>
               </>
             ) : (
-              <div className="text-center py-16 text-[#9DA391]">
+              <div className="text-center py-16 text-[#64748B]">
                 请选择左侧工单查看物料齐套明细
               </div>
             )}
@@ -431,8 +431,8 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 px-6 border-t border-[#E8E4D9] bg-white flex items-center justify-between shrink-0">
-          <div className="text-xs text-[#9DA391]">
+        <div className="p-4 px-6 border-t border-[#E5E9F0] bg-white flex items-center justify-between shrink-0">
+          <div className="text-xs text-[#64748B]">
             {calcSuccess && (
               <span className="text-emerald-700 font-semibold flex items-center gap-1">
                 <CheckCircle className="w-4 h-4" /> 批量齐套运算已完成，状态已同步锁定
@@ -442,7 +442,7 @@ export const BatchKitCheckModal: React.FC<BatchKitCheckModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-[#E8E4D9] rounded-xl text-xs font-medium text-[#5A634D] hover:bg-[#F0EEE6] transition cursor-pointer"
+              className="px-4 py-2 border border-[#E5E9F0] rounded-xl text-xs font-medium text-[#1E40AF] hover:bg-[#EDF2F7] transition cursor-pointer"
             >
               关闭
             </button>

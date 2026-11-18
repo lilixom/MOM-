@@ -657,7 +657,7 @@ export const Gantt24HTimeline: React.FC<Gantt24HTimelineProps> = ({
               className={`px-3 py-1 rounded-lg border font-semibold flex items-center gap-1.5 transition text-xs shadow-2xs ${
                 isScheduleFrozen
                   ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-[#D9C5B2] hover:bg-[#c9b39e] text-[#4A4E44] border-[#C5B09D] cursor-pointer'
+                  : 'bg-[#CBD5E1] hover:bg-[#c9b39e] text-[#1E293B] border-[#C5B09D] cursor-pointer'
               }`}
               title={
                 isScheduleFrozen

@@ -358,25 +358,25 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
     <div className="space-y-4">
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="bg-white p-4 rounded-2xl border border-[#E8E4D9] shadow-2xs">
-          <div className="text-2xl font-bold text-[#4A4E44]">12</div>
-          <div className="text-xs text-[#9DA391] mt-0.5">待排产销售订单</div>
+        <div className="bg-white p-4 rounded-2xl border border-[#E5E9F0] shadow-2xs">
+          <div className="text-2xl font-bold text-[#1E293B]">12</div>
+          <div className="text-xs text-[#64748B] mt-0.5">待排产销售订单</div>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-[#E8E4D9] shadow-2xs">
-          <div className="text-2xl font-bold text-[#4A4E44]">{FACTORY_LINES.length}</div>
-          <div className="text-xs text-[#9DA391] mt-0.5">活跃线体</div>
+        <div className="bg-white p-4 rounded-2xl border border-[#E5E9F0] shadow-2xs">
+          <div className="text-2xl font-bold text-[#1E293B]">{FACTORY_LINES.length}</div>
+          <div className="text-xs text-[#64748B] mt-0.5">活跃线体</div>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-[#E8E4D9] shadow-2xs">
-          <div className="text-2xl font-bold text-[#D9C5B2]">67%</div>
-          <div className="text-xs text-[#9DA391] mt-0.5">平均产能负荷</div>
+        <div className="bg-white p-4 rounded-2xl border border-[#E5E9F0] shadow-2xs">
+          <div className="text-2xl font-bold text-[#165DFF] font-mono tabular-nums">67%</div>
+          <div className="text-xs text-[#64748B] mt-0.5">平均产能负荷</div>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-[#E8E4D9] shadow-2xs">
-          <div className="text-2xl font-bold text-[#5A634D]">8</div>
-          <div className="text-xs text-[#9DA391] mt-0.5">已下达制令单</div>
+        <div className="bg-white p-4 rounded-2xl border border-[#E5E9F0] shadow-2xs">
+          <div className="text-2xl font-bold text-[#1E40AF]">8</div>
+          <div className="text-xs text-[#64748B] mt-0.5">已下达制令单</div>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-[#E8E4D9] shadow-2xs">
-          <div className="text-2xl font-bold text-[#7D8471]">4</div>
-          <div className="text-xs text-[#9DA391] mt-0.5">排产版本数</div>
+        <div className="bg-white p-4 rounded-2xl border border-[#E5E9F0] shadow-2xs">
+          <div className="text-2xl font-bold text-[#2563EB]">4</div>
+          <div className="text-xs text-[#64748B] mt-0.5">排产版本数</div>
         </div>
       </div>
        {/* 说明 Banner */}
@@ -403,50 +403,50 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
         </div>
       </div>
       {/* Query Bar */}
-      <div className="bg-white rounded-2xl border border-[#E8E4D9] shadow-2xs p-4">
-        <div className="text-xs font-bold text-[#4A4E44] mb-2.5 flex items-center justify-between flex-wrap gap-2">
+      <div className="bg-white rounded-2xl border border-[#E5E9F0] shadow-2xs p-4">
+        <div className="text-xs font-bold text-[#1E293B] mb-2.5 flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-1.5">
-            <Search className="w-4 h-4 text-[#7D8471]" />
+            <Search className="w-4 h-4 text-[#2563EB]" />
             <span>排产查询条件（日期范围最少14天，起始时间今天）</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="text-[#9DA391]">当前排产显示区间：</span>
-            <span className="font-bold text-[#5A634D] bg-[#E8EAE3] px-2 py-0.5 rounded-md font-mono">
+            <span className="text-[#64748B]">当前排产显示区间：</span>
+            <span className="font-bold text-[#1E40AF] bg-[#EBF2FF] px-2 py-0.5 rounded-md font-mono">
               {queryStartDate} ~ {queryEndDate}（共 {displayDays.length} 天）
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2.5 flex-wrap text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="text-[#9DA391] whitespace-nowrap">组织:</span>
-            <select className="p-1.5 border border-[#E8E4D9] rounded-xl bg-white text-[#4A4E44] text-xs">
+            <span className="text-[#64748B] whitespace-nowrap">组织:</span>
+            <select className="p-1.5 border border-[#E5E9F0] rounded-xl bg-white text-[#1E293B] text-xs">
               <option>昇兴集团</option>
               <option>三片事业部</option>
             </select>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-[#9DA391] whitespace-nowrap font-medium">日期范围:</span>
+            <span className="text-[#64748B] whitespace-nowrap font-medium">日期范围:</span>
             <input
               type="date"
               value={queryStartDate}
               onChange={(e) => handleStartDateChange(e.target.value)}
-              className="p-1.5 border border-[#E8E4D9] rounded-xl text-[#4A4E44] bg-white font-mono text-xs focus:ring-1 focus:ring-[#7D8471]"
+              className="p-1.5 border border-[#E5E9F0] rounded-xl text-[#1E293B] bg-white font-mono text-xs focus:ring-1 focus:ring-[#2563EB]"
             />
-            <span className="text-[#9DA391]">至</span>
+            <span className="text-[#64748B]">至</span>
             <input
               type="date"
               value={queryEndDate}
               min={ymd(addDays(new Date(queryStartDate + 'T00:00:00'), 13))}
               onChange={(e) => handleEndDateChange(e.target.value)}
-              className="p-1.5 border border-[#E8E4D9] rounded-xl text-[#4A4E44] bg-white font-mono text-xs focus:ring-1 focus:ring-[#7D8471]"
+              className="p-1.5 border border-[#E5E9F0] rounded-xl text-[#1E293B] bg-white font-mono text-xs focus:ring-1 focus:ring-[#2563EB]"
             />
           </div>
 
-          <div className="inline-flex border border-[#E8E4D9] rounded-xl overflow-hidden bg-white p-0.5">
+          <div className="inline-flex border border-[#E5E9F0] rounded-xl overflow-hidden bg-white p-0.5">
             <button
               onClick={() => handleSetPresetRange(14)}
               className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer ${
-                displayDays.length === 14 ? 'bg-[#7D8471] text-white font-medium shadow-2xs' : 'text-[#5A634D] hover:bg-[#F0EEE6]'
+                displayDays.length === 14 ? 'bg-[#2563EB] text-white font-medium shadow-2xs' : 'text-[#1E40AF] hover:bg-[#EDF2F7]'
               }`}
             >
               14天
@@ -454,7 +454,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
             <button
               onClick={() => handleSetPresetRange(21)}
               className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer ${
-                displayDays.length === 21 ? 'bg-[#7D8471] text-white font-medium shadow-2xs' : 'text-[#5A634D] hover:bg-[#F0EEE6]'
+                displayDays.length === 21 ? 'bg-[#2563EB] text-white font-medium shadow-2xs' : 'text-[#1E40AF] hover:bg-[#EDF2F7]'
               }`}
             >
               21天
@@ -462,25 +462,25 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
             <button
               onClick={() => handleSetPresetRange(30)}
               className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer ${
-                displayDays.length === 30 ? 'bg-[#7D8471] text-white font-medium shadow-2xs' : 'text-[#5A634D] hover:bg-[#F0EEE6]'
+                displayDays.length === 30 ? 'bg-[#2563EB] text-white font-medium shadow-2xs' : 'text-[#1E40AF] hover:bg-[#EDF2F7]'
               }`}
             >
               30天
             </button>
             <button
               onClick={() => handleSetPresetRange('month')}
-              className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer text-[#5A634D] hover:bg-[#F0EEE6]`}
+              className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer text-[#1E40AF] hover:bg-[#EDF2F7]`}
             >
               本月
             </button>
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-[#9DA391] whitespace-nowrap">线体:</span>
+            <span className="text-[#64748B] whitespace-nowrap">线体:</span>
             <select
               value={queryLine}
               onChange={(e) => setQueryLine(e.target.value)}
-              className="p-1.5 border border-[#E8E4D9] rounded-xl bg-white text-[#4A4E44] text-xs cursor-pointer"
+              className="p-1.5 border border-[#E5E9F0] rounded-xl bg-white text-[#1E293B] text-xs cursor-pointer"
             >
               <option value="">全部线体</option>
               {FACTORY_LINES.map((l) => (
@@ -492,7 +492,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
           </div>
           <button
             onClick={() => onShowToast(`✅ 查询条件已更新：${queryStartDate} ~ ${queryEndDate}（共 ${displayDays.length} 天）`, 'success')}
-            className="px-3.5 py-1.5 bg-[#7D8471] text-white rounded-xl font-medium hover:bg-[#5A634D] transition shadow-2xs cursor-pointer"
+            className="px-3.5 py-1.5 bg-[#2563EB] text-white rounded-xl font-medium hover:bg-[#165DFF] transition shadow-2xs cursor-pointer"
           >
             查询
           </button>
@@ -500,12 +500,12 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
       </div>
 
       {/* Schedule Main Card */}
-      <div className="bg-white rounded-2xl border border-[#E8E4D9] shadow-2xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E5E9F0] shadow-2xs overflow-hidden">
         {/* Header Toolbar */}
-        <div className="p-3.5 px-5 border-b border-[#E8E4D9] flex flex-wrap items-center justify-between gap-2 bg-[#FCFAF7]">
+        <div className="p-3.5 px-5 border-b border-[#E5E9F0] flex flex-wrap items-center justify-between gap-2 bg-[#FFFFFF]">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-[#4A4E44]">🎯 日排产区</span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#E8EAE3] text-[#5A634D] font-medium">
+            <span className="text-sm font-bold text-[#1E293B]">🎯 日排产区</span>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#EBF2FF] text-[#1E40AF] font-medium">
               多版本对比
             </span>
             {isScheduleFrozen && (
@@ -522,7 +522,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer border ${
                 isScheduleFrozen
                   ? 'bg-cyan-700 hover:bg-cyan-800 text-white border-cyan-600'
-                  : 'bg-white border-[#E8E4D9] text-[#4A4E44] hover:bg-cyan-50 hover:text-cyan-800 hover:border-cyan-300'
+                  : 'bg-white border-[#E5E9F0] text-[#1E293B] hover:bg-cyan-50 hover:text-cyan-800 hover:border-cyan-300'
               }`}
               title={
                 isScheduleFrozen
@@ -554,7 +554,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
               className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1 shadow-2xs ${
                 isScheduleFrozen
                   ? 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed opacity-75'
-                  : 'bg-[#5A634D] text-white hover:bg-[#4A4E44] cursor-pointer'
+                  : 'bg-[#165DFF] text-white hover:bg-[#0E4FD6] cursor-pointer'
               }`}
               title={
                 isScheduleFrozen
@@ -582,7 +582,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                   onOpenGenerateModal();
                 }}
                
-                className="px-3.5 py-1.5 bg-[#5A634D] text-white rounded-xl text-xs font-semibold hover:bg-[#4A4E44] transition flex items-center gap-1 shadow-2xs cursor-pointer"
+                className="px-3.5 py-1.5 bg-[#165DFF] text-white rounded-xl text-xs font-semibold hover:bg-[#0E4FD6] transition flex items-center gap-1 shadow-2xs cursor-pointer"
               >
                 <Settings2 className="w-3.5 h-3.5" />
                 <span>
@@ -592,7 +592,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
             </div>
             <button
               onClick={() => setIsImportMOModalOpen(true)}
-              className="px-3.5 py-1.5 bg-[#7D8471] text-white rounded-xl text-xs font-semibold hover:bg-[#5A634D] transition flex items-center gap-1 shadow-2xs cursor-pointer"
+              className="px-3.5 py-1.5 bg-[#2563EB] text-white rounded-xl text-xs font-semibold hover:bg-[#165DFF] transition flex items-center gap-1 shadow-2xs cursor-pointer"
               title="导入外部MES/ERP制令单并自动锁定日排产"
             >
               <FileUp className="w-3.5 h-3.5" />
@@ -600,7 +600,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
             </button>
             <button
               onClick={() => onShowToast('📤 排产表导出成功', 'success')}
-              className="px-3.5 py-1.5 border border-[#E8E4D9] rounded-xl text-xs font-medium text-[#5A634D] bg-white hover:bg-[#F0EEE6] transition flex items-center gap-1 shadow-2xs"
+              className="px-3.5 py-1.5 border border-[#E5E9F0] rounded-xl text-xs font-medium text-[#1E40AF] bg-white hover:bg-[#EDF2F7] transition flex items-center gap-1 shadow-2xs"
             >
               <Download className="w-3.5 h-3.5" />
               <span>导出</span>
@@ -609,13 +609,13 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
         </div>
 
         {/* View Action Sub-bar */}
-        <div className="p-2.5 px-4 border-b border-[#E8E4D9] bg-white flex flex-wrap items-center gap-2 text-xs">
+        <div className="p-2.5 px-4 border-b border-[#E5E9F0] bg-white flex flex-wrap items-center gap-2 text-xs">
           <button
             onClick={() => setViewState({ ...viewState, cap: !viewState.cap })}
             className={`px-3 py-1 rounded-xl border text-xs font-medium transition ${
               viewState.cap
-                ? 'bg-[#7D8471] text-white border-[#7D8471]'
-                : 'bg-white text-[#5A634D] border-[#E8E4D9] hover:bg-[#F0EEE6]'
+                ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                : 'bg-white text-[#1E40AF] border-[#E5E9F0] hover:bg-[#EDF2F7]'
             }`}
           >
             {viewState.cap ? '隐藏产能列' : '显示产能列'}
@@ -624,8 +624,8 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
             onClick={() => setViewState({ ...viewState, actual: !viewState.actual })}
             className={`px-3 py-1 rounded-xl border text-xs font-medium transition ${
               viewState.actual
-                ? 'bg-[#7D8471] text-white border-[#7D8471]'
-                : 'bg-white text-[#5A634D] border-[#E8E4D9] hover:bg-[#F0EEE6]'
+                ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                : 'bg-white text-[#1E40AF] border-[#E5E9F0] hover:bg-[#EDF2F7]'
             }`}
           >
             {viewState.actual ? '隐藏实际' : '显示实际'}
@@ -634,8 +634,8 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
             onClick={() => setViewState({ ...viewState, var: !viewState.var })}
             className={`px-3 py-1 rounded-xl border text-xs font-medium transition ${
               viewState.var
-                ? 'bg-[#7D8471] text-white border-[#7D8471]'
-                : 'bg-white text-[#5A634D] border-[#E8E4D9] hover:bg-[#F0EEE6]'
+                ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                : 'bg-white text-[#1E40AF] border-[#E5E9F0] hover:bg-[#EDF2F7]'
             }`}
           >
             {viewState.var ? '隐藏差异分析' : '显示差异分析'}
@@ -643,7 +643,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
 
           <button
             onClick={handleDeleteCheckedWOs}
-            className="px-3 py-1 rounded-xl border border-[#F27D52]/30 bg-[#F27D52]/10 text-[#F27D52] hover:bg-[#F27D52]/20 font-medium transition ml-auto"
+            className="px-3 py-1 rounded-xl border border-[#EA580C]/30 bg-[#EA580C]/10 text-[#EA580C] hover:bg-[#EA580C]/20 font-medium transition ml-auto"
           >
             <Trash2 className="w-3.5 h-3.5 inline mr-1" />
             删除选中
@@ -651,79 +651,79 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
         </div>
 
         {/* Legend */}
-        <div className="p-2.5 px-4 border-b border-[#E8E4D9] bg-[#FCFAF7] flex items-center gap-4 text-xs flex-wrap">
-          <span className="font-semibold text-[#5A634D]">状态说明:</span>
+        <div className="p-2.5 px-4 border-b border-[#E5E9F0] bg-[#FFFFFF] flex items-center gap-4 text-xs flex-wrap">
+          <span className="font-semibold text-[#1E40AF]">状态说明:</span>
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shadow-2xs" />
-            <span className="text-[#4A4E44] font-medium">已排产</span>
+            <span className="text-[#1E293B] font-medium">已排产</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shadow-2xs" />
-            <span className="text-[#4A4E44] font-medium">已齐套</span>
+            <span className="text-[#1E293B] font-medium">已齐套</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-600 shadow-2xs" />
-            <span className="text-[#4A4E44] font-medium">已锁定</span>
+            <span className="text-[#1E293B] font-medium">已锁定</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-purple-600 shadow-2xs" />
-            <span className="text-[#4A4E44] font-medium">已生产</span>
+            <span className="text-[#1E293B] font-medium">已生产</span>
           </span>
         </div>
 
         {/* 14-Day Overview Heatmap */}
-        <div className="p-4 border-b border-[#E8E4D9] bg-[#FCFAF7]">
-          <div className="text-xs font-bold text-[#4A4E44] mb-2 flex items-center justify-between flex-wrap gap-2">
+        <div className="p-4 border-b border-[#E5E9F0] bg-[#FFFFFF]">
+          <div className="text-xs font-bold text-[#1E293B] mb-2 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span>📆 {displayDays.length}天排产总览（{queryStartDate} ~ {queryEndDate}）（点击日期格可直接切换日排产）</span>
-              <span className="text-[11px] font-normal text-[#5A634D] bg-[#E8EAE3] px-2 py-0.5 rounded-md flex items-center gap-1.5">
+              <span className="text-[11px] font-normal text-[#1E40AF] bg-[#EBF2FF] px-2 py-0.5 rounded-md flex items-center gap-1.5">
                 <span className="font-semibold text-[#2D3325]">计划:</span> 计划排产 · <span className="font-semibold text-blue-700">实际:</span> 实际产量
               </span>
             </div>
-            <span className="text-[#9DA391] font-normal">
-              当前选择: <b className="text-[#7D8471] font-bold">{selectedDate}</b>
+            <span className="text-[#64748B] font-normal">
+              当前选择: <b className="text-[#2563EB] font-bold">{selectedDate}</b>
             </span>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-[#E8E4D9] bg-white">
+          <div className="overflow-x-auto rounded-xl border border-[#E5E9F0] bg-white">
             <table className="w-full text-center text-xs border-collapse min-w-max">
               <thead>
-                <tr className="bg-[#FCFAF7] text-[#5A634D] border-b border-[#E8E4D9]">
-                  <th className="p-2 border-r border-[#E8E4D9] font-semibold sticky left-0 bg-[#FCFAF7] min-w-[90px] text-left text-[#4A4E44]">
+                <tr className="bg-[#FFFFFF] text-[#1E40AF] border-b border-[#E5E9F0]">
+                  <th className="p-2 border-r border-[#E5E9F0] font-semibold sticky left-0 bg-[#FFFFFF] min-w-[90px] text-left text-[#1E293B]">
                     线别 \ 日期
                   </th>
                   {displayDays.map((d) => (
                     <th
                       key={d.date}
-                      className={`p-1.5 border-r border-[#E8E4D9] min-w-[62px] ${
+                      className={`p-1.5 border-r border-[#E5E9F0] min-w-[62px] ${
                         d.isToday
-                          ? 'border-l-2 border-l-[#7D8471] bg-[#E8EAE3] text-[#4A4E44] font-bold'
+                          ? 'border-l-2 border-l-[#2563EB] bg-[#EBF2FF] text-[#1E293B] font-bold'
                           : d.date === selectedDate
-                          ? 'bg-[#E8EAE3]'
+                          ? 'bg-[#EBF2FF]'
                           : d.doff > 0
-                          ? 'bg-[#FCFAF7]'
+                          ? 'bg-[#FFFFFF]'
                           : ''
                       }`}
                     >
                       <div>{d.md}</div>
-                      <div className="text-[10px] text-[#9DA391] font-normal">
+                      <div className="text-[10px] text-[#64748B] font-normal">
                         周{d.wd}
                       </div>
                     </th>
                   ))}
                   {/* Summary Column Header */}
-                  <th className="p-1.5 border-r border-[#E8E4D9] min-w-[75px] bg-[#E8EAE3] text-[#2D3325] font-bold">
+                  <th className="p-1.5 border-r border-[#E5E9F0] min-w-[75px] bg-[#EBF2FF] text-[#2D3325] font-bold">
                     <div>汇总</div>
-                    <div className="text-[10px] text-[#5A634D] font-normal">全期合计</div>
+                    <div className="text-[10px] text-[#1E40AF] font-normal">全期合计</div>
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {(queryLine ? FACTORY_LINES.filter((l) => l === queryLine) : FACTORY_LINES).map((line) => (
-                  <tr key={line} className="border-b border-[#F0EEE6]">
-                    <td className="p-2 border-r border-[#E8E4D9] font-semibold text-left sticky left-0 bg-white text-[#4A4E44]">
+                  <tr key={line} className="border-b border-[#EDF2F7]">
+                    <td className="p-2 border-r border-[#E5E9F0] font-semibold text-left sticky left-0 bg-white text-[#1E293B]">
                       <div>{line}</div>
-                      <div className="text-[10px] text-[#9DA391]">{teamOf(line)}</div>
+                      <div className="text-[10px] text-[#64748B]">{teamOf(line)}</div>
                     </td>
                     {displayDays.map((d) => {
                       const dayWOs = workOrders.filter(
@@ -833,11 +833,11 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                         <td
                           key={d.date}
                           onClick={() => onSelectDate(d.date)}
-                          className={`p-1.5 border-r border-[#E8E4D9] cursor-pointer transition relative ${
-                            isSelected ? 'ring-2 ring-[#7D8471] ring-inset z-10 shadow-sm' : ''
+                          className={`p-1.5 border-r border-[#E5E9F0] cursor-pointer transition relative ${
+                            isSelected ? 'ring-2 ring-[#2563EB] ring-inset z-10 shadow-sm' : ''
                           } ${
-                            d.isToday ? 'border-l-2 border-l-[#7D8471]' : ''
-                          } ${qty === 0 && actualQty === 0 ? 'bg-[#FCFAF7] text-[#9DA391]' : 'hover:brightness-95'}`}
+                            d.isToday ? 'border-l-2 border-l-[#2563EB]' : ''
+                          } ${qty === 0 && actualQty === 0 ? 'bg-[#FFFFFF] text-[#64748B]' : 'hover:brightness-95'}`}
                           style={
                             qty > 0 || actualQty > 0
                               ? {
@@ -852,14 +852,14 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                           {qty > 0 || actualQty > 0 ? (
                             <div className="space-y-0.5">
                               <div className="flex items-center justify-between gap-1 text-[10px] leading-tight">
-                                <span className="text-[#4A4E44] font-medium scale-90 origin-left">计划:</span>
+                                <span className="text-[#1E293B] font-medium scale-90 origin-left">计划:</span>
                                 <span className="font-bold text-[11px] text-[#2D3325] font-mono">
                                   {fmtK(qty)}
                                 </span>
                               </div>
                               <div className="flex items-center justify-between gap-1 text-[10px] leading-tight border-t border-black/5 pt-0.5">
                                 <span className="text-blue-700 font-medium scale-90 origin-left">实际:</span>
-                                <span className={`font-bold text-[10px] font-mono ${actualQty > 0 ? 'text-blue-800' : 'text-[#9DA391]'}`}>
+                                <span className={`font-bold text-[10px] font-mono ${actualQty > 0 ? 'text-blue-800' : 'text-[#64748B]'}`}>
                                   {actualQty > 0 ? fmtK(actualQty) : '—'}
                                 </span>
                               </div>
@@ -925,28 +925,28 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
 
                       return (
                         <td
-                          className="p-1.5 border-r border-[#E8E4D9] bg-[#F7F5EE]/80 text-[#2D3325] font-semibold text-center"
+                          className="p-1.5 border-r border-[#E5E9F0] bg-[#F8FAFC]/80 text-[#2D3325] font-semibold text-center"
                           title={`${line} 全期汇总\n计划总排产: ${lineQty.toLocaleString()} 件\n实际总产量: ${lineActualQty.toLocaleString()} 件\n工单总数: ${lineCnt} 单`}
                         >
                           {lineQty > 0 || lineActualQty > 0 ? (
                             <div className="space-y-0.5">
                               <div className="flex items-center justify-between gap-1 text-[10px] leading-tight">
-                                <span className="text-[#4A4E44] font-medium scale-90 origin-left">计划:</span>
+                                <span className="text-[#1E293B] font-medium scale-90 origin-left">计划:</span>
                                 <span className="font-bold text-[11px] text-[#2D3325] font-mono">
                                   {fmtK(lineQty)}
                                 </span>
                               </div>
                               <div className="flex items-center justify-between gap-1 text-[10px] leading-tight border-t border-black/5 pt-0.5">
                                 <span className="text-blue-700 font-medium scale-90 origin-left">实际:</span>
-                                <span className={`font-bold text-[10px] font-mono ${lineActualQty > 0 ? 'text-blue-800' : 'text-[#9DA391]'}`}>
+                                <span className={`font-bold text-[10px] font-mono ${lineActualQty > 0 ? 'text-blue-800' : 'text-[#64748B]'}`}>
                                   {lineActualQty > 0 ? fmtK(lineActualQty) : '—'}
                                 </span>
                               </div>
                               <div className="flex items-center justify-between gap-1 pt-0.5 border-t border-black/5 text-[9px]">
-                                <span className="font-mono text-[9px] text-[#7D8471] font-bold">
+                                <span className="font-mono text-[9px] text-[#2563EB] font-bold">
                                   {lineQty > 0 ? `${Math.round((lineActualQty / lineQty) * 100)}%` : '0%'}
                                 </span>
-                                <span className="font-bold font-mono text-[#4A4E44] ml-auto">
+                                <span className="font-bold font-mono text-[#1E293B] ml-auto">
                                   {lineCnt}单
                                 </span>
                               </div>
@@ -990,10 +990,10 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                   const grandCnt = grandWOs.length;
 
                   return (
-                    <tr className="border-t-2 border-[#D9C5B2] bg-[#F7F5EE] font-semibold">
-                      <td className="p-2 border-r border-[#E8E4D9] font-bold text-left sticky left-0 bg-[#E8EAE3] text-[#2D3325] z-10 shadow-2xs">
+                    <tr className="border-t-2 border-[#CBD5E1] bg-[#F8FAFC] font-semibold">
+                      <td className="p-2 border-r border-[#E5E9F0] font-bold text-left sticky left-0 bg-[#EBF2FF] text-[#2D3325] z-10 shadow-2xs">
                         <div className="font-bold text-[#2D3325]">合计</div>
-                        <div className="text-[10px] text-[#5A634D] font-normal">全线汇总</div>
+                        <div className="text-[10px] text-[#1E40AF] font-normal">全线汇总</div>
                       </td>
                       {displayDays.map((d) => {
                         const dayWOs = workOrders.filter(
@@ -1026,30 +1026,30 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                         return (
                           <td
                             key={`total-${d.date}`}
-                            className={`p-1.5 border-r border-[#E8E4D9] bg-[#F7F5EE] text-[#2D3325] ${
-                              d.isToday ? 'border-l-2 border-l-[#7D8471]' : ''
+                            className={`p-1.5 border-r border-[#E5E9F0] bg-[#F8FAFC] text-[#2D3325] ${
+                              d.isToday ? 'border-l-2 border-l-[#2563EB]' : ''
                             }`}
                             title={`全线 · ${d.date}\n计划总排产: ${dayQty.toLocaleString()} 件\n实际总产量: ${dayActualQty.toLocaleString()} 件\n工单总数: ${dayCnt} 单`}
                           >
                             {dayQty > 0 || dayActualQty > 0 ? (
                               <div className="space-y-0.5">
                                 <div className="flex items-center justify-between gap-1 text-[10px] leading-tight">
-                                  <span className="text-[#4A4E44] font-medium scale-90 origin-left">计划:</span>
+                                  <span className="text-[#1E293B] font-medium scale-90 origin-left">计划:</span>
                                   <span className="font-bold text-[11px] text-[#2D3325] font-mono">
                                     {fmtK(dayQty)}
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between gap-1 text-[10px] leading-tight border-t border-black/5 pt-0.5">
                                   <span className="text-blue-700 font-medium scale-90 origin-left">实际:</span>
-                                  <span className={`font-bold text-[10px] font-mono ${dayActualQty > 0 ? 'text-blue-800' : 'text-[#9DA391]'}`}>
+                                  <span className={`font-bold text-[10px] font-mono ${dayActualQty > 0 ? 'text-blue-800' : 'text-[#64748B]'}`}>
                                     {dayActualQty > 0 ? fmtK(dayActualQty) : '—'}
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between gap-1 pt-0.5 border-t border-black/5 text-[9px]">
-                                  <span className="font-mono text-[9px] text-[#7D8471] font-bold">
+                                  <span className="font-mono text-[9px] text-[#2563EB] font-bold">
                                     {dayQty > 0 ? `${Math.round((dayActualQty / dayQty) * 100)}%` : '0%'}
                                   </span>
-                                  <span className="font-bold font-mono text-[#4A4E44] ml-auto">
+                                  <span className="font-bold font-mono text-[#1E293B] ml-auto">
                                     {dayCnt}单
                                   </span>
                                 </div>
@@ -1062,7 +1062,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                       })}
                       {/* 汇总行 x 汇总列 交叉单元格 (Grand Total) */}
                       <td
-                        className="p-1.5 border-r border-[#E8E4D9] bg-[#E8EAE3] text-[#2D3325] font-bold text-center"
+                        className="p-1.5 border-r border-[#E5E9F0] bg-[#EBF2FF] text-[#2D3325] font-bold text-center"
                         title={`全线全期总计\n计划总排产: ${grandQty.toLocaleString()} 件\n实际总产量: ${grandActualQty.toLocaleString()} 件\n工单总数: ${grandCnt} 单`}
                       >
                         <div className="space-y-0.5">
@@ -1079,7 +1079,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                             </span>
                           </div>
                           <div className="flex items-center justify-between gap-1 pt-0.5 border-t border-black/10 text-[9px]">
-                            <span className="font-mono text-[9px] text-[#5A634D] font-bold">
+                            <span className="font-mono text-[9px] text-[#1E40AF] font-bold">
                               {grandQty > 0 ? `${Math.round((grandActualQty / grandQty) * 100)}%` : '0%'}
                             </span>
                             <span className="font-bold font-mono text-[#2D3325] ml-auto">

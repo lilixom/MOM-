@@ -404,56 +404,56 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
     <div className="space-y-4">
       {/* KPI Cards (Reflecting query filter results) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-white p-4 rounded-2xl border border-[#E8E4D9] shadow-2xs">
-          <div className="text-2xl font-bold text-[#5A634D]">{filteredDays.length}</div>
-          <div className="text-xs text-[#9DA391] mt-0.5">
-            维护跨度 (天) {filteredDays.length !== CAL_DAYS.length && <span className="text-[#5A634D]">/ 已筛选</span>}
+        <div className="bg-white p-4 rounded-2xl border border-[#E5E9F0] shadow-2xs">
+          <div className="text-2xl font-bold text-[#1E40AF]">{filteredDays.length}</div>
+          <div className="text-xs text-[#64748B] mt-0.5">
+            维护跨度 (天) {filteredDays.length !== CAL_DAYS.length && <span className="text-[#1E40AF]">/ 已筛选</span>}
           </div>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-[#E8E4D9] shadow-2xs">
-          <div className="text-2xl font-bold text-[#7D8471]">{filteredLines.length}</div>
-          <div className="text-xs text-[#9DA391] mt-0.5">
-            有效线体数 {filteredLines.length !== FACTORY_LINES.length && <span className="text-[#7D8471]">/ 已筛选</span>}
+        <div className="bg-white p-4 rounded-2xl border border-[#E5E9F0] shadow-2xs">
+          <div className="text-2xl font-bold text-[#2563EB]">{filteredLines.length}</div>
+          <div className="text-xs text-[#64748B] mt-0.5">
+            有效线体数 {filteredLines.length !== FACTORY_LINES.length && <span className="text-[#2563EB]">/ 已筛选</span>}
           </div>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-[#F27D52]/20 bg-[#F27D52]/5 shadow-2xs">
-          <div className="text-2xl font-bold text-[#F27D52]">
+        <div className="bg-white p-4 rounded-2xl border border-[#EA580C]/20 bg-[#EA580C]/5 shadow-2xs">
+          <div className="text-2xl font-bold text-[#EA580C]">
             {totalRollUnf.toLocaleString()}
           </div>
-          <div className="text-xs text-[#F27D52] mt-0.5 font-medium">今晚0点待顺延 (件)</div>
+          <div className="text-xs text-[#EA580C] mt-0.5 font-medium">今晚0点待顺延 (件)</div>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-[#E8E4D9] shadow-2xs">
-          <div className="text-2xl font-bold text-[#5A634D]">{totalAvail} h</div>
-          <div className="text-xs text-[#9DA391] mt-0.5">
+        <div className="bg-white p-4 rounded-2xl border border-[#E5E9F0] shadow-2xs">
+          <div className="text-2xl font-bold text-[#1E40AF]">{totalAvail} h</div>
+          <div className="text-xs text-[#64748B] mt-0.5">
             {filteredDays.length}天可用工时合计
           </div>
         </div>
       </div>
 
       {/* Query / Filter Card */}
-      <div className="bg-white rounded-2xl border border-[#E8E4D9] shadow-2xs p-4">
+      <div className="bg-white rounded-2xl border border-[#E5E9F0] shadow-2xs p-4">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-          <div className="text-xs font-bold text-[#4A4E44] flex items-center gap-1.5">
-            <Search className="w-4 h-4 text-[#7D8471]" />
+          <div className="text-xs font-bold text-[#1E293B] flex items-center gap-1.5">
+            <Search className="w-4 h-4 text-[#2563EB]" />
             <span>🔍 工厂日历查询条件</span>
             {isFilterActive && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8EAE3] text-[#5A634D] border border-[#5A634D]/20">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EBF2FF] text-[#1E40AF] border border-[#165DFF]/20">
                 已应用筛选
               </span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#9DA391]">
-              匹配结果: <b className="text-[#5A634D]">{filteredDays.length}</b> 天 / <b className="text-[#5A634D]">{filteredLines.length}</b> 条产线
+            <span className="text-xs text-[#64748B]">
+              匹配结果: <b className="text-[#1E40AF]">{filteredDays.length}</b> 天 / <b className="text-[#1E40AF]">{filteredLines.length}</b> 条产线
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap text-xs">
           {/* Date Range Input */}
-          <div className="flex items-center gap-1.5 bg-[#FCFAF7] p-1.5 px-3 rounded-xl border border-[#E8E4D9]">
-            <CalendarIcon className="w-3.5 h-3.5 text-[#7D8471] shrink-0" />
-            <span className="text-[#5A634D] font-semibold whitespace-nowrap">时间范围:</span>
+          <div className="flex items-center gap-1.5 bg-[#FFFFFF] p-1.5 px-3 rounded-xl border border-[#E5E9F0]">
+            <CalendarIcon className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
+            <span className="text-[#1E40AF] font-semibold whitespace-nowrap">时间范围:</span>
             <input
               type="date"
               value={startDate}
@@ -464,28 +464,28 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                 setStartDate(val);
                 if (val > endDate) setEndDate(val);
               }}
-              className="p-1 border border-[#E8E4D9] rounded-lg text-[#4A4E44] bg-white font-mono text-xs focus:ring-1 focus:ring-[#5A634D] outline-none"
+              className="p-1 border border-[#E5E9F0] rounded-lg text-[#1E293B] bg-white font-mono text-xs focus:ring-1 focus:ring-[#165DFF] outline-none"
             />
-            <span className="text-[#9DA391] font-bold">~</span>
+            <span className="text-[#64748B] font-bold">~</span>
             <input
               type="date"
               value={endDate}
               min={startDate || defaultStartDate}
               max={defaultEndDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="p-1 border border-[#E8E4D9] rounded-lg text-[#4A4E44] bg-white font-mono text-xs focus:ring-1 focus:ring-[#5A634D] outline-none"
+              className="p-1 border border-[#E5E9F0] rounded-lg text-[#1E293B] bg-white font-mono text-xs focus:ring-1 focus:ring-[#165DFF] outline-none"
             />
           </div>
 
           {/* Quick Date Presets */}
-          <div className="inline-flex border border-[#E8E4D9] rounded-xl overflow-hidden bg-white p-0.5">
+          <div className="inline-flex border border-[#E5E9F0] rounded-xl overflow-hidden bg-white p-0.5">
             <button
               type="button"
               onClick={() => handleQuickRange(7)}
               className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer ${
                 isQuickRangeActive(7)
-                  ? 'bg-[#7D8471] text-white font-medium shadow-2xs'
-                  : 'text-[#5A634D] hover:bg-[#F0EEE6]'
+                  ? 'bg-[#2563EB] text-white font-medium shadow-2xs'
+                  : 'text-[#1E40AF] hover:bg-[#EDF2F7]'
               }`}
             >
               未来7天
@@ -495,8 +495,8 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
               onClick={() => handleQuickRange(14)}
               className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer ${
                 isQuickRangeActive(14)
-                  ? 'bg-[#7D8471] text-white font-medium shadow-2xs'
-                  : 'text-[#5A634D] hover:bg-[#F0EEE6]'
+                  ? 'bg-[#2563EB] text-white font-medium shadow-2xs'
+                  : 'text-[#1E40AF] hover:bg-[#EDF2F7]'
               }`}
             >
               未来14天
@@ -506,8 +506,8 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
               onClick={() => handleQuickRange(15)}
               className={`px-3 py-1 text-xs rounded-lg transition cursor-pointer ${
                 isQuickRangeActive(15)
-                  ? 'bg-[#7D8471] text-white font-medium shadow-2xs'
-                  : 'text-[#5A634D] hover:bg-[#F0EEE6]'
+                  ? 'bg-[#2563EB] text-white font-medium shadow-2xs'
+                  : 'text-[#1E40AF] hover:bg-[#EDF2F7]'
               }`}
             >
               全部(15天)
@@ -515,13 +515,13 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
           </div>
 
           {/* Line Filter */}
-          <div className="flex items-center gap-1.5 bg-[#FCFAF7] p-1.5 px-3 rounded-xl border border-[#E8E4D9]">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#7D8471] shrink-0" />
-            <span className="text-[#5A634D] font-semibold whitespace-nowrap">线体:</span>
+          <div className="flex items-center gap-1.5 bg-[#FFFFFF] p-1.5 px-3 rounded-xl border border-[#E5E9F0]">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
+            <span className="text-[#1E40AF] font-semibold whitespace-nowrap">线体:</span>
             <select
               value={selectedLine}
               onChange={(e) => setSelectedLine(e.target.value)}
-              className="p-1 border border-[#E8E4D9] rounded-lg bg-white text-[#4A4E44] text-xs font-semibold focus:ring-1 focus:ring-[#5A634D] outline-none cursor-pointer"
+              className="p-1 border border-[#E5E9F0] rounded-lg bg-white text-[#1E293B] text-xs font-semibold focus:ring-1 focus:ring-[#165DFF] outline-none cursor-pointer"
             >
               <option value="">全部线体 ({FACTORY_LINES.length} 条)</option>
               {FACTORY_LINES.map((line) => (
@@ -542,7 +542,7 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                   'info'
                 );
               }}
-              className="px-3.5 py-1.5 bg-[#5A634D] text-white rounded-xl text-xs font-semibold hover:bg-[#4A4E44] transition flex items-center gap-1 shadow-2xs cursor-pointer"
+              className="px-3.5 py-1.5 bg-[#165DFF] text-white rounded-xl text-xs font-semibold hover:bg-[#0E4FD6] transition flex items-center gap-1 shadow-2xs cursor-pointer"
             >
               <Search className="w-3.5 h-3.5" />
               <span>查询</span>
@@ -550,7 +550,7 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
             <button
               type="button"
               onClick={handleResetFilter}
-              className="px-3.5 py-1.5 border border-[#E8E4D9] bg-white text-[#5A634D] rounded-xl text-xs font-medium hover:bg-[#F0EEE6] transition flex items-center gap-1 shadow-2xs cursor-pointer"
+              className="px-3.5 py-1.5 border border-[#E5E9F0] bg-white text-[#1E40AF] rounded-xl text-xs font-medium hover:bg-[#EDF2F7] transition flex items-center gap-1 shadow-2xs cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>重置条件</span>
@@ -560,11 +560,11 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
       </div>
 
       {/* Main Calendar Card */}
-      <div className="bg-white rounded-2xl border border-[#E8E4D9] shadow-2xs overflow-hidden">
-        <div className="p-4 px-5 border-b border-[#F0EEE6] flex flex-wrap items-center justify-between gap-2 bg-[#FCFAF7]">
+      <div className="bg-white rounded-2xl border border-[#E5E9F0] shadow-2xs overflow-hidden">
+        <div className="p-4 px-5 border-b border-[#EDF2F7] flex flex-wrap items-center justify-between gap-2 bg-[#FFFFFF]">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-[#4A4E44]">🏭 工厂日历排期总览</span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#E8EAE3] text-[#5A634D] font-medium">
+            <span className="text-sm font-bold text-[#1E293B]">🏭 工厂日历排期总览</span>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#EBF2FF] text-[#1E40AF] font-medium">
               工作日周期 08:30~次日08:30 | 当前呈现 {filteredDays.length} 天 / {filteredLines.length} 条产线
             </span>
           </div>
@@ -572,7 +572,7 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
             {onOpenTimeSlotDrawer && (
               <button
                 onClick={() => onOpenTimeSlotDrawer('slot')}
-                className="px-3.5 py-1.5 text-xs bg-[#7D8471] hover:bg-[#5A634D] text-white rounded-xl transition font-semibold flex items-center gap-1 shadow-2xs cursor-pointer"
+                className="px-3.5 py-1.5 text-xs bg-[#2563EB] hover:bg-[#165DFF] text-white rounded-xl transition font-semibold flex items-center gap-1 shadow-2xs cursor-pointer"
               >
                 <Clock className="w-3.5 h-3.5" />
                 <span>⏱️ 作息时段</span>
@@ -580,31 +580,31 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
             )}
             <button
               onClick={() => setAllHours(24)}
-              className="px-3 py-1.5 text-xs border border-[#E8E4D9] rounded-xl bg-white hover:bg-[#F0EEE6] text-[#5A634D] transition font-medium cursor-pointer"
+              className="px-3 py-1.5 text-xs border border-[#E5E9F0] rounded-xl bg-white hover:bg-[#EDF2F7] text-[#1E40AF] transition font-medium cursor-pointer"
               title="将当前筛选范围内的工时全设为24小时"
             >
               设为24h
             </button>
             <button
               onClick={applyWeekendRule}
-              className="px-3 py-1.5 text-xs border border-[#E8E4D9] rounded-xl bg-white hover:bg-[#F0EEE6] text-[#5A634D] transition font-medium cursor-pointer"
+              className="px-3 py-1.5 text-xs border border-[#E5E9F0] rounded-xl bg-white hover:bg-[#EDF2F7] text-[#1E40AF] transition font-medium cursor-pointer"
               title="为当前筛选产线套用周末规则"
             >
               套用周末规则
             </button>
             <button
               onClick={resetCalendar}
-              className="px-3 py-1.5 text-xs border border-[#E8E4D9] rounded-xl bg-white hover:bg-[#F0EEE6] text-[#5A634D] transition font-medium cursor-pointer"
+              className="px-3 py-1.5 text-xs border border-[#E5E9F0] rounded-xl bg-white hover:bg-[#EDF2F7] text-[#1E40AF] transition font-medium cursor-pointer"
               title="重置当前筛选范围的日历"
             >
-              <RotateCcw className="w-3 h-3 inline mr-1 text-[#7D8471]" />
+              <RotateCcw className="w-3 h-3 inline mr-1 text-[#2563EB]" />
               重置
             </button>
           </div>
         </div>
 
         <div className="p-4 space-y-3">
-          <div className="text-xs text-[#5A634D] bg-[#FDFBF7] border border-[#E8E4D9] rounded-xl p-3 leading-relaxed flex items-center justify-between gap-2 flex-wrap">
+          <div className="text-xs text-[#1E40AF] bg-[#F8FAFC] border border-[#E5E9F0] rounded-xl p-3 leading-relaxed flex items-center justify-between gap-2 flex-wrap">
             <div>
               维护各产线每日 <b>可用工时</b> 与 <b>日历类型</b>
               （正常生产 / 休息 / 设备维修）。日排产区将按此可用工时计算产能；每晚 0
@@ -612,31 +612,31 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
             </div>
             <div className="flex items-center gap-3 text-[11px] shrink-0 font-medium">
               <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded bg-white border border-[#E8E4D9] inline-block" />
+                <span className="w-2.5 h-2.5 rounded bg-white border border-[#E5E9F0] inline-block" />
                 正常生产
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded bg-[#F9F7F2] border border-[#E8E4D9] inline-block" />
+                <span className="w-2.5 h-2.5 rounded bg-[#F4F6F9] border border-[#E5E9F0] inline-block" />
                 计划休息 (0h)
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded bg-[#F27D52]/20 border border-[#F27D52]/40 inline-block" />
+                <span className="w-2.5 h-2.5 rounded bg-[#EA580C]/20 border border-[#EA580C]/40 inline-block" />
                 设备维修 (0h)
               </span>
             </div>
           </div>
 
           {filteredDays.length === 0 ? (
-            <div className="p-8 text-center bg-[#FCFAF7] rounded-xl border border-dashed border-[#E8E4D9] space-y-3">
-              <AlertCircle className="w-8 h-8 text-[#F27D52] mx-auto opacity-70" />
-              <div className="text-sm font-semibold text-[#4A4E44]">所选时间范围内暂无工厂日历数据</div>
-              <p className="text-xs text-[#9DA391]">
+            <div className="p-8 text-center bg-[#FFFFFF] rounded-xl border border-dashed border-[#E5E9F0] space-y-3">
+              <AlertCircle className="w-8 h-8 text-[#EA580C] mx-auto opacity-70" />
+              <div className="text-sm font-semibold text-[#1E293B]">所选时间范围内暂无工厂日历数据</div>
+              <p className="text-xs text-[#64748B]">
                 当前时间范围 ({startDate} ~ {endDate}) 无有效排期，请调整时间范围或重置查询条件。
               </p>
               <button
                 type="button"
                 onClick={handleResetFilter}
-                className="px-4 py-1.5 bg-[#5A634D] text-white rounded-xl text-xs font-semibold hover:bg-[#4A4E44] transition shadow-2xs inline-flex items-center gap-1"
+                className="px-4 py-1.5 bg-[#165DFF] text-white rounded-xl text-xs font-semibold hover:bg-[#0E4FD6] transition shadow-2xs inline-flex items-center gap-1"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>重置为默认15天</span>
@@ -646,8 +646,8 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-xs">
                 <thead>
-                  <tr className="bg-[#FCFAF7] text-[#5A634D] border-b border-[#E8E4D9] font-semibold">
-                    <th className="p-2 border border-[#E8E4D9] sticky left-0 z-10 bg-[#FCFAF7] min-w-[90px] text-left">
+                  <tr className="bg-[#FFFFFF] text-[#1E40AF] border-b border-[#E5E9F0] font-semibold">
+                    <th className="p-2 border border-[#E5E9F0] sticky left-0 z-10 bg-[#FFFFFF] min-w-[90px] text-left">
                       线别 \ 日期
                     </th>
                     {filteredDays.map((d) => {
@@ -661,17 +661,17 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                           }}
                           className={`p-1.5 border transition cursor-pointer select-none text-center min-w-[65px] ${
                             isSelected
-                              ? 'bg-[#5A634D] text-white border-[#5A634D] shadow-xs'
+                              ? 'bg-[#165DFF] text-white border-[#165DFF] shadow-xs'
                               : d.isToday
-                              ? 'bg-[#E8EAE3] text-[#5A634D] border-[#E8E4D9] hover:bg-[#dcdfd6]'
-                              : 'border-[#E8E4D9] hover:bg-[#F0EEE6]'
+                              ? 'bg-[#EBF2FF] text-[#1E40AF] border-[#E5E9F0] hover:bg-[#dcdfd6]'
+                              : 'border-[#E5E9F0] hover:bg-[#EDF2F7]'
                           }`}
                           title="点击选择该日期查看作息明细"
                         >
                           <div>{d.md}</div>
                           <div
                             className={`text-[10px] font-normal ${
-                              isSelected ? 'text-[#E8EAE3]' : 'text-[#9DA391]'
+                              isSelected ? 'text-[#EBF2FF]' : 'text-[#64748B]'
                             }`}
                           >
                             周{d.wd}
@@ -680,8 +680,8 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                             <span
                               className={`text-[9px] px-1.5 py-0.2 rounded-full font-semibold inline-block mt-0.5 ${
                                 isSelected
-                                  ? 'bg-white text-[#5A634D]'
-                                  : 'bg-[#7D8471] text-white'
+                                  ? 'bg-white text-[#1E40AF]'
+                                  : 'bg-[#2563EB] text-white'
                               }`}
                             >
                               今天
@@ -690,7 +690,7 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                         </th>
                       );
                     })}
-                    <th className="p-2 border border-[#E8E4D9] text-center bg-[#E8EAE3] text-[#5A634D] font-bold min-w-[70px]">
+                    <th className="p-2 border border-[#E5E9F0] text-center bg-[#EBF2FF] text-[#1E40AF] font-bold min-w-[70px]">
                       合计工时
                     </th>
                   </tr>
@@ -699,16 +699,16 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                   {filteredLines.map((line) => {
                     let sum = 0;
                     return (
-                      <tr key={line} className="hover:bg-[#F9F7F2]">
+                      <tr key={line} className="hover:bg-[#F4F6F9]">
                         <td
                           onClick={() => setActiveLine(line)}
-                          className={`p-2 border border-[#E8E4D9] sticky left-0 z-10 font-semibold cursor-pointer transition ${
-                            line === activeLine ? 'bg-[#E8EAE3] text-[#5A634D]' : 'bg-white text-[#4A4E44]'
+                          className={`p-2 border border-[#E5E9F0] sticky left-0 z-10 font-semibold cursor-pointer transition ${
+                            line === activeLine ? 'bg-[#EBF2FF] text-[#1E40AF]' : 'bg-white text-[#1E293B]'
                           }`}
                           title="点击选择该产线"
                         >
                           <div>{line}</div>
-                          <div className="text-[10px] text-[#9DA391]">{teamOf(line)}</div>
+                          <div className="text-[10px] text-[#64748B]">{teamOf(line)}</div>
                         </td>
                         {filteredDays.map((d) => {
                           const key = `${d.date}|${line}`;
@@ -716,9 +716,9 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                           sum += c.hours;
                           const cellBg =
                             c.type === 'rest'
-                              ? 'bg-[#F9F7F2]'
+                              ? 'bg-[#F4F6F9]'
                               : c.type === 'maint'
-                              ? 'bg-[#F27D52]/10'
+                              ? 'bg-[#EA580C]/10'
                               : 'bg-white';
 
                           const isCellSelected = d.date === activeDate && line === activeLine;
@@ -741,23 +741,23 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                               }}
                               className={`p-1 text-center transition cursor-pointer select-none relative ${
                                 isCellSelected
-                                  ? 'border-2 border-[#5A634D] ring-2 ring-[#5A634D]/40 bg-white z-10 shadow-sm font-bold'
+                                  ? 'border-2 border-[#165DFF] ring-2 ring-[#165DFF]/40 bg-white z-10 shadow-sm font-bold'
                                   : isColSelected
-                                  ? `border border-[#E8E4D9] ${cellBg} bg-[#5A634D]/5 ring-1 ring-[#5A634D]/20`
-                                  : `border border-[#E8E4D9] ${cellBg} hover:bg-[#F0EEE6]`
+                                  ? `border border-[#E5E9F0] ${cellBg} bg-[#165DFF]/5 ring-1 ring-[#165DFF]/20`
+                                  : `border border-[#E5E9F0] ${cellBg} hover:bg-[#EDF2F7]`
                               } ${!matchesType ? 'opacity-30' : ''}`}
                             >
                               <div className="flex items-center justify-between px-0.5">
                                 <span
                                   className={`font-bold text-xs ${
-                                    isCellSelected ? 'text-[#5A634D] text-sm' : 'text-[#4A4E44]'
+                                    isCellSelected ? 'text-[#1E40AF] text-sm' : 'text-[#1E293B]'
                                   }`}
                                 >
                                   {c.hours}h
                                 </span>
                                 {isCellSelected && (
                                   <span
-                                    className="w-1.5 h-1.5 rounded-full bg-[#5A634D] inline-block"
+                                    className="w-1.5 h-1.5 rounded-full bg-[#165DFF] inline-block"
                                     title="当前选中"
                                   />
                                 )}
@@ -765,7 +765,7 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                             </td>
                           );
                         })}
-                        <td className="p-2 border border-[#E8E4D9] text-center font-bold text-[#5A634D] bg-[#E8EAE3]/50">
+                        <td className="p-2 border border-[#E5E9F0] text-center font-bold text-[#1E40AF] bg-[#EBF2FF]/50">
                           {sum}h
                         </td>
                       </tr>
@@ -773,8 +773,8 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                   })}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-[#FCFAF7] font-semibold text-[#5A634D] border-t border-[#E8E4D9]">
-                    <td className="p-2 border border-[#E8E4D9] sticky left-0 z-10 bg-[#FCFAF7] font-bold">
+                  <tr className="bg-[#FFFFFF] font-semibold text-[#1E40AF] border-t border-[#E5E9F0]">
+                    <td className="p-2 border border-[#E5E9F0] sticky left-0 z-10 bg-[#FFFFFF] font-bold">
                       每日合计
                     </td>
                     {filteredDays.map((d) => {
@@ -784,12 +784,12 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                         daySum += c.hours;
                       });
                       return (
-                        <td key={d.date} className="p-1.5 border border-[#E8E4D9] text-center font-bold font-mono">
+                        <td key={d.date} className="p-1.5 border border-[#E5E9F0] text-center font-bold font-mono">
                           {daySum}h
                         </td>
                       );
                     })}
-                    <td className="p-2 border border-[#E8E4D9] text-center bg-[#5A634D] text-white font-bold font-mono">
+                    <td className="p-2 border border-[#E5E9F0] text-center bg-[#165DFF] text-white font-bold font-mono">
                       {totalAvail}h
                     </td>
                   </tr>
@@ -800,27 +800,27 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
 
           {/* 作息明细 Breakdown Panel for Selected Date & Line */}
           {activeDate && filteredDays.some((d) => d.date === activeDate) && (
-            <div className="mt-4 p-4 bg-white rounded-2xl border-2 border-[#5A634D]/30 shadow-xs space-y-3">
-              <div className="flex items-center justify-between border-b border-[#F0EEE6] pb-3 flex-wrap gap-2">
+            <div className="mt-4 p-4 bg-white rounded-2xl border-2 border-[#165DFF]/30 shadow-xs space-y-3">
+              <div className="flex items-center justify-between border-b border-[#EDF2F7] pb-3 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="p-2 rounded-xl bg-[#E8EAE3] text-[#5A634D]">
+                  <span className="p-2 rounded-xl bg-[#EBF2FF] text-[#1E40AF]">
                     <Clock className="w-5 h-5" />
                   </span>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-sm font-bold text-[#4A4E44]">
+                      <h4 className="text-sm font-bold text-[#1E293B]">
                         📋 作息明细 - {activeDate}
                       </h4>
-                      <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-[#5A634D] text-white">
+                      <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-[#165DFF] text-white">
                         {activeLine} 产线 ({teamOf(activeLine)} 班组)
                       </span>
                       <span
                         className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
                           calState[`${activeDate}|${activeLine}`]?.type === 'rest'
-                            ? 'bg-[#E8EAE3] text-[#5A634D]'
+                            ? 'bg-[#EBF2FF] text-[#1E40AF]'
                             : calState[`${activeDate}|${activeLine}`]?.type === 'maint'
-                            ? 'bg-[#F27D52]/15 text-[#F27D52]'
-                            : 'bg-[#5A634D]/10 text-[#5A634D]'
+                            ? 'bg-[#EA580C]/15 text-[#EA580C]'
+                            : 'bg-[#165DFF]/10 text-[#1E40AF]'
                         }`}
                       >
                         {calState[`${activeDate}|${activeLine}`]?.type === 'work'
@@ -831,7 +831,7 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                         （{(calState[`${activeDate}|${activeLine}`]?.hours ?? 24)}h 可用）
                       </span>
                     </div>
-                    <p className="text-xs text-[#9DA391] mt-0.5">
+                    <p className="text-xs text-[#64748B] mt-0.5">
                       工厂单工作日核算周期：<b>08:30 ~ 次日 08:30</b>（跨零点 24 小时排产规则）
                     </p>
                   </div>
@@ -841,7 +841,7 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                   {onOpenTimeSlotDrawer && (
                     <button
                       onClick={() => onOpenTimeSlotDrawer('slot')}
-                      className="px-3.5 py-1.5 bg-[#7D8471] hover:bg-[#5A634D] text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                      className="px-3.5 py-1.5 bg-[#2563EB] hover:bg-[#165DFF] text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
                     >
                       <Clock className="w-3.5 h-3.5" />
                       <span>⏱️ 维护作息时段</span>
@@ -852,10 +852,10 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
 
               {/* Details Grid */}
               <div className="text-xs">
-                <div className="p-3 bg-[#FCFAF7] rounded-xl border border-[#E8E4D9] space-y-2 w-full">
-                  <div className="font-bold text-[#4A4E44] flex items-center justify-between border-b border-[#E8E4D9] pb-1.5">
+                <div className="p-3 bg-[#FFFFFF] rounded-xl border border-[#E5E9F0] space-y-2 w-full">
+                  <div className="font-bold text-[#1E293B] flex items-center justify-between border-b border-[#E5E9F0] pb-1.5">
                     <span>🕒 日常作息与非生产时间段明细 (08:30-次日08:30)</span>
-                    <span className="text-[11px] text-[#9DA391] font-normal">
+                    <span className="text-[11px] text-[#64748B] font-normal">
                       排产引擎自动避开扣除
                     </span>
                   </div>
@@ -865,7 +865,7 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                           <thead>
-                            <tr className="border-b border-[#E8E4D9] text-[#9DA391] text-[11px] font-medium">
+                            <tr className="border-b border-[#E5E9F0] text-[#64748B] text-[11px] font-medium">
                               <th className="py-2 px-3">工作日</th>
                               <th className="py-2 px-3">线体</th>
                               <th className="py-2 px-3">班次</th>
@@ -876,20 +876,20 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                               <th className="py-2 px-3 text-center min-w-[110px]">操作</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-[#E8E4D9]/60 text-[#4A4E44]">
+                          <tbody className="divide-y divide-[#E5E9F0]/60 text-[#1E293B]">
                             <tr className="hover:bg-white/60 transition">
-                              <td className="py-2.5 px-3 font-semibold text-[#4A4E44] font-mono">{activeDate}</td>
-                              <td className="py-2.5 px-3 font-semibold text-[#5A634D]">{activeLine}</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E293B] font-mono">{activeDate}</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E40AF]">{activeLine}</td>
                               <td className="py-2.5 px-3 font-semibold">
-                                <span className="px-2 py-0.5 rounded text-[11px] bg-[#5A634D]/10 text-[#5A634D] font-bold">
+                                <span className="px-2 py-0.5 rounded text-[11px] bg-[#165DFF]/10 text-[#1E40AF] font-bold">
                                   ☀️ 白班
                                 </span>
                               </td>
-                              <td className="py-2.5 px-3 font-semibold text-[#5A634D] font-mono">{activeDate} 08:30 - {activeDate} 09:30</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E40AF] font-mono">{activeDate} 08:30 - {activeDate} 09:30</td>
                               <td className="py-2.5 px-3 font-medium">班前例会 & 首件确认</td>
-                              <td className="py-2.5 px-3 text-[#9DA391] text-[11px]">设备点检 / 确认生产路线与首件</td>
+                              <td className="py-2.5 px-3 text-[#64748B] text-[11px]">设备点检 / 确认生产路线与首件</td>
                               <td className="py-2.5 px-3 text-right">
-                                <span className="text-[10px] px-2.5 py-1 rounded bg-[#E8EAE3] text-[#5A634D] font-bold inline-block">
+                                <span className="text-[10px] px-2.5 py-1 rounded bg-[#EBF2FF] text-[#1E40AF] font-bold inline-block">
                                   1.0h
                                 </span>
                               </td>
@@ -897,14 +897,14 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                                 <div className="flex items-center justify-center gap-1.5">
                                   <button
                                     onClick={() => onOpenTimeSlotDrawer && onOpenTimeSlotDrawer('slot')}
-                                    className="px-2 py-0.5 text-[11px] rounded bg-[#5A634D]/10 hover:bg-[#5A634D]/20 text-[#5A634D] font-semibold transition cursor-pointer"
+                                    className="px-2 py-0.5 text-[11px] rounded bg-[#165DFF]/10 hover:bg-[#165DFF]/20 text-[#1E40AF] font-semibold transition cursor-pointer"
                                     title="修改此作息时段"
                                   >
                                     修改
                                   </button>
                                   <button
                                     onClick={() => onOpenTimeSlotDrawer && onOpenTimeSlotDrawer('slot')}
-                                    className="px-2 py-0.5 text-[11px] rounded bg-[#E8EAE3] hover:bg-[#dcdfd6] text-[#5A634D] font-semibold transition cursor-pointer"
+                                    className="px-2 py-0.5 text-[11px] rounded bg-[#EBF2FF] hover:bg-[#dcdfd6] text-[#1E40AF] font-semibold transition cursor-pointer"
                                     title="新增作息时段"
                                   >
                                     + 新增
@@ -913,18 +913,18 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                               </td>
                             </tr>
                             <tr className="hover:bg-white/60 transition">
-                              <td className="py-2.5 px-3 font-semibold text-[#4A4E44] font-mono">{activeDate}</td>
-                              <td className="py-2.5 px-3 font-semibold text-[#5A634D]">{activeLine}</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E293B] font-mono">{activeDate}</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E40AF]">{activeLine}</td>
                               <td className="py-2.5 px-3 font-semibold">
-                                <span className="px-2 py-0.5 rounded text-[11px] bg-[#5A634D]/10 text-[#5A634D] font-bold">
+                                <span className="px-2 py-0.5 rounded text-[11px] bg-[#165DFF]/10 text-[#1E40AF] font-bold">
                                   ☀️ 白班
                                 </span>
                               </td>
-                              <td className="py-2.5 px-3 font-semibold text-[#5A634D] font-mono">{activeDate} 12:00 - {activeDate} 13:00</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E40AF] font-mono">{activeDate} 12:00 - {activeDate} 13:00</td>
                               <td className="py-2.5 px-3 font-medium">午餐轮休</td>
-                              <td className="py-2.5 px-3 text-[#9DA391] text-[11px]">中班就餐与暂定轮休</td>
+                              <td className="py-2.5 px-3 text-[#64748B] text-[11px]">中班就餐与暂定轮休</td>
                               <td className="py-2.5 px-3 text-right">
-                                <span className="text-[10px] px-2.5 py-1 rounded bg-[#E8EAE3] text-[#5A634D] font-bold inline-block">
+                                <span className="text-[10px] px-2.5 py-1 rounded bg-[#EBF2FF] text-[#1E40AF] font-bold inline-block">
                                   1.0h
                                 </span>
                               </td>
@@ -932,14 +932,14 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                                 <div className="flex items-center justify-center gap-1.5">
                                   <button
                                     onClick={() => onOpenTimeSlotDrawer && onOpenTimeSlotDrawer('slot')}
-                                    className="px-2 py-0.5 text-[11px] rounded bg-[#5A634D]/10 hover:bg-[#5A634D]/20 text-[#5A634D] font-semibold transition cursor-pointer"
+                                    className="px-2 py-0.5 text-[11px] rounded bg-[#165DFF]/10 hover:bg-[#165DFF]/20 text-[#1E40AF] font-semibold transition cursor-pointer"
                                     title="修改此作息时段"
                                   >
                                     修改
                                   </button>
                                   <button
                                     onClick={() => onOpenTimeSlotDrawer && onOpenTimeSlotDrawer('slot')}
-                                    className="px-2 py-0.5 text-[11px] rounded bg-[#E8EAE3] hover:bg-[#dcdfd6] text-[#5A634D] font-semibold transition cursor-pointer"
+                                    className="px-2 py-0.5 text-[11px] rounded bg-[#EBF2FF] hover:bg-[#dcdfd6] text-[#1E40AF] font-semibold transition cursor-pointer"
                                     title="新增作息时段"
                                   >
                                     + 新增
@@ -948,18 +948,18 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                               </td>
                             </tr>
                             <tr className="hover:bg-white/60 transition">
-                              <td className="py-2.5 px-3 font-semibold text-[#4A4E44] font-mono">{activeDate}</td>
-                              <td className="py-2.5 px-3 font-semibold text-[#5A634D]">{activeLine}</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E293B] font-mono">{activeDate}</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E40AF]">{activeLine}</td>
                               <td className="py-2.5 px-3 font-semibold">
-                                <span className="px-2 py-0.5 rounded text-[11px] bg-[#5A634D]/10 text-[#5A634D] font-bold">
+                                <span className="px-2 py-0.5 rounded text-[11px] bg-[#165DFF]/10 text-[#1E40AF] font-bold">
                                   ☀️ 白班
                                 </span>
                               </td>
-                              <td className="py-2.5 px-3 font-semibold text-[#5A634D] font-mono">{activeDate} 17:30 - {activeDate} 18:30</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E40AF] font-mono">{activeDate} 17:30 - {activeDate} 18:30</td>
                               <td className="py-2.5 px-3 font-medium">晚餐交接</td>
-                              <td className="py-2.5 px-3 text-[#9DA391] text-[11px]">晚餐 & 白/夜班交接清理</td>
+                              <td className="py-2.5 px-3 text-[#64748B] text-[11px]">晚餐 & 白/夜班交接清理</td>
                               <td className="py-2.5 px-3 text-right">
-                                <span className="text-[10px] px-2.5 py-1 rounded bg-[#E8EAE3] text-[#5A634D] font-bold inline-block">
+                                <span className="text-[10px] px-2.5 py-1 rounded bg-[#EBF2FF] text-[#1E40AF] font-bold inline-block">
                                   1.0h
                                 </span>
                               </td>
@@ -967,14 +967,14 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                                 <div className="flex items-center justify-center gap-1.5">
                                   <button
                                     onClick={() => onOpenTimeSlotDrawer && onOpenTimeSlotDrawer('slot')}
-                                    className="px-2 py-0.5 text-[11px] rounded bg-[#5A634D]/10 hover:bg-[#5A634D]/20 text-[#5A634D] font-semibold transition cursor-pointer"
+                                    className="px-2 py-0.5 text-[11px] rounded bg-[#165DFF]/10 hover:bg-[#165DFF]/20 text-[#1E40AF] font-semibold transition cursor-pointer"
                                     title="修改此作息时段"
                                   >
                                     修改
                                   </button>
                                   <button
                                     onClick={() => onOpenTimeSlotDrawer && onOpenTimeSlotDrawer('slot')}
-                                    className="px-2 py-0.5 text-[11px] rounded bg-[#E8EAE3] hover:bg-[#dcdfd6] text-[#5A634D] font-semibold transition cursor-pointer"
+                                    className="px-2 py-0.5 text-[11px] rounded bg-[#EBF2FF] hover:bg-[#dcdfd6] text-[#1E40AF] font-semibold transition cursor-pointer"
                                     title="新增作息时段"
                                   >
                                     + 新增
@@ -983,20 +983,20 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                               </td>
                             </tr>
                             <tr className="hover:bg-white/60 transition">
-                              <td className="py-2.5 px-3 font-semibold text-[#4A4E44] font-mono">
+                              <td className="py-2.5 px-3 font-semibold text-[#1E293B] font-mono">
                                 {activeDate}
                               </td>
-                              <td className="py-2.5 px-3 font-semibold text-[#5A634D]">{activeLine}</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E40AF]">{activeLine}</td>
                               <td className="py-2.5 px-3 font-semibold">
-                                <span className="px-2 py-0.5 rounded text-[11px] bg-[#F27D52]/15 text-[#F27D52] font-bold">
+                                <span className="px-2 py-0.5 rounded text-[11px] bg-[#EA580C]/15 text-[#EA580C] font-bold">
                                   🌙 夜班
                                 </span>
                               </td>
-                              <td className="py-2.5 px-3 font-semibold text-[#5A634D] font-mono">{activeDate} 23:30 - {nextDateStr} 00:30</td>
+                              <td className="py-2.5 px-3 font-semibold text-[#1E40AF] font-mono">{activeDate} 23:30 - {nextDateStr} 00:30</td>
                               <td className="py-2.5 px-3 font-medium">夜休保养</td>
-                              <td className="py-2.5 px-3 text-[#9DA391] text-[11px]">夜班餐补休息 & 巡检保养</td>
+                              <td className="py-2.5 px-3 text-[#64748B] text-[11px]">夜班餐补休息 & 巡检保养</td>
                               <td className="py-2.5 px-3 text-right">
-                                <span className="text-[10px] px-2.5 py-1 rounded bg-[#E8EAE3] text-[#5A634D] font-bold inline-block">
+                                <span className="text-[10px] px-2.5 py-1 rounded bg-[#EBF2FF] text-[#1E40AF] font-bold inline-block">
                                   1.0h
                                 </span>
                               </td>
@@ -1004,14 +1004,14 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
                                 <div className="flex items-center justify-center gap-1.5">
                                   <button
                                     onClick={() => onOpenTimeSlotDrawer && onOpenTimeSlotDrawer('slot')}
-                                    className="px-2 py-0.5 text-[11px] rounded bg-[#5A634D]/10 hover:bg-[#5A634D]/20 text-[#5A634D] font-semibold transition cursor-pointer"
+                                    className="px-2 py-0.5 text-[11px] rounded bg-[#165DFF]/10 hover:bg-[#165DFF]/20 text-[#1E40AF] font-semibold transition cursor-pointer"
                                     title="修改此作息时段"
                                   >
                                     修改
                                   </button>
                                   <button
                                     onClick={() => onOpenTimeSlotDrawer && onOpenTimeSlotDrawer('slot')}
-                                    className="px-2 py-0.5 text-[11px] rounded bg-[#E8EAE3] hover:bg-[#dcdfd6] text-[#5A634D] font-semibold transition cursor-pointer"
+                                    className="px-2 py-0.5 text-[11px] rounded bg-[#EBF2FF] hover:bg-[#dcdfd6] text-[#1E40AF] font-semibold transition cursor-pointer"
                                     title="新增作息时段"
                                   >
                                     + 新增
@@ -1032,14 +1032,14 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
       </div>
 
       {/* Midnight Rollover Simulation Card */}
-      <div className="bg-white rounded-2xl border border-[#E8E4D9] shadow-2xs overflow-hidden">
-        <div className="p-4 px-5 border-b border-[#F0EEE6] flex items-center justify-between bg-[#FCFAF7]">
-          <div className="text-sm font-bold text-[#4A4E44] flex items-center gap-2">
+      <div className="bg-white rounded-2xl border border-[#E5E9F0] shadow-2xs overflow-hidden">
+        <div className="p-4 px-5 border-b border-[#EDF2F7] flex items-center justify-between bg-[#FFFFFF]">
+          <div className="text-sm font-bold text-[#1E293B] flex items-center gap-2">
             <span>🌙 每日0点自动顺产（未完成量往后排）</span>
           </div>
           <button
             onClick={runMidnightRoll}
-            className="px-3.5 py-2 bg-[#5A634D] text-white rounded-xl text-xs font-medium hover:bg-[#4A4E44] transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+            className="px-3.5 py-2 bg-[#165DFF] text-white rounded-xl text-xs font-medium hover:bg-[#0E4FD6] transition flex items-center gap-1.5 shadow-xs cursor-pointer"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>模拟今晚0点自动顺产</span>
@@ -1049,19 +1049,19 @@ export const FactoryCalendarTab: React.FC<FactoryCalendarTabProps> = ({
         <div className="p-4 text-xs space-y-2">
           {rollSummary ? (
             <div className="space-y-2">
-              <div className="font-semibold text-[#5A634D] bg-[#E8EAE3] p-3 rounded-xl border border-[#E8E4D9]">
+              <div className="font-semibold text-[#1E40AF] bg-[#EBF2FF] p-3 rounded-xl border border-[#E5E9F0]">
                 {rollSummary}
               </div>
               <div className="space-y-1 pl-1">
                 {rollDetail.map((d, i) => (
-                  <div key={i} className="text-[#4A4E44] border-b border-dashed border-[#E8E4D9] py-1">
+                  <div key={i} className="text-[#1E293B] border-b border-dashed border-[#E5E9F0] py-1">
                     {d}
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <div className="text-[#9DA391] py-2">
+            <div className="text-[#64748B] py-2">
               点击右上角按钮，模拟每日 0 点：①当日未完成量占用次日排产时间，所有未来排产整体往后平移；②新开工单依据工厂日历可用工时自动填充空缺。
             </div>
           )}

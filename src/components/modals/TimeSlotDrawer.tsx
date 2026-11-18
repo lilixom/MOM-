@@ -128,26 +128,26 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
       />
 
       {/* Right Drawer Container */}
-      <div className="relative w-full max-w-md bg-[#FDFBF7] h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-250 border-l border-[#E8E4D9]">
+      <div className="relative w-full max-w-md bg-[#F8FAFC] h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-250 border-l border-[#E5E9F0]">
         {/* Header */}
-        <div className="p-4 border-b border-[#E8E4D9] bg-[#FCFAF7] flex flex-col gap-3">
+        <div className="p-4 border-b border-[#E5E9F0] bg-[#FFFFFF] flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-xl bg-[#E8EAE3] text-[#5A634D]">
+              <span className="p-1.5 rounded-xl bg-[#EBF2FF] text-[#1E40AF]">
                 <Clock className="w-5 h-5" />
               </span>
               <div>
-                <h3 className="text-base font-bold text-[#4A4E44]">
+                <h3 className="text-base font-bold text-[#1E293B]">
                   ⏱️ 作息时段
                 </h3>
-                <p className="text-xs text-[#9DA391]">
+                <p className="text-xs text-[#64748B]">
                   配置并控制各产线排产时段范围（工作日 8:30 - 次日 8:30）
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-1 rounded-full hover:bg-[#F0EEE6] text-[#9DA391] transition"
+              className="p-1 rounded-full hover:bg-[#EDF2F7] text-[#64748B] transition"
             >
               <X className="w-5 h-5" />
             </button>
@@ -159,25 +159,25 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
           {/* Form Card */}
           <form
             onSubmit={handleFormSubmit}
-            className="bg-white border border-[#E8E4D9] rounded-2xl p-4 shadow-2xs space-y-3.5"
+            className="bg-white border border-[#E5E9F0] rounded-2xl p-4 shadow-2xs space-y-3.5"
           >
-            <div className="text-xs font-bold text-[#5A634D] flex items-center justify-between pb-2 border-b border-[#F0EEE6]">
+            <div className="text-xs font-bold text-[#1E40AF] flex items-center justify-between pb-2 border-b border-[#EDF2F7]">
               <span className="flex items-center gap-1.5">
-                <Plus className="w-3.5 h-3.5 text-[#7D8471]" />
+                <Plus className="w-3.5 h-3.5 text-[#2563EB]" />
                 <span>新增时段范围配置</span>
               </span>
-              <span className="text-[10px] text-[#9DA391] font-mono">
+              <span className="text-[10px] text-[#64748B] font-mono">
                 当前: {currentDuration}分钟 ({currentDuration === 30 ? '半小时' : currentDuration === 60 ? '1小时' : `${(currentDuration/60).toFixed(1)}小时`})
               </span>
             </div>
 
             {/* Scope / Line */}
             <div>
-              <label className="text-[#9DA391] font-medium block mb-1 text-xs">适用产线</label>
+              <label className="text-[#64748B] font-medium block mb-1 text-xs">适用产线</label>
               <select
                 value={line}
                 onChange={(e) => setLine(e.target.value)}
-                className="w-full p-2 border border-[#E8E4D9] rounded-xl text-[#4A4E44] bg-[#FCFAF7] text-xs"
+                className="w-full p-2 border border-[#E5E9F0] rounded-xl text-[#1E293B] bg-[#FFFFFF] text-xs"
               >
                 <option value="全部产线">全部产线</option>
                 {FACTORY_LINES.map((l) => (
@@ -191,10 +191,10 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
             {/* Time Slot Range Section (Merged with Date, styled matching image) */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[#9DA391] font-medium text-xs">
-                  维护时段范围 <span className="text-[10px] text-[#7D8471] font-normal">（含适用日期与时间）</span>
+                <label className="text-[#64748B] font-medium text-xs">
+                  维护时段范围 <span className="text-[10px] text-[#2563EB] font-normal">（含适用日期与时间）</span>
                 </label>
-                <span className="text-[11px] font-bold text-[#7D8471]">
+                <span className="text-[11px] font-bold text-[#2563EB]">
                   {currentDuration}分钟 ({currentDuration < 60 ? `${currentDuration}分钟` : `${(currentDuration/60).toFixed(1)}小时`})
                 </span>
               </div>
@@ -206,15 +206,15 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
                   value={startDateTime}
                   onChange={(e) => setStartDateTime(e.target.value)}
                   placeholder="YYYY-MM-DD HH:mm:ss"
-                  className="w-full text-center font-mono text-xs text-[#4A4E44] bg-transparent outline-none focus:bg-sky-50/50 rounded py-0.5"
+                  className="w-full text-center font-mono text-xs text-[#1E293B] bg-transparent outline-none focus:bg-sky-50/50 rounded py-0.5"
                 />
-                <span className="text-[#9DA391] font-serif text-sm font-bold shrink-0 select-none">→</span>
+                <span className="text-[#64748B] font-serif text-sm font-bold shrink-0 select-none">→</span>
                 <input
                   type="text"
                   value={endDateTime}
                   onChange={(e) => setEndDateTime(e.target.value)}
                   placeholder="YYYY-MM-DD HH:mm:ss"
-                  className="w-full text-center font-mono text-xs text-[#4A4E44] bg-transparent outline-none focus:bg-sky-50/50 rounded py-0.5"
+                  className="w-full text-center font-mono text-xs text-[#1E293B] bg-transparent outline-none focus:bg-sky-50/50 rounded py-0.5"
                 />
                 <button
                   type="button"
@@ -231,32 +231,32 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
 
               {/* Quick Presets Chips */}
               <div className="flex items-center gap-1.5 mt-2 flex-wrap text-[11px]">
-                <span className="text-[#9DA391] shrink-0 text-[10px]">快捷预设:</span>
+                <span className="text-[#64748B] shrink-0 text-[10px]">快捷预设:</span>
                 <button
                   type="button"
                   onClick={() => handleQuickPreset('08:30', '09:00', 'rest', '08:30-09:00 半小时早班例会')}
-                  className="px-2 py-0.5 bg-[#E8EAE3] text-[#5A634D] hover:bg-[#7D8471] hover:text-white rounded-lg transition"
+                  className="px-2 py-0.5 bg-[#EBF2FF] text-[#1E40AF] hover:bg-[#2563EB] hover:text-white rounded-lg transition"
                 >
                   8:30-9:00 (半小时)
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickPreset('08:30', '09:30', 'rest', '08:30-09:30 1小时例会与休息')}
-                  className="px-2 py-0.5 bg-[#E8EAE3] text-[#5A634D] hover:bg-[#7D8471] hover:text-white rounded-lg transition font-semibold"
+                  className="px-2 py-0.5 bg-[#EBF2FF] text-[#1E40AF] hover:bg-[#2563EB] hover:text-white rounded-lg transition font-semibold"
                 >
                   8:30-9:30 (1小时)
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickPreset('12:00', '12:30', 'rest', '12:00-12:30 午餐休息')}
-                  className="px-2 py-0.5 bg-[#E8EAE3] text-[#5A634D] hover:bg-[#7D8471] hover:text-white rounded-lg transition"
+                  className="px-2 py-0.5 bg-[#EBF2FF] text-[#1E40AF] hover:bg-[#2563EB] hover:text-white rounded-lg transition"
                 >
                   12:00-12:30 (半小时)
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickPreset('14:00', '14:30', 'maint', '14:00-14:30 半小时设备停机保养')}
-                  className="px-2 py-0.5 bg-[#F27D52]/10 text-[#F27D52] hover:bg-[#F27D52] hover:text-white rounded-lg transition"
+                  className="px-2 py-0.5 bg-[#EA580C]/10 text-[#EA580C] hover:bg-[#EA580C] hover:text-white rounded-lg transition"
                 >
                   14:00-14:30 停机
                 </button>
@@ -265,7 +265,7 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
 
             {/* Type Selection (休息 + 停机 + 正常) */}
             <div>
-              <label className="text-[#9DA391] font-medium text-xs block mb-1">
+              <label className="text-[#64748B] font-medium text-xs block mb-1">
                 维护类型 (包括 休息 / 停机)
               </label>
               <div className="grid grid-cols-2 gap-1.5 text-xs">
@@ -274,8 +274,8 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
                   onClick={() => setType('rest')}
                   className={`p-2 rounded-xl border flex items-center justify-center gap-1 font-medium transition ${
                     type === 'rest'
-                      ? 'bg-[#7D8471] text-white border-[#7D8471] shadow-2xs font-semibold'
-                      : 'bg-white text-[#5A634D] border-[#E8E4D9] hover:bg-[#FCFAF7]'
+                      ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-2xs font-semibold'
+                      : 'bg-white text-[#1E40AF] border-[#E5E9F0] hover:bg-[#FFFFFF]'
                   }`}
                 >
                   <Coffee className="w-3.5 h-3.5" />
@@ -286,8 +286,8 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
                   onClick={() => setType('maint')}
                   className={`p-2 rounded-xl border flex items-center justify-center gap-1 font-medium transition ${
                     type === 'maint'
-                      ? 'bg-[#F27D52] text-white border-[#F27D52] shadow-2xs font-semibold'
-                      : 'bg-white text-[#5A634D] border-[#E8E4D9] hover:bg-[#FCFAF7]'
+                      ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-2xs font-semibold'
+                      : 'bg-white text-[#1E40AF] border-[#E5E9F0] hover:bg-[#FFFFFF]'
                   }`}
                 >
                   <PauseCircle className="w-3.5 h-3.5" />
@@ -298,13 +298,13 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
 
             {/* Notes Input & Default Checkbox */}
             <div>
-              <label className="text-[#9DA391] font-medium text-xs block mb-1">备注说明</label>
+              <label className="text-[#64748B] font-medium text-xs block mb-1">备注说明</label>
               <textarea
                 rows={2}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="请输入该时段维护的说明或控制原因..."
-                className="w-full p-2 border border-[#E8E4D9] rounded-xl text-[#4A4E44] bg-[#FCFAF7] text-xs resize-none"
+                className="w-full p-2 border border-[#E5E9F0] rounded-xl text-[#1E293B] bg-[#FFFFFF] text-xs resize-none"
               />
             </div>
 
@@ -314,18 +314,18 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
                 id="isDefaultSlot"
                 checked={isDefault}
                 onChange={(e) => setIsDefault(e.target.checked)}
-                className="rounded border-[#E8E4D9] text-[#7D8471] focus:ring-[#7D8471] cursor-pointer"
+                className="rounded border-[#E5E9F0] text-[#2563EB] focus:ring-[#2563EB] cursor-pointer"
               />
-              <label htmlFor="isDefaultSlot" className="text-xs text-[#4A4E44] font-medium cursor-pointer flex items-center gap-1 select-none">
+              <label htmlFor="isDefaultSlot" className="text-xs text-[#1E293B] font-medium cursor-pointer flex items-center gap-1 select-none">
                 <span>设为默认</span>
-                <span className="text-[10px] text-[#9DA391] font-normal">(全表中仅保留一个默认)</span>
+                <span className="text-[10px] text-[#64748B] font-normal">(全表中仅保留一个默认)</span>
               </label>
             </div>
 
             {/* Save Button */}
             <button
               type="submit"
-              className="w-full py-2.5 bg-[#7D8471] hover:bg-[#5A634D] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+              className="w-full py-2.5 bg-[#2563EB] hover:bg-[#165DFF] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>保存</span>
@@ -334,14 +334,14 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
 
           {/* Configured Rules List */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold text-[#4A4E44] px-1">
+            <div className="flex items-center justify-between text-xs font-bold text-[#1E293B] px-1">
               <span>📋 已配置的时段列表 ({currentCategoryRules.length})</span>
-              <span className="text-[11px] text-[#9DA391] font-normal">可随时删除或重新添加</span>
+              <span className="text-[11px] text-[#64748B] font-normal">可随时删除或重新添加</span>
             </div>
 
             {currentCategoryRules.length === 0 ? (
-              <div className="text-center py-8 bg-white rounded-2xl border border-dashed border-[#E8E4D9] text-xs text-[#9DA391] space-y-2">
-                <Sparkles className="w-6 h-6 mx-auto text-[#9DA391]" />
+              <div className="text-center py-8 bg-white rounded-2xl border border-dashed border-[#E5E9F0] text-xs text-[#64748B] space-y-2">
+                <Sparkles className="w-6 h-6 mx-auto text-[#64748B]" />
                 <p>暂无时段维护配置</p>
                 <p className="text-[11px]">上方填表即可快速增加 8:30-9:30 (半小时/1小时) 的休息/停机设置</p>
               </div>
@@ -353,25 +353,25 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
                   return (
                     <div
                       key={rule.id}
-                      className="p-3 bg-white border border-[#E8E4D9] rounded-2xl shadow-2xs hover:border-[#7D8471] transition flex flex-col gap-1.5"
+                      className="p-3 bg-white border border-[#E5E9F0] rounded-2xl shadow-2xs hover:border-[#2563EB] transition flex flex-col gap-1.5"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5 text-xs">
                           <span
                             className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
                               isRest
-                                ? 'bg-[#E8EAE3] text-[#5A634D]'
+                                ? 'bg-[#EBF2FF] text-[#1E40AF]'
                                 : isMaint
-                                ? 'bg-[#F27D52]/15 text-[#F27D52]'
-                                : 'bg-[#5A634D] text-white'
+                                ? 'bg-[#EA580C]/15 text-[#EA580C]'
+                                : 'bg-[#165DFF] text-white'
                             }`}
                           >
                             {isRest ? '☕ 休息' : isMaint ? '🛑 停机' : '⚙️ 作业'}
                           </span>
-                          <span className="font-bold text-[#4A4E44] font-mono">
+                          <span className="font-bold text-[#1E293B] font-mono">
                             {rule.startTime} - {rule.endTime}
                           </span>
-                          <span className="text-[10px] text-[#9DA391]">
+                          <span className="text-[10px] text-[#64748B]">
                             ({rule.durationMinutes}分钟)
                           </span>
                         </div>
@@ -385,7 +385,7 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
                             <button
                               type="button"
                               onClick={() => onSetDefaultRule && onSetDefaultRule(rule.id)}
-                              className="text-[10px] text-[#9DA391] hover:text-[#5A634D] hover:bg-[#E8EAE3] px-2 py-0.5 rounded-md transition border border-[#E8E4D9] shrink-0 cursor-pointer"
+                              className="text-[10px] text-[#64748B] hover:text-[#1E40AF] hover:bg-[#EBF2FF] px-2 py-0.5 rounded-md transition border border-[#E5E9F0] shrink-0 cursor-pointer"
                               title="点击设为唯一默认"
                             >
                               设为默认
@@ -397,7 +397,7 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
                               onDeleteRule(rule.id);
                               onShowToast(`🗑️ 已移除 ${rule.startTime}-${rule.endTime} 维护配置`, 'info');
                             }}
-                            className="p-1 rounded-lg text-[#9DA391] hover:text-[#F27D52] hover:bg-[#F27D52]/10 transition"
+                            className="p-1 rounded-lg text-[#64748B] hover:text-[#EA580C] hover:bg-[#EA580C]/10 transition"
                             title="删除配置"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -406,16 +406,16 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
                       </div>
 
                       {rule.operationName && (
-                        <div className="text-xs font-bold text-[#5A634D] flex items-center gap-1">
+                        <div className="text-xs font-bold text-[#1E40AF] flex items-center gap-1">
                           <span>作业: {rule.operationName}</span>
                         </div>
                       )}
 
-                      <div className="flex items-center justify-between text-xs text-[#5A634D]">
-                        <span className="text-[11px] bg-[#FCFAF7] px-2 py-0.5 rounded-lg border border-[#E8E4D9]">
+                      <div className="flex items-center justify-between text-xs text-[#1E40AF]">
+                        <span className="text-[11px] bg-[#FFFFFF] px-2 py-0.5 rounded-lg border border-[#E5E9F0]">
                           {rule.line} · {rule.date}
                         </span>
-                        <span className="text-[11px] text-[#9DA391] truncate max-w-[180px]">
+                        <span className="text-[11px] text-[#64748B] truncate max-w-[180px]">
                           备注: {rule.notes}
                         </span>
                       </div>
@@ -428,14 +428,14 @@ export const TimeSlotDrawer: React.FC<TimeSlotDrawerProps> = ({
         </div>
 
         {/* Drawer Footer */}
-        <div className="p-3.5 border-t border-[#E8E4D9] bg-[#FCFAF7] flex items-center justify-between text-xs text-[#5A634D]">
-          <div className="flex items-center gap-1 text-[11px] text-[#9DA391]">
-            <CheckCircle className="w-3.5 h-3.5 text-[#7D8471]" />
+        <div className="p-3.5 border-t border-[#E5E9F0] bg-[#FFFFFF] flex items-center justify-between text-xs text-[#1E40AF]">
+          <div className="flex items-center gap-1 text-[11px] text-[#64748B]">
+            <CheckCircle className="w-3.5 h-3.5 text-[#2563EB]" />
             <span>自动应用于排产及日历计算</span>
           </div>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 border border-[#E8E4D9] rounded-xl font-medium text-[#5A634D] bg-white hover:bg-[#F0EEE6] transition"
+            className="px-4 py-1.5 border border-[#E5E9F0] rounded-xl font-medium text-[#1E40AF] bg-white hover:bg-[#EDF2F7] transition"
           >
             关闭
           </button>

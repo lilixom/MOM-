@@ -131,21 +131,21 @@ export const ActualChangeoverTab: React.FC<ActualChangeoverTabProps> = ({
   const allDates = Array.from(new Set(tableRows.map((r) => r.date))).sort();
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E8E4D9] shadow-2xs p-4 space-y-4">
+    <div className="bg-white rounded-2xl border border-[#E5E9F0] shadow-2xs p-4 space-y-4">
       {/* Top Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#F0EEE6] pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EDF2F7] pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#7D8471]/10 flex items-center justify-center text-[#7D8471]">
+          <div className="w-8 h-8 rounded-xl bg-[#2563EB]/10 flex items-center justify-center text-[#2563EB]">
             <ClipboardList className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-base font-bold text-[#4A4E44]">实际换型工时维护</span>
+              <span className="text-base font-bold text-[#1E293B]">实际换型工时维护</span>
               <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-md font-medium">
                 数据源：计划日排产已生成制令单（{generatedWorkOrders.length} 张）
               </span>
             </div>
-            <p className="text-[11px] text-[#9DA391] mt-0.5">
+            <p className="text-[11px] text-[#64748B] mt-0.5">
               自动汇聚计划日排产已下发的制令单，并计算上下单换型标准及实际工时对比
             </p>
           </div>
@@ -154,7 +154,7 @@ export const ActualChangeoverTab: React.FC<ActualChangeoverTabProps> = ({
         <div className="flex items-center gap-2 flex-wrap text-xs">
           <button
             onClick={() => onShowToast(`已导出 ${filtered.length} 条已生成制令单换型记录`, 'success')}
-            className="px-3.5 py-1.5 border border-[#E8E4D9] rounded-xl font-medium text-[#5A634D] hover:bg-[#F0EEE6] transition cursor-pointer flex items-center gap-1.5"
+            className="px-3.5 py-1.5 border border-[#E5E9F0] rounded-xl font-medium text-[#1E40AF] hover:bg-[#EDF2F7] transition cursor-pointer flex items-center gap-1.5"
           >
             <Download className="w-3.5 h-3.5" />
             <span>导出制令单换型数据</span>
@@ -163,13 +163,13 @@ export const ActualChangeoverTab: React.FC<ActualChangeoverTabProps> = ({
       </div>
 
       {/* Query Bar */}
-      <div className="flex items-center gap-2.5 flex-wrap text-xs bg-[#FCFAF7] p-3 rounded-xl border border-[#E8E4D9]">
+      <div className="flex items-center gap-2.5 flex-wrap text-xs bg-[#FFFFFF] p-3 rounded-xl border border-[#E5E9F0]">
         <div className="flex items-center gap-1.5">
-          <span className="text-[#9DA391] font-medium">线体:</span>
+          <span className="text-[#64748B] font-medium">线体:</span>
           <select
             value={selectedLine}
             onChange={(e) => setSelectedLine(e.target.value)}
-            className="p-1.5 border border-[#E8E4D9] rounded-xl bg-white text-[#4A4E44] text-xs cursor-pointer"
+            className="p-1.5 border border-[#E5E9F0] rounded-xl bg-white text-[#1E293B] text-xs cursor-pointer"
           >
             <option value="">全部线体</option>
             {FACTORY_LINES.map((line) => (
@@ -182,11 +182,11 @@ export const ActualChangeoverTab: React.FC<ActualChangeoverTabProps> = ({
 
         {allDates.length > 0 && (
           <div className="flex items-center gap-1.5">
-            <span className="text-[#9DA391] font-medium">排产日期:</span>
+            <span className="text-[#64748B] font-medium">排产日期:</span>
             <select
               value={selectedDateFilter}
               onChange={(e) => setSelectedDateFilter(e.target.value)}
-              className="p-1.5 border border-[#E8E4D9] rounded-xl bg-white text-[#4A4E44] text-xs cursor-pointer"
+              className="p-1.5 border border-[#E5E9F0] rounded-xl bg-white text-[#1E293B] text-xs cursor-pointer"
             >
               <option value="">全部日期</option>
               {allDates.map((d) => (
@@ -205,9 +205,9 @@ export const ActualChangeoverTab: React.FC<ActualChangeoverTabProps> = ({
               placeholder="搜索工单/制令单/料号/品名"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="p-1.5 pl-7 border border-[#E8E4D9] rounded-xl w-56 bg-white text-[#4A4E44] text-xs"
+              className="p-1.5 pl-7 border border-[#E5E9F0] rounded-xl w-56 bg-white text-[#1E293B] text-xs"
             />
-            <Search className="w-3.5 h-3.5 text-[#9DA391] absolute left-2 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-[#64748B] absolute left-2 top-2.5" />
           </div>
         </div>
 
@@ -218,83 +218,83 @@ export const ActualChangeoverTab: React.FC<ActualChangeoverTabProps> = ({
               setSelectedDateFilter('');
               setSearchTerm('');
             }}
-            className="text-xs text-[#7D8471] hover:underline cursor-pointer"
+            className="text-xs text-[#2563EB] hover:underline cursor-pointer"
           >
             清空筛选
           </button>
         )}
 
-        <div className="ml-auto text-xs text-[#9DA391]">
-          展示 <b className="text-[#4A4E44]">{filtered.length}</b> / {tableRows.length} 条已生成制令单
+        <div className="ml-auto text-xs text-[#64748B]">
+          展示 <b className="text-[#1E293B]">{filtered.length}</b> / {tableRows.length} 条已生成制令单
         </div>
       </div>
 
       {/* Table Area */}
       {filtered.length === 0 ? (
-        <div className="text-center py-12 bg-[#FCFAF7] rounded-xl border border-[#E8E4D9] space-y-2">
-          <ClipboardList className="w-10 h-10 text-[#9DA391] mx-auto opacity-50" />
-          <div className="text-sm font-bold text-[#4A4E44]">
+        <div className="text-center py-12 bg-[#FFFFFF] rounded-xl border border-[#E5E9F0] space-y-2">
+          <ClipboardList className="w-10 h-10 text-[#64748B] mx-auto opacity-50" />
+          <div className="text-sm font-bold text-[#1E293B]">
             {generatedWorkOrders.length === 0
               ? '暂无已生成的制令单'
               : '未找到匹配的制令单换型记录'}
           </div>
-          <p className="text-xs text-[#9DA391] max-w-md mx-auto">
+          <p className="text-xs text-[#64748B] max-w-md mx-auto">
             {generatedWorkOrders.length === 0
               ? '请先前往「计划日排产」页面，勾选待排产工单并点击「生成制令单」，生成后的制令单将自动同步至此进行换型工时维护。'
               : '请尝试切换或清除上方线体、日期及关键词筛选条件。'}
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto border border-[#E8E4D9] rounded-xl">
+        <div className="overflow-x-auto border border-[#E5E9F0] rounded-xl">
           <table className="w-full text-left border-collapse text-xs min-w-max">
-            <thead className="bg-[#FCFAF7] text-[#5A634D] font-semibold">
+            <thead className="bg-[#FFFFFF] text-[#1E40AF] font-semibold">
               <tr>
-                <th className="p-2.5 border-b border-[#E8E4D9]">排产日期</th>
-                <th className="p-2.5 border-b border-[#E8E4D9]">线体</th>
-                <th className="p-2.5 border-b border-[#E8E4D9]">工单</th>
-                <th className="p-2.5 border-b border-[#E8E4D9]">制令单</th>
-                <th className="p-2.5 border-b border-[#E8E4D9]">料号</th>
-                <th className="p-2.5 border-b border-[#E8E4D9] max-w-[180px]">品名</th>
-                <th className="p-2.5 border-b border-[#E8E4D9] text-right">小时产能</th>
-                <th className="p-2.5 border-b border-[#E8E4D9]">上一个制令单</th>
-                <th className="p-2.5 border-b border-[#E8E4D9]">上一个料号</th>
-                <th className="p-2.5 border-b border-[#E8E4D9] max-w-[160px]">上一个品名</th>
-                <th className="p-2.5 border-b border-[#E8E4D9] text-right text-[#F27D52] font-bold">
+                <th className="p-2.5 border-b border-[#E5E9F0]">排产日期</th>
+                <th className="p-2.5 border-b border-[#E5E9F0]">线体</th>
+                <th className="p-2.5 border-b border-[#E5E9F0]">工单</th>
+                <th className="p-2.5 border-b border-[#E5E9F0]">制令单</th>
+                <th className="p-2.5 border-b border-[#E5E9F0]">料号</th>
+                <th className="p-2.5 border-b border-[#E5E9F0] max-w-[180px]">品名</th>
+                <th className="p-2.5 border-b border-[#E5E9F0] text-right">小时产能</th>
+                <th className="p-2.5 border-b border-[#E5E9F0]">上一个制令单</th>
+                <th className="p-2.5 border-b border-[#E5E9F0]">上一个料号</th>
+                <th className="p-2.5 border-b border-[#E5E9F0] max-w-[160px]">上一个品名</th>
+                <th className="p-2.5 border-b border-[#E5E9F0] text-right text-[#EA580C] font-bold">
                   标准换型工时<br />(工单)
                 </th>
-                <th className="p-2.5 border-b border-[#E8E4D9] text-right font-bold text-[#4A4E44]">
+                <th className="p-2.5 border-b border-[#E5E9F0] text-right font-bold text-[#1E293B]">
                   实际换型工时<br />(工单)
                 </th>
-                <th className="p-2.5 border-b border-[#E8E4D9] text-center">操作</th>
+                <th className="p-2.5 border-b border-[#E5E9F0] text-center">操作</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F0EEE6]">
+            <tbody className="divide-y divide-[#EDF2F7]">
               {filtered.map((r) => {
                 const isEditing = editingWoId === r.woId;
                 return (
-                  <tr key={r.woId} className="hover:bg-[#F9F7F2]">
-                    <td className="p-2.5 font-mono text-[#5A634D]">{r.date}</td>
-                    <td className="p-2.5 font-bold text-[#4A4E44]">
-                      {r.line} <span className="text-[10px] text-[#9DA391] font-normal">({r.lineCode})</span>
+                  <tr key={r.woId} className="hover:bg-[#F4F6F9]">
+                    <td className="p-2.5 font-mono text-[#1E40AF]">{r.date}</td>
+                    <td className="p-2.5 font-bold text-[#1E293B]">
+                      {r.line} <span className="text-[10px] text-[#64748B] font-normal">({r.lineCode})</span>
                     </td>
-                    <td className="p-2.5 font-mono font-semibold text-[#5A634D]">{r.wo}</td>
+                    <td className="p-2.5 font-mono font-semibold text-[#1E40AF]">{r.wo}</td>
                     <td className="p-2.5 font-mono text-blue-700 font-semibold">{r.cmd}</td>
-                    <td className="p-2.5 font-mono text-[#9DA391]">{r.matCode}</td>
-                    <td className="p-2.5 truncate max-w-[180px] text-[#4A4E44]" title={r.productName}>
+                    <td className="p-2.5 font-mono text-[#64748B]">{r.matCode}</td>
+                    <td className="p-2.5 truncate max-w-[180px] text-[#1E293B]" title={r.productName}>
                       {r.productName}
                     </td>
-                    <td className="p-2.5 text-right font-mono text-[#4A4E44]">
+                    <td className="p-2.5 text-right font-mono text-[#1E293B]">
                       {r.capPerHr.toLocaleString()}
                     </td>
-                    <td className="p-2.5 font-mono text-[#9DA391]">{r.prevCmd}</td>
-                    <td className="p-2.5 font-mono text-[#9DA391]">{r.prevMatCode}</td>
-                    <td className="p-2.5 truncate max-w-[160px] text-[#9DA391]" title={r.prevProductName}>
+                    <td className="p-2.5 font-mono text-[#64748B]">{r.prevCmd}</td>
+                    <td className="p-2.5 font-mono text-[#64748B]">{r.prevMatCode}</td>
+                    <td className="p-2.5 truncate max-w-[160px] text-[#64748B]" title={r.prevProductName}>
                       {r.prevProductName}
                     </td>
-                    <td className="p-2.5 text-right font-mono font-bold text-[#F27D52]">
+                    <td className="p-2.5 text-right font-mono font-bold text-[#EA580C]">
                       {r.stdTimeWO} h
                     </td>
-                    <td className="p-2.5 text-right font-mono font-bold text-[#4A4E44]">
+                    <td className="p-2.5 text-right font-mono font-bold text-[#1E293B]">
                       {isEditing ? (
                         <div className="flex items-center justify-end gap-1">
                           <input
@@ -326,7 +326,7 @@ export const ActualChangeoverTab: React.FC<ActualChangeoverTabProps> = ({
                           </button>
                           <button
                             onClick={handleCancelEdit}
-                            className="px-2 py-1 text-[11px] border border-[#E8E4D9] rounded-lg hover:bg-[#F0EEE6] text-[#5A634D] transition cursor-pointer"
+                            className="px-2 py-1 text-[11px] border border-[#E5E9F0] rounded-lg hover:bg-[#EDF2F7] text-[#1E40AF] transition cursor-pointer"
                             title="取消"
                           >
                             <X className="w-3 h-3" />
@@ -335,7 +335,7 @@ export const ActualChangeoverTab: React.FC<ActualChangeoverTabProps> = ({
                       ) : (
                         <button
                           onClick={() => handleStartEdit(r)}
-                          className="px-2 py-1 text-[11px] border border-[#E8E4D9] rounded-lg hover:bg-[#F0EEE6] text-[#5A634D] transition cursor-pointer flex items-center gap-1 mx-auto"
+                          className="px-2 py-1 text-[11px] border border-[#E5E9F0] rounded-lg hover:bg-[#EDF2F7] text-[#1E40AF] transition cursor-pointer flex items-center gap-1 mx-auto"
                         >
                           <Edit3 className="w-3 h-3" />
                           <span>编辑工时</span>

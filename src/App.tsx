@@ -12,6 +12,13 @@ import { SalesAndCapacityTab } from './components/SalesAndCapacityTab';
 import { KitTab } from './components/KitTab';
 import { StandardChangeoverTab } from './components/StandardChangeoverTab';
 import { ActualChangeoverTab } from './components/ActualChangeoverTab';
+import { PlanOrderTab } from './components/PlanOrderTab';
+import { WorkOrderManageTab } from './components/WorkOrderManageTab';
+import { MfgOrderTab } from './components/MfgOrderTab';
+import { MomImportedPageTab } from './components/MomImportedPageTab';
+import { PageLogicNoteBlock } from './components/PageLogicNoteBlock';
+import { MOM_IMPORTED_LEAVES } from './data/momImportedMenu';
+import { MOM_PAGE_DEFAULT_NOTES } from './data/momPageNotes';
 
 import { ImportModal } from './components/modals/ImportModal';
 import { InsertWOModal } from './components/modals/InsertWOModal';
@@ -31,6 +38,9 @@ import {
   ActualChangeoverItem,
   KitComponent,
   TimeSlotMaintenanceRule,
+  PlanOrder,
+  WorkOrderManageItem,
+  MfgOrderItem,
 } from './types';
 import {
   DEFAULT_SELECTED_DATE,
@@ -41,6 +51,9 @@ import {
   INITIAL_CHANGEOVER_DATA,
   INITIAL_ACTUAL_DATA,
   INITIAL_TIME_SLOT_RULES,
+  INITIAL_PLAN_ORDERS,
+  INITIAL_WORK_ORDER_MANAGE,
+  INITIAL_MFG_ORDERS,
   VERSIONS,
 } from './mockData';
 
@@ -63,6 +76,9 @@ export default function App() {
     useState<ActualChangeoverItem[]>(INITIAL_ACTUAL_DATA);
   const [timeSlotRules, setTimeSlotRules] =
     useState<TimeSlotMaintenanceRule[]>(INITIAL_TIME_SLOT_RULES);
+  const [planOrders, setPlanOrders] = useState<PlanOrder[]>(INITIAL_PLAN_ORDERS);
+  const [workOrderManageItems, setWorkOrderManageItems] = useState<WorkOrderManageItem[]>(INITIAL_WORK_ORDER_MANAGE);
+  const [mfgOrders, setMfgOrders] = useState<MfgOrderItem[]>(INITIAL_MFG_ORDERS);
   const [isScheduleFrozen, setIsScheduleFrozen] = useState(false);
 
   // Modals & Drawers state
@@ -107,6 +123,9 @@ export default function App() {
     setKitData(INITIAL_KIT_DATA);
     setChangeoverData(INITIAL_CHANGEOVER_DATA);
     setActualData(INITIAL_ACTUAL_DATA);
+    setPlanOrders(INITIAL_PLAN_ORDERS);
+    setWorkOrderManageItems(INITIAL_WORK_ORDER_MANAGE);
+    setMfgOrders(INITIAL_MFG_ORDERS);
     setPackEdits({});
     setKitCheckedDate(null);
     setIsScheduleFrozen(false);
@@ -272,7 +291,7 @@ export default function App() {
   if (!allDates.includes(selectedDate)) allDates.unshift(selectedDate);
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] text-[#4A4E44] font-sans flex antialiased">
+    <div className="min-h-screen bg-[#F4F6F9] text-[#1E293B] font-sans flex antialiased">
       {/* Left Sidebar */}
       <Sidebar
         activeTab={activeTab}
@@ -295,6 +314,11 @@ export default function App() {
 
         {/* Main Content Area */}
         <main className="flex-1 p-3 md:p-6 space-y-4">
+          <PageLogicNoteBlock
+            pageKey={activeTab}
+            defaultNote={MOM_PAGE_DEFAULT_NOTES[activeTab] || ''}
+            onShowToast={showToast}
+          />
           {activeTab === 'tab-calendar' && (
             <FactoryCalendarTab
               selectedDate={selectedDate}
@@ -304,6 +328,33 @@ export default function App() {
               onUpdateWorkOrders={handleUpdateWorkOrders}
               onSelectDate={handleSelectDate}
               onOpenTimeSlotDrawer={handleOpenTimeSlotDrawer}
+              onShowToast={showToast}
+            />
+          )}
+
+          {activeTab === 'tab-plan-order' && (
+            <PlanOrderTab
+              planOrders={planOrders}
+              onUpdatePlanOrders={setPlanOrders}
+              onShowToast={showToast}
+            />
+          )}
+
+          {activeTab === 'tab-work-order' && (
+            <WorkOrderManageTab
+              items={workOrderManageItems}
+              onUpdateItems={setWorkOrderManageItems}
+              onNavigateToPlanOrder={() => setActiveTab('tab-plan-order')}
+              onShowToast={showToast}
+            />
+          )}
+
+          {activeTab === 'tab-mfg-order' && (
+            <MfgOrderTab
+              items={mfgOrders}
+              onUpdateItems={setMfgOrders}
+              onNavigateToPlanOrder={() => setActiveTab('tab-plan-order')}
+              onNavigateToWorkOrder={() => setActiveTab('tab-work-order')}
               onShowToast={showToast}
             />
           )}
@@ -365,6 +416,14 @@ export default function App() {
             <ActualChangeoverTab
               workOrders={workOrders}
               onUpdateWorkOrders={handleUpdateWorkOrders}
+              onShowToast={showToast}
+            />
+          )}
+
+          {activeTab.startsWith('mom:') && (
+            <MomImportedPageTab
+              pageId={activeTab.slice(4)}
+              leafMeta={MOM_IMPORTED_LEAVES[activeTab.slice(4)]}
               onShowToast={showToast}
             />
           )}

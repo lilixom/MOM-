@@ -324,11 +324,11 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/40 backdrop-blur-2xs animate-in fade-in duration-200">
-      <div className="bg-[#FDFBF7] rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[92vh] border border-[#E8E4D9]">
+      <div className="bg-[#F8FAFC] rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[92vh] border border-[#E5E9F0]">
         {/* Header */}
-        <div className="p-4 px-6 border-b border-[#E8E4D9] flex items-center justify-between bg-[#FCFAF7] shrink-0">
-          <div className="text-base font-bold text-[#4A4E44] flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#5A634D]/10 flex items-center justify-center text-[#5A634D]">
+        <div className="p-4 px-6 border-b border-[#E5E9F0] flex items-center justify-between bg-[#FFFFFF] shrink-0">
+          <div className="text-base font-bold text-[#1E293B] flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[#165DFF]/10 flex items-center justify-center text-[#1E40AF]">
               <FileUp className="w-4 h-4" />
             </div>
             <div>
@@ -338,14 +338,14 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                   导入后自动锁定工单
                 </span>
               </div>
-              <p className="text-[11px] text-[#7D8471] font-normal">
+              <p className="text-[11px] text-[#2563EB] font-normal">
                 通过 MES API 接口按开工日期范围拉取制令单，自动校验排产时段与冲突后确认导入
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-[#9DA391] hover:text-[#4A4E44] rounded-lg hover:bg-[#F0EEE6] transition cursor-pointer"
+            className="p-1.5 text-[#64748B] hover:text-[#1E293B] rounded-lg hover:bg-[#EDF2F7] transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -372,24 +372,24 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
           </div>
 
           {/* Query Filter Toolbar */}
-          <div className="p-3.5 bg-white rounded-xl border border-[#E8E4D9] shadow-2xs space-y-3">
+          <div className="p-3.5 bg-white rounded-xl border border-[#E5E9F0] shadow-2xs space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-3">
                 <div className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-[#5A634D]" />
-                  <span className="font-semibold text-[#4A4E44]">预计开工日期:</span>
+                  <Calendar className="w-4 h-4 text-[#1E40AF]" />
+                  <span className="font-semibold text-[#1E293B]">预计开工日期:</span>
                   <input
                     type="date"
                     value={queryStartDate}
                     onChange={(e) => setQueryStartDate(e.target.value)}
-                    className="p-1.5 px-2 bg-[#FCFAF7] border border-[#E8E4D9] rounded-lg text-xs font-mono text-[#4A4E44] focus:outline-none focus:border-[#5A634D]"
+                    className="p-1.5 px-2 bg-[#FFFFFF] border border-[#E5E9F0] rounded-lg text-xs font-mono text-[#1E293B] focus:outline-none focus:border-[#165DFF]"
                   />
-                  <span className="text-[#9DA391] font-bold">~</span>
+                  <span className="text-[#64748B] font-bold">~</span>
                   <input
                     type="date"
                     value={queryEndDate}
                     onChange={(e) => setQueryEndDate(e.target.value)}
-                    className="p-1.5 px-2 bg-[#FCFAF7] border border-[#E8E4D9] rounded-lg text-xs font-mono text-[#4A4E44] focus:outline-none focus:border-[#5A634D]"
+                    className="p-1.5 px-2 bg-[#FFFFFF] border border-[#E5E9F0] rounded-lg text-xs font-mono text-[#1E293B] focus:outline-none focus:border-[#165DFF]"
                   />
                 </div>
 
@@ -401,7 +401,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                       setQueryEndDate(selectedDate);
                       fetchMesOrders(selectedDate, selectedDate, queryLine);
                     }}
-                    className="px-2 py-1 bg-[#F0EEE6] hover:bg-[#E8E4D9] rounded-md text-[11px] text-[#5A634D] transition cursor-pointer"
+                    className="px-2 py-1 bg-[#EDF2F7] hover:bg-[#E5E9F0] rounded-md text-[11px] text-[#1E40AF] transition cursor-pointer"
                   >
                     当天
                   </button>
@@ -412,7 +412,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                       setQueryEndDate(end3);
                       fetchMesOrders(selectedDate, end3, queryLine);
                     }}
-                    className="px-2 py-1 bg-[#F0EEE6] hover:bg-[#E8E4D9] rounded-md text-[11px] text-[#5A634D] transition cursor-pointer"
+                    className="px-2 py-1 bg-[#EDF2F7] hover:bg-[#E5E9F0] rounded-md text-[11px] text-[#1E40AF] transition cursor-pointer"
                   >
                     未来3天
                   </button>
@@ -423,7 +423,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                       setQueryEndDate(end7);
                       fetchMesOrders(selectedDate, end7, queryLine);
                     }}
-                    className="px-2 py-1 bg-[#F0EEE6] hover:bg-[#E8E4D9] rounded-md text-[11px] text-[#5A634D] transition cursor-pointer"
+                    className="px-2 py-1 bg-[#EDF2F7] hover:bg-[#E5E9F0] rounded-md text-[11px] text-[#1E40AF] transition cursor-pointer"
                   >
                     未来7天
                   </button>
@@ -431,12 +431,12 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
 
                 {/* Line selector */}
                 <div className="flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-[#5A634D]" />
-                  <span className="font-semibold text-[#4A4E44]">产线:</span>
+                  <Building2 className="w-3.5 h-3.5 text-[#1E40AF]" />
+                  <span className="font-semibold text-[#1E293B]">产线:</span>
                   <select
                     value={queryLine}
                     onChange={(e) => setQueryLine(e.target.value)}
-                    className="p-1.5 px-2 bg-[#FCFAF7] border border-[#E8E4D9] rounded-lg text-xs text-[#4A4E44] focus:outline-none"
+                    className="p-1.5 px-2 bg-[#FFFFFF] border border-[#E5E9F0] rounded-lg text-xs text-[#1E293B] focus:outline-none"
                   >
                     <option value="all">全部线体</option>
                     {FACTORY_LINES.map((line) => (
@@ -452,7 +452,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
               <button
                 onClick={handleSearchAPI}
                 disabled={isLoadingAPI}
-                className="px-4 py-1.5 bg-[#5A634D] text-white rounded-xl text-xs font-semibold hover:bg-[#4A4E44] transition flex items-center gap-1.5 shadow-2xs cursor-pointer disabled:opacity-50"
+                className="px-4 py-1.5 bg-[#165DFF] text-white rounded-xl text-xs font-semibold hover:bg-[#0E4FD6] transition flex items-center gap-1.5 shadow-2xs cursor-pointer disabled:opacity-50"
               >
                 <Search className="w-3.5 h-3.5" />
                 <span>{isLoadingAPI ? '正在调用 API 查询...' : '查询 MES 制令单'}</span>
@@ -464,10 +464,10 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
           <div className="space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-[#4A4E44]">
+                <span className="font-bold text-[#1E293B]">
                   MES 制令单列表（已检索到 {apiOrders.length} 条）
                 </span>
-                <span className="text-[#7D8471]">
+                <span className="text-[#2563EB]">
                   已勾选: <b className="text-amber-700 font-mono">{selectedMoNos.length}</b> 张
                   {totalSelectedQty > 0 && `（计划数量: ${totalSelectedQty.toLocaleString()} 件）`}
                 </span>
@@ -476,7 +476,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleSelectAllValid}
-                  className="px-2.5 py-1 border border-[#E8E4D9] rounded-lg bg-white hover:bg-[#F0EEE6] text-[11px] font-medium text-[#5A634D] transition cursor-pointer"
+                  className="px-2.5 py-1 border border-[#E5E9F0] rounded-lg bg-white hover:bg-[#EDF2F7] text-[11px] font-medium text-[#1E40AF] transition cursor-pointer"
                 >
                   {selectedMoNos.length > 0 && selectedMoNos.length === apiOrders.filter((o) => !validateOrderConflict(o).hasConflict).length
                     ? '取消全选'
@@ -486,9 +486,9 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
             </div>
 
             {/* Orders Table */}
-            <div className="border border-[#E8E4D9] rounded-xl overflow-x-auto max-h-[360px] bg-white shadow-2xs">
+            <div className="border border-[#E5E9F0] rounded-xl overflow-x-auto max-h-[360px] bg-white shadow-2xs">
               <table className="w-full text-left border-collapse text-xs">
-                <thead className="bg-[#FCFAF7] text-[#5A634D] sticky top-0 border-b border-[#E8E4D9] z-10">
+                <thead className="bg-[#FFFFFF] text-[#1E40AF] sticky top-0 border-b border-[#E5E9F0] z-10">
                   <tr>
                     <th className="p-2.5 w-10 text-center">
                       <input
@@ -498,7 +498,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                           selectedMoNos.length === apiOrders.filter((o) => !validateOrderConflict(o).hasConflict).length
                         }
                         onChange={handleSelectAllValid}
-                        className="rounded accent-[#5A634D] cursor-pointer"
+                        className="rounded accent-[#165DFF] cursor-pointer"
                         title="全选合规制令单"
                       />
                     </th>
@@ -513,17 +513,17 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                     <th className="p-2.5 text-center">冲突校验</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F0EEE6]">
+                <tbody className="divide-y divide-[#EDF2F7]">
                   {isLoadingAPI ? (
                     <tr>
-                      <td colSpan={10} className="p-8 text-center text-[#7D8471]">
-                        <RefreshCw className="w-6 h-6 animate-spin mx-auto text-[#5A634D] mb-2" />
+                      <td colSpan={10} className="p-8 text-center text-[#2563EB]">
+                        <RefreshCw className="w-6 h-6 animate-spin mx-auto text-[#1E40AF] mb-2" />
                         <span>正在从 MES 系统拉取待排产制令单数据...</span>
                       </td>
                     </tr>
                   ) : apiOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="p-8 text-center text-[#7D8471]">
+                      <td colSpan={10} className="p-8 text-center text-[#2563EB]">
                         <span>所选日期范围内未查询到待排产制令单，请调整日期重新查询。</span>
                       </td>
                     </tr>
@@ -540,7 +540,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                               ? 'bg-rose-50/40 opacity-80'
                               : isSelected
                               ? 'bg-amber-50/60'
-                              : 'hover:bg-[#F9F7F2]'
+                              : 'hover:bg-[#F4F6F9]'
                           }`}
                         >
                           {/* Checkbox */}
@@ -550,7 +550,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                               checked={isSelected}
                               disabled={conflict.hasConflict}
                               onChange={() => handleToggleSelect(ord.moNo)}
-                              className="rounded accent-[#5A634D] cursor-pointer disabled:cursor-not-allowed"
+                              className="rounded accent-[#165DFF] cursor-pointer disabled:cursor-not-allowed"
                               title={conflict.hasConflict ? conflict.reason : '勾选导入'}
                             />
                           </td>
@@ -561,18 +561,18 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                           </td>
 
                           {/* WO No */}
-                          <td className="p-2.5 font-mono text-[#5A634D]">{ord.woId}</td>
+                          <td className="p-2.5 font-mono text-[#1E40AF]">{ord.woId}</td>
 
                           {/* Line */}
-                          <td className="p-2.5 text-[#4A4E44]">
+                          <td className="p-2.5 text-[#1E293B]">
                             <span className="font-semibold">{ord.line}</span>
-                            <span className="ml-1 text-[11px] text-[#7D8471]">({ord.team})</span>
+                            <span className="ml-1 text-[11px] text-[#2563EB]">({ord.team})</span>
                           </td>
 
                           {/* Product */}
                           <td className="p-2.5 max-w-[170px] truncate" title={ord.product}>
                             <div className="text-[#2D3325] font-medium">{ord.product}</div>
-                            <div className="text-[10px] text-[#7D8471] font-mono">{ord.matCode}</div>
+                            <div className="text-[10px] text-[#2563EB] font-mono">{ord.matCode}</div>
                           </td>
 
                           {/* Qty */}
@@ -581,7 +581,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                           </td>
 
                           {/* UPH */}
-                          <td className="p-2.5 text-right font-mono text-[#5A634D]">
+                          <td className="p-2.5 text-right font-mono text-[#1E40AF]">
                             {ord.hourCap.toLocaleString()}/h
                           </td>
 
@@ -597,7 +597,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
                           {/* End Time = start + qty/UPH */}
                           <td className="p-2.5 font-mono">
                             <div className="text-amber-900 font-semibold">{ord.endTime}</div>
-                            <div className="text-[10px] text-[#7D8471]" title="开工时间 + (计划数量 / 计划UPH)">
+                            <div className="text-[10px] text-[#2563EB]" title="开工时间 + (计划数量 / 计划UPH)">
                               ({ord.durationHours}h 工时)
                             </div>
                           </td>
@@ -630,7 +630,7 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
             </div>
 
             {/* Bottom hint for conflict filtering */}
-            <div className="flex flex-wrap items-center justify-between text-[11px] text-[#7D8471] px-1">
+            <div className="flex flex-wrap items-center justify-between text-[11px] text-[#2563EB] px-1">
               <span>* 存在排产冲突或超出日期范围的制令单已被智能保护并禁用勾选。</span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 可导入
@@ -640,32 +640,32 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
           </div>
 
           {/* Merge Strategy Option */}
-          <div className="bg-white p-3.5 rounded-xl border border-[#E8E4D9] flex flex-wrap items-center justify-between gap-3">
+          <div className="bg-white p-3.5 rounded-xl border border-[#E5E9F0] flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-xs">
-              <span className="font-semibold text-[#4A4E44]">排产工单合并方式：</span>
-              <label className="flex items-center gap-1.5 cursor-pointer text-[#4A4E44]">
+              <span className="font-semibold text-[#1E293B]">排产工单合并方式：</span>
+              <label className="flex items-center gap-1.5 cursor-pointer text-[#1E293B]">
                 <input
                   type="radio"
                   name="importMode"
                   checked={importMode === 'matchOrAppend'}
                   onChange={() => setImportMode('matchOrAppend')}
-                  className="accent-[#5A634D]"
+                  className="accent-[#165DFF]"
                 />
                 <span>匹配现有工单并锁定（推荐）</span>
               </label>
-              <label className="flex items-center gap-1.5 cursor-pointer text-[#4A4E44] ml-2">
+              <label className="flex items-center gap-1.5 cursor-pointer text-[#1E293B] ml-2">
                 <input
                   type="radio"
                   name="importMode"
                   checked={importMode === 'appendOnly'}
                   onChange={() => setImportMode('appendOnly')}
-                  className="accent-[#5A634D]"
+                  className="accent-[#165DFF]"
                 />
                 <span>作为新工单追加</span>
               </label>
             </div>
 
-            <div className="text-[11px] text-[#7D8471]">
+            <div className="text-[11px] text-[#2563EB]">
               导入后工单状态变更为：
               <span className="ml-1 px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-bold border border-amber-200">
                 已锁定(已生成制令单)
@@ -675,8 +675,8 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 px-6 border-t border-[#E8E4D9] flex items-center justify-between bg-[#FCFAF7] shrink-0">
-          <div className="text-xs text-[#5A634D]">
+        <div className="p-4 px-6 border-t border-[#E5E9F0] flex items-center justify-between bg-[#FFFFFF] shrink-0">
+          <div className="text-xs text-[#1E40AF]">
             <span>
               已选择 <b className="text-amber-800 font-bold">{selectedMoNos.length}</b> 张制令单
               {selectedMoNos.length > 0 && `（计划总量: ${totalSelectedQty.toLocaleString()} 件）`}
@@ -686,14 +686,14 @@ export const ImportMOModal: React.FC<ImportMOModalProps> = ({
           <div className="flex items-center gap-2.5">
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-[#E8E4D9] rounded-xl text-xs font-medium text-[#5A634D] bg-white hover:bg-[#F0EEE6] transition cursor-pointer"
+              className="px-4 py-2 border border-[#E5E9F0] rounded-xl text-xs font-medium text-[#1E40AF] bg-white hover:bg-[#EDF2F7] transition cursor-pointer"
             >
               取消
             </button>
             <button
               onClick={handleExecuteImport}
               disabled={selectedMoNos.length === 0}
-              className="px-5 py-2 bg-[#5A634D] text-white rounded-xl text-xs font-semibold hover:bg-[#4A4E44] transition flex items-center gap-1.5 shadow-2xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-5 py-2 bg-[#165DFF] text-white rounded-xl text-xs font-semibold hover:bg-[#0E4FD6] transition flex items-center gap-1.5 shadow-2xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Check className="w-4 h-4 text-emerald-300" />
               <span>
