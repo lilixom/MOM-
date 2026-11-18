@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #F9F7F2;
+    color: #4A4E44;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
+}
+
+/* Custom theme color utilities for Natural Tones */
+.bg-natural-canvas { background-color: #F9F7F2; }
+.bg-natural-card { background-color: #FFFFFF; }
+.bg-natural-card-warm { background-color: #FDFBF7; }
+.bg-natural-surface { background-color: #FCFAF7; }
+.bg-natural-muted { background-color: #E8EAE3; }
+
+.border-natural { border-color: #E8E4D9; }
+.border-natural-light { border-color: #F0EEE6; }
+
+.text-natural-primary { color: #4A4E44; }
+.text-natural-dark { color: #5A634D; }
+.text-natural-muted { color: #9DA391; }
+.text-natural-olive { color: #7D8471; }
+.text-natural-moss { color: #A4B494; }
+
+.bg-natural-olive { background-color: #7D8471; }
+.bg-natural-dark { background-color: #5A634D; }
+.bg-natural-moss { background-color: #A4B494; }
+.bg-natural-sand { background-color: #D9C5B2; }
+.bg-natural-terracotta { background-color: #F27D52; }
+
+/* Custom Gantt scrollbar: strictly dedicated to the Gantt chart column */
+.custom-gantt-scrollbar::-webkit-scrollbar {
+  height: 9px;
+}
+.custom-gantt-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+.custom-gantt-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.custom-gantt-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+

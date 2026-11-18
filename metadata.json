@@ -1,0 +1,6 @@
+{
+  "name": "MOM 计划排产系统",
+  "description": "基于MOM架构的高效智能工厂排产与生产日程管理系统，包含工厂日历、多版本日排产甘特图、齐套分析、销售订单(N-1)交期校验与标准/实际换型工时管理。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
