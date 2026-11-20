@@ -16,8 +16,30 @@ import { PlanOrderTab } from './components/PlanOrderTab';
 import { WorkOrderManageTab } from './components/WorkOrderManageTab';
 import { MfgOrderTab } from './components/MfgOrderTab';
 import { MomImportedPageTab } from './components/MomImportedPageTab';
+import { CopperWeighingRecordTab } from './components/CopperWeighingRecordTab';
+import { CopperOutsourcingReceiptTab } from './components/CopperOutsourcingReceiptTab';
+import { CopperOutsourcingSummaryTab } from './components/CopperOutsourcingSummaryTab';
+import { PurchaseOrderTab } from './components/PurchaseOrderTab';
+import { SalesDeliveryTab } from './components/SalesDeliveryTab';
+import { WarehouseInventoryTab } from './components/WarehouseInventoryTab';
+import { SapInventoryTab } from './components/SapInventoryTab';
+import { WarehouseModelingTab } from './components/WarehouseModelingTab';
+import { ProcessInfoTab } from './components/ProcessInfoTab';
+import { ProcessParamTab } from './components/ProcessParamTab';
+import { ProcessFileTab } from './components/ProcessFileTab';
+import { ProcessSheetTab } from './components/ProcessSheetTab';
+import { ProcessOpTemplateTab } from './components/ProcessOpTemplateTab';
+import { ProcessSheetTemplateTab } from './components/ProcessSheetTemplateTab';
+import { CanSpecMaintTab } from './components/CanSpecMaintTab';
+import { PackListConfigTab } from './components/PackListConfigTab';
+import { ProcessOpConfigItemTab } from './components/ProcessOpConfigItemTab';
+import { CoatingConfigTab } from './components/CoatingConfigTab';
+import { ProcessBomTab } from './components/ProcessBomTab';
+import { EquipmentModuleTab } from './components/EquipmentModuleTab';
+import { ProductionModuleTab } from './components/ProductionModuleTab';
 import { PageLogicNoteBlock } from './components/PageLogicNoteBlock';
 import { MOM_IMPORTED_LEAVES } from './data/momImportedMenu';
+import { PRODUCTION_PAGE_ID_MAP } from './data/productionData';
 import { MOM_PAGE_DEFAULT_NOTES } from './data/momPageNotes';
 
 import { ImportModal } from './components/modals/ImportModal';
@@ -420,13 +442,115 @@ export default function App() {
             />
           )}
 
-          {activeTab.startsWith('mom:') && (
-            <MomImportedPageTab
-              pageId={activeTab.slice(4)}
-              leafMeta={MOM_IMPORTED_LEAVES[activeTab.slice(4)]}
+          {activeTab === 'tab-process-info' && (
+            <ProcessInfoTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-process-param' && (
+            <ProcessParamTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-process-file' && (
+            <ProcessFileTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-process-sheet' && (
+            <ProcessSheetTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-process-op-template' && (
+            <ProcessOpTemplateTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-process-sheet-template' && (
+            <ProcessSheetTemplateTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-can-spec-maint' && (
+            <CanSpecMaintTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-pack-list-config' && (
+            <PackListConfigTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-process-op-config-item' && (
+            <ProcessOpConfigItemTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-coating-config' && (
+            <CoatingConfigTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'tab-process-bom' && (
+            <ProcessBomTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'mom:p036' && (
+            <WarehouseModelingTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'mom:p048' && (
+            <PurchaseOrderTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'mom:p069' && (
+            <WarehouseInventoryTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'mom:p073' && (
+            <SalesDeliveryTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'mom:p085' && (
+            <SapInventoryTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'mom:p112' && (
+            <CopperWeighingRecordTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'mom:p113' && (
+            <CopperOutsourcingSummaryTab onShowToast={showToast} />
+          )}
+
+          {activeTab === 'mom:p114' && (
+            <CopperOutsourcingReceiptTab onShowToast={showToast} />
+          )}
+
+          {activeTab.startsWith('mom:eq-') && (
+            <EquipmentModuleTab
+              pageKey={activeTab.slice(7)}
+              onNavigate={(key) => setActiveTab(`mom:eq-${key}`)}
               onShowToast={showToast}
             />
           )}
+
+          {activeTab.startsWith('mom:') &&
+            Boolean(PRODUCTION_PAGE_ID_MAP[activeTab.slice(4)]) && (
+              <ProductionModuleTab
+                pageKey={PRODUCTION_PAGE_ID_MAP[activeTab.slice(4)]}
+                onShowToast={showToast}
+              />
+            )}
+
+          {activeTab.startsWith('mom:') &&
+            !activeTab.startsWith('mom:eq-') &&
+            !PRODUCTION_PAGE_ID_MAP[activeTab.slice(4)] &&
+            activeTab !== 'mom:p036' &&
+            activeTab !== 'mom:p048' &&
+            activeTab !== 'mom:p069' &&
+            activeTab !== 'mom:p073' &&
+            activeTab !== 'mom:p085' &&
+            activeTab !== 'mom:p112' &&
+            activeTab !== 'mom:p113' &&
+            activeTab !== 'mom:p114' && (
+              <MomImportedPageTab
+                pageId={activeTab.slice(4)}
+                leafMeta={MOM_IMPORTED_LEAVES[activeTab.slice(4)]}
+                onShowToast={showToast}
+              />
+            )}
         </main>
       </div>
 

@@ -13,6 +13,17 @@ export type TabType =
   | 'tab-kit'
   | 'tab-changeover'
   | 'tab-actual'
+  | 'tab-process-info'
+  | 'tab-process-param'
+  | 'tab-process-file'
+  | 'tab-process-sheet'
+  | 'tab-process-op-template'
+  | 'tab-process-sheet-template'
+  | 'tab-can-spec-maint'
+  | 'tab-pack-list-config'
+  | 'tab-process-op-config-item'
+  | 'tab-coating-config'
+  | 'tab-process-bom'
   | `mom:${string}`;
 
 interface HeaderProps {
@@ -63,6 +74,28 @@ export const Header: React.FC<HeaderProps> = ({
         return { module: '计划管理', label: '销售订单与产能负荷' };
       case 'tab-kit':
         return { module: '计划管理', label: '齐套分析' };
+      case 'tab-process-info':
+        return { module: '工艺管理', label: '工序信息' };
+      case 'tab-process-param':
+        return { module: '工艺管理', label: '工序工艺参数' };
+      case 'tab-process-file':
+        return { module: '工艺管理', label: '工艺文件' };
+      case 'tab-process-sheet':
+        return { module: '工艺管理', label: '工艺单' };
+      case 'tab-process-op-template':
+        return { module: '工艺管理', label: '工艺单工序模板' };
+      case 'tab-process-sheet-template':
+        return { module: '工艺管理', label: '工艺单模板' };
+      case 'tab-can-spec-maint':
+        return { module: '工艺管理', label: '罐型规格维护' };
+      case 'tab-pack-list-config':
+        return { module: '工艺管理', label: '包材清单配置' };
+      case 'tab-process-op-config-item':
+        return { module: '工艺管理', label: '工艺单工序参数配置' };
+      case 'tab-coating-config':
+        return { module: '工艺管理', label: '涂料配置' };
+      case 'tab-process-bom':
+        return { module: '工艺管理', label: '工艺单BOM' };
       default:
         return { module: '计划管理', label: '计划日排产' };
     }

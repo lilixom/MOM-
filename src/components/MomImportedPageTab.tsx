@@ -32,6 +32,8 @@ import type {
   MomSpecCol,
   MomSpecTraceNode,
 } from '../data/momImportedSpecs';
+import { MomTraceLayoutView } from './MomTraceLayoutView';
+import { MomCustomFormOverlay } from './MomCustomFormOverlay';
 
 interface MomImportedPageTabProps {
   pageId: string;
@@ -69,19 +71,44 @@ const ARCH_LABEL: Record<string, string> = {
 
 const STATUS_BADGE_MAP: Record<string, string> = {
   已审核: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  审核通过: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   启用: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   合格: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  OK: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  及时: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   已完成: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   正常: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  是: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   运行中: 'bg-blue-50 text-blue-700 border-blue-200',
+  已接单: 'bg-blue-50 text-blue-700 border-blue-200',
+  开立: 'bg-blue-50 text-blue-700 border-blue-200',
+  IQC: 'bg-blue-50 text-blue-700 border-blue-200',
+  IPQC: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+  首件检验: 'bg-sky-50 text-sky-700 border-sky-200',
+  FQC: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+  理化检验: 'bg-violet-50 text-violet-700 border-violet-200',
   待审核: 'bg-amber-50 text-amber-700 border-amber-200',
-  草稿: 'bg-slate-100 text-slate-700 border-slate-200',
   待检: 'bg-amber-50 text-amber-700 border-amber-200',
+  特采: 'bg-amber-50 text-amber-700 border-amber-200',
+  让步接收: 'bg-amber-50 text-amber-700 border-amber-200',
+  返工: 'bg-amber-50 text-amber-700 border-amber-200',
+  草稿: 'bg-slate-100 text-slate-700 border-slate-200',
+  否: 'bg-slate-100 text-slate-600 border-slate-200',
   停用: 'bg-rose-50 text-rose-700 border-rose-200',
   不合格: 'bg-rose-50 text-rose-700 border-rose-200',
+  NG: 'bg-rose-50 text-rose-700 border-rose-200',
+  退货: 'bg-rose-50 text-rose-700 border-rose-200',
+  报废: 'bg-rose-50 text-rose-700 border-rose-200',
   异常: 'bg-rose-50 text-rose-700 border-rose-200',
+  超时: 'bg-rose-50 text-rose-700 border-rose-200',
   停机: 'bg-rose-50 text-rose-700 border-rose-200',
 };
+
+function isSwitchOnValue(val: unknown): boolean {
+  if (val === true) return true;
+  const s = String(val ?? '').trim();
+  return s === '启用' || s === '开' || s === '是' || s === 'true' || s === 'Y' || s === '1';
+}
 
 function downloadFile(filename: string, content: string, mime: string) {
   const blob = new Blob([content], { type: mime });
@@ -117,7 +144,10 @@ function parseNumericValue(v: unknown): number {
 const MomSvgChart: React.FC<{
   chart: MomSpecChart;
   svgRef?: (el: SVGSVGElement | null) => void;
-}> = ({ chart, svgRef }) => {
+  baselineValue?: number | null;
+  baselineUnit?: string;
+  hideHeader?: boolean;
+}> = ({ chart, svgRef, baselineValue, baselineUnit, hideHeader }) => {
   const [viewMode, setViewMode] = useState<'bar' | 'line'>(
     chart.type === 'line' ? 'line' : 'bar'
   );
@@ -128,11 +158,23 @@ const MomSvgChart: React.FC<{
   }, [chart.type, chart.title]);
 
   const isPie = chart.type === 'pie';
-  const pieItems = (chart.pie || chart.data || []).map((d, i) => ({
-    name: d.label || d.name || `项${i + 1}`,
-    value: Number(d.value) || 0,
-    color: CHART_COLORS[i % CHART_COLORS.length],
-  }));
+  const rawPieSource = chart.pie || chart.data;
+  const pieItems =
+    rawPieSource && rawPieSource.length > 0
+      ? rawPieSource.map((d, i) => ({
+          name: d.label || d.name || `项${i + 1}`,
+          value: Number(d.value) || 0,
+          color: CHART_COLORS[i % CHART_COLORS.length],
+        }))
+      : (chart.labels || []).map((lb, i) => {
+          const firstSeries = chart.series?.[0];
+          const arr = firstSeries?.values || firstSeries?.data || [];
+          return {
+            name: lb,
+            value: Number(arr[i]) || 0,
+            color: CHART_COLORS[i % CHART_COLORS.length],
+          };
+        });
 
   const labels = chart.labels || [];
   const series = (chart.series || []).map((s, i) => ({
@@ -143,140 +185,178 @@ const MomSvgChart: React.FC<{
 
   const width = 560;
   const height = 230;
-  const pad = { top: 22, right: 20, bottom: 34, left: 46 };
+  const pad = { top: 22, right: 20, bottom: 34, left: 52 };
   const plotW = width - pad.left - pad.right;
   const plotH = height - pad.top - pad.bottom;
 
-  const allVals = series.flatMap((s) => s.values);
-  const maxVal = Math.max(10, ...allVals) * 1.12;
+  const hasBaseline =
+    baselineValue !== undefined && baselineValue !== null && Number.isFinite(baselineValue);
+  const allVals = [
+    ...series.flatMap((s) => s.values),
+    ...(hasBaseline ? [baselineValue as number] : []),
+  ];
+  const maxVal = Math.max(1, ...allVals) * 1.15;
   const ticks = 4;
+  const baselineY = hasBaseline
+    ? pad.top + plotH - Math.min(1, Math.max(0, (baselineValue as number) / maxVal)) * plotH
+    : null;
+
+  const formatTick = (v: number) => {
+    if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
+    if (v >= 10000) return `${(v / 1000).toFixed(0)}k`;
+    if (maxVal <= 10) return v.toFixed(1);
+    return String(Math.round(v));
+  };
 
   return (
-    <div className="bg-white border border-[#E5E9F0] rounded-lg shadow-xs flex flex-col">
-      <div className="px-4 py-3 border-b border-[#EEF2F7] flex items-center justify-between gap-2">
-        <span className="text-xs font-bold text-[#0F172A] truncate">{chart.title}</span>
-        {!isPie && (
-          <div className="inline-flex border border-[#DCE3EE] rounded-md overflow-hidden shrink-0 bg-[#F8FAFC]">
-            <button
-              type="button"
-              onClick={() => setViewMode('bar')}
-              className={`px-2.5 py-1 text-[11px] font-medium cursor-pointer transition whitespace-nowrap ${
-                viewMode === 'bar'
-                  ? 'bg-[#165DFF] text-white'
-                  : 'text-[#475569] hover:text-[#0F172A]'
-              }`}
-            >
-              柱状
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('line')}
-              className={`px-2.5 py-1 text-[11px] font-medium cursor-pointer transition whitespace-nowrap ${
-                viewMode === 'line'
-                  ? 'bg-[#165DFF] text-white'
-                  : 'text-[#475569] hover:text-[#0F172A]'
-              }`}
-            >
-              折线
-            </button>
+    <div
+      className={
+        hideHeader
+          ? 'flex flex-col'
+          : 'bg-white border border-[#E5E9F0] rounded-2xl shadow-xs flex flex-col overflow-hidden'
+      }
+    >
+      {!hideHeader && (
+        <div className="px-4 py-3 border-b border-[#EEF2F7] bg-[#F8FAFC] flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="w-1 h-3.5 rounded-full bg-[#165DFF] shrink-0" />
+            <span className="text-xs font-bold text-[#1E40AF] truncate">
+              {chart.title || '统计分析图表'}
+            </span>
           </div>
-        )}
-      </div>
+          {!isPie && (
+            <div className="inline-flex border border-[#DCE3EE] rounded-lg overflow-hidden shrink-0 bg-white">
+              <button
+                type="button"
+                onClick={() => setViewMode('bar')}
+                className={`px-2.5 py-1 text-[11px] font-medium cursor-pointer transition whitespace-nowrap ${
+                  viewMode === 'bar'
+                    ? 'bg-[#165DFF] text-white'
+                    : 'text-[#475569] hover:text-[#0F172A]'
+                }`}
+              >
+                柱状
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('line')}
+                className={`px-2.5 py-1 text-[11px] font-medium cursor-pointer transition whitespace-nowrap ${
+                  viewMode === 'line'
+                    ? 'bg-[#165DFF] text-white'
+                    : 'text-[#475569] hover:text-[#0F172A]'
+                }`}
+              >
+                折线
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
-      <div className="p-3.5">
+      <div className={hideHeader ? 'pt-2' : 'p-3.5'}>
         {isPie ? (
-          <div className="flex flex-col sm:flex-row items-center gap-4 min-h-[210px]">
-            <svg
-              ref={svgRef}
-              viewBox="0 0 220 200"
-              className="w-48 h-44 shrink-0"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {(() => {
-                const total = pieItems.reduce((acc, p) => acc + p.value, 0) || 1;
-                let angle = -Math.PI / 2;
-                const cx = 110;
-                const cy = 100;
-                const rOuter = 78;
-                const rInner = 44;
-                return pieItems.map((item, idx) => {
-                  const slice = (item.value / total) * Math.PI * 2;
-                  const a1 = angle;
-                  const a2 = angle + slice;
-                  angle = a2;
-                  const large = slice > Math.PI ? 1 : 0;
-                  const x1 = cx + rOuter * Math.cos(a1);
-                  const y1 = cy + rOuter * Math.sin(a1);
-                  const x2 = cx + rOuter * Math.cos(a2);
-                  const y2 = cy + rOuter * Math.sin(a2);
-                  const x3 = cx + rInner * Math.cos(a2);
-                  const y3 = cy + rInner * Math.sin(a2);
-                  const x4 = cx + rInner * Math.cos(a1);
-                  const y4 = cy + rInner * Math.sin(a1);
-                  const d = `M ${x1} ${y1} A ${rOuter} ${rOuter} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${rInner} ${rInner} 0 ${large} 0 ${x4} ${y4} Z`;
+          pieItems.length === 0 ? (
+            <div className="h-[200px] flex items-center justify-center text-xs text-[#94A3B8]">
+              暂无图表分布数据
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row items-center gap-4 min-h-[210px]">
+              <svg
+                ref={svgRef}
+                viewBox="0 0 220 200"
+                className="w-48 h-44 shrink-0"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {(() => {
+                  const total = pieItems.reduce((acc, p) => acc + p.value, 0) || 1;
+                  let angle = -Math.PI / 2;
+                  const cx = 110;
+                  const cy = 100;
+                  const rOuter = 78;
+                  const rInner = 44;
+                  return pieItems.map((item, idx) => {
+                    const slice = (item.value / total) * Math.PI * 2;
+                    const a1 = angle;
+                    const a2 = angle + slice;
+                    angle = a2;
+                    const large = slice > Math.PI ? 1 : 0;
+                    const x1 = cx + rOuter * Math.cos(a1);
+                    const y1 = cy + rOuter * Math.sin(a1);
+                    const x2 = cx + rOuter * Math.cos(a2);
+                    const y2 = cy + rOuter * Math.sin(a2);
+                    const x3 = cx + rInner * Math.cos(a2);
+                    const y3 = cy + rInner * Math.sin(a2);
+                    const x4 = cx + rInner * Math.cos(a1);
+                    const y4 = cy + rInner * Math.sin(a1);
+                    const d = `M ${x1} ${y1} A ${rOuter} ${rOuter} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${rInner} ${rInner} 0 ${large} 0 ${x4} ${y4} Z`;
+                    return (
+                      <path
+                        key={idx}
+                        d={d}
+                        fill={item.color}
+                        stroke="#FFFFFF"
+                        strokeWidth={2}
+                        opacity={hoveredIdx === null || hoveredIdx === idx ? 1 : 0.45}
+                        onMouseEnter={() => setHoveredIdx(idx)}
+                        onMouseLeave={() => setHoveredIdx(null)}
+                        className="cursor-pointer transition-opacity"
+                      />
+                    );
+                  });
+                })()}
+                <text
+                  x="110"
+                  y="96"
+                  textAnchor="middle"
+                  className="fill-[#64748B] text-[10px]"
+                >
+                  {hoveredIdx !== null && pieItems[hoveredIdx]
+                    ? pieItems[hoveredIdx].name
+                    : '合计占比'}
+                </text>
+                <text
+                  x="110"
+                  y="113"
+                  textAnchor="middle"
+                  className="fill-[#0F172A] text-[13px] font-bold font-mono"
+                >
+                  {hoveredIdx !== null && pieItems[hoveredIdx]
+                    ? pieItems[hoveredIdx].value
+                    : pieItems.reduce((a, b) => a + b.value, 0)}
+                </text>
+              </svg>
+              <div className="flex-1 w-full space-y-1.5 text-xs">
+                {pieItems.map((it, idx) => {
+                  const total = pieItems.reduce((a, b) => a + b.value, 0) || 1;
+                  const pct = ((it.value / total) * 100).toFixed(1);
                   return (
-                    <path
+                    <div
                       key={idx}
-                      d={d}
-                      fill={item.color}
-                      stroke="#FFFFFF"
-                      strokeWidth={2}
-                      opacity={hoveredIdx === null || hoveredIdx === idx ? 1 : 0.45}
                       onMouseEnter={() => setHoveredIdx(idx)}
                       onMouseLeave={() => setHoveredIdx(null)}
-                      className="cursor-pointer transition-opacity"
-                    />
-                  );
-                });
-              })()}
-              <text
-                x="110"
-                y="96"
-                textAnchor="middle"
-                className="fill-[#64748B] text-[10px]"
-              >
-                {hoveredIdx !== null && pieItems[hoveredIdx]
-                  ? pieItems[hoveredIdx].name
-                  : '合计占比'}
-              </text>
-              <text
-                x="110"
-                y="113"
-                textAnchor="middle"
-                className="fill-[#0F172A] text-[13px] font-bold font-mono"
-              >
-                {hoveredIdx !== null && pieItems[hoveredIdx]
-                  ? pieItems[hoveredIdx].value
-                  : pieItems.reduce((a, b) => a + b.value, 0)}
-              </text>
-            </svg>
-            <div className="flex-1 w-full space-y-1.5 text-xs">
-              {pieItems.map((it, idx) => {
-                const total = pieItems.reduce((a, b) => a + b.value, 0) || 1;
-                const pct = ((it.value / total) * 100).toFixed(1);
-                return (
-                  <div
-                    key={idx}
-                    onMouseEnter={() => setHoveredIdx(idx)}
-                    onMouseLeave={() => setHoveredIdx(null)}
-                    className={`flex items-center justify-between px-2 py-1 rounded transition cursor-default ${
-                      hoveredIdx === idx ? 'bg-[#F1F5F9]' : ''
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span
-                        className="w-2.5 h-2.5 rounded-xs shrink-0"
-                        style={{ backgroundColor: it.color }}
-                      />
-                      <span className="text-[#334155] truncate">{it.name}</span>
+                      className={`flex items-center justify-between px-2 py-1 rounded transition cursor-default ${
+                        hoveredIdx === idx ? 'bg-[#F1F5F9]' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span
+                          className="w-2.5 h-2.5 rounded-xs shrink-0"
+                          style={{ backgroundColor: it.color }}
+                        />
+                        <span className="text-[#334155] truncate">{it.name}</span>
+                      </div>
+                      <span className="font-mono tabular-nums text-[#0F172A] font-medium shrink-0 ml-2">
+                        {it.value} ({pct}%)
+                      </span>
                     </div>
-                    <span className="font-mono tabular-nums text-[#0F172A] font-medium shrink-0 ml-2">
-                      {it.value} ({pct}%)
-                    </span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
+          )
+        ) : labels.length === 0 ? (
+          <div className="h-[215px] flex items-center justify-center text-xs text-[#94A3B8] border border-dashed border-[#E2E8F0] rounded-xl bg-[#F8FAFC]/60">
+            暂无图表趋势数据，可调整查询条件后刷新
           </div>
         ) : (
           <>
@@ -289,7 +369,7 @@ const MomSvgChart: React.FC<{
               {/* Grid lines */}
               {Array.from({ length: ticks + 1 }).map((_, idx) => {
                 const y = pad.top + (plotH * idx) / ticks;
-                const val = Math.round(maxVal * (1 - idx / ticks));
+                const val = maxVal * (1 - idx / ticks);
                 return (
                   <g key={idx}>
                     <line
@@ -308,11 +388,37 @@ const MomSvgChart: React.FC<{
                       fill="#64748B"
                       fontFamily="monospace"
                     >
-                      {val}
+                      {formatTick(val)}
                     </text>
                   </g>
                 );
               })}
+
+              {/* Baseline reference line */}
+              {baselineY !== null && (
+                <g>
+                  <line
+                    x1={pad.left}
+                    y1={baselineY}
+                    x2={width - pad.right}
+                    y2={baselineY}
+                    stroke="#EA580C"
+                    strokeWidth={1.5}
+                    strokeDasharray="5 4"
+                  />
+                  <text
+                    x={width - pad.right - 2}
+                    y={Math.max(pad.top + 10, baselineY - 4)}
+                    textAnchor="end"
+                    fontSize="10"
+                    fill="#EA580C"
+                    fontWeight="600"
+                    fontFamily="monospace"
+                  >
+                    {`基线 ${baselineValue}${baselineUnit || ''}`}
+                  </text>
+                </g>
+              )}
 
               {/* X labels */}
               {labels.map((lb, idx) => {
@@ -334,7 +440,7 @@ const MomSvgChart: React.FC<{
                       fontSize="10"
                       fill="#64748B"
                     >
-                      {lb.length > 8 ? lb.slice(0, 8) + '…' : lb}
+                      {lb.length > 10 ? lb.slice(0, 10) + '…' : lb}
                     </text>
                   )
                 );
@@ -462,6 +568,10 @@ export const MomImportedPageTab: React.FC<MomImportedPageTabProps> = ({
   const [pageSize, setPageSize] = useState<number>(10);
   const [hiddenCols, setHiddenCols] = useState<Record<string, boolean>>({});
   const [reportChartType, setReportChartType] = useState<'bar' | 'line'>('bar');
+  const [activeMasterRowIdx, setActiveMasterRowIdx] = useState<number>(0);
+  const [tcBaseline, setTcBaseline] = useState<string>('');
+  const [tcPeriod, setTcPeriod] = useState<string>('日');
+  const [tcGroup, setTcGroup] = useState<string>('');
 
   // IOT live chart simulation
   const [iotAutoRefresh, setIotAutoRefresh] = useState<boolean>(false);
@@ -556,6 +666,15 @@ export const MomImportedPageTab: React.FC<MomImportedPageTabProps> = ({
     setPrintModalRow(null);
     setIotAutoRefresh(false);
     setIotSeries(Array.from({ length: 24 }, () => 62 + Math.round(Math.random() * 18)));
+    if (typeof spec.rowSelected === 'string') {
+      const foundIdx = normalized.findIndex((r) => r.__id === spec.rowSelected);
+      setActiveMasterRowIdx(foundIdx >= 0 ? foundIdx : 0);
+    } else {
+      setActiveMasterRowIdx(spec.rowSelected ?? 0);
+    }
+    setTcBaseline(spec.baseline ?? '');
+    setTcPeriod(spec.periods?.[0] ?? '日');
+    setTcGroup(spec.chartGroup?.[0] ?? '');
   }, [spec?.id]);
 
   // IOT 3-second auto refresh
@@ -621,9 +740,11 @@ export const MomImportedPageTab: React.FC<MomImportedPageTabProps> = ({
   const allOnPageSelected =
     pagedRows.length > 0 && pagedRows.every((r) => selectedIds[r.__id]);
 
-  // Report trend chart spec
+  // Report trend chart spec (only for standard reports without explicit table-chart layout)
   const reportChartSpec: MomSpecChart | null = useMemo(() => {
-    if (!spec || spec.arch !== 'report' || filteredRows.length < 4) return null;
+    if (!spec || spec.arch !== 'report' || spec.reportLayout === 'table-chart' || filteredRows.length < 4) {
+      return null;
+    }
     const numCols = cols
       .filter(
         (c) =>
@@ -647,6 +768,83 @@ export const MomImportedPageTab: React.FC<MomImportedPageTabProps> = ({
       })),
     };
   }, [spec, cols, filteredRows, reportChartType]);
+
+  // Effective chart for table-chart reports (supports period & group switching + fallback from rows)
+  const effectiveTableChart: MomSpecChart | null = useMemo(() => {
+    if (!spec || spec.reportLayout !== 'table-chart') return null;
+    const base = spec.chart;
+    const baseLabels = base?.labels || [];
+    const baseSeries = base?.series || [];
+
+    if (base && base.type === 'pie') {
+      return {
+        ...base,
+        title: spec.chartTitle || base.title || `${spec.title} 占比分布`,
+      };
+    }
+
+    let labels = [...baseLabels];
+    let series = baseSeries.map((s) => ({
+      name: s.name,
+      values: [...(s.values || s.data || [])],
+    }));
+
+    // If chart labels are empty (e.g., p245), derive directly from table rows
+    if (labels.length === 0 && filteredRows.length > 0) {
+      const labelCol =
+        cols.find((c) =>
+          tcGroup ? c.title.includes(tcGroup) : /日期|时间|线别|线体|机种|产品|供应商/.test(c.title)
+        ) || cols[0];
+      const numCol =
+        cols.find((c) => /率|占比|不良数|样本数|合格数|数量/.test(c.title)) ||
+        cols[cols.length - 1];
+      if (labelCol && numCol) {
+        const slice = filteredRows.slice(0, 10);
+        labels = slice.map((r) => String(r[labelCol.key] ?? '-'));
+        series = [
+          {
+            name: baseSeries[0]?.name || numCol.title,
+            values: slice.map((r) => parseNumericValue(r[numCol.key])),
+          },
+        ];
+      }
+    }
+
+    // Apply subtle period aggregation label/value transform when switching 日/周/月
+    if (labels.length > 0 && tcPeriod && tcPeriod !== (spec.periods?.[0] ?? '日')) {
+      if (tcPeriod === '周') {
+        labels = ['W43', 'W44', 'W45', 'W46', 'W47'].slice(0, Math.max(4, Math.min(5, labels.length)));
+        series = series.map((s) => ({
+          name: s.name,
+          values: labels.map((_, i) => {
+            const v = s.values[i % Math.max(1, s.values.length)] ?? 0;
+            return Number((v * (0.97 + (i % 3) * 0.02)).toFixed(2));
+          }),
+        }));
+      } else if (tcPeriod === '月') {
+        labels = ['7月', '8月', '9月', '10月', '11月'];
+        series = series.map((s) => ({
+          name: s.name,
+          values: labels.map((_, i) => {
+            const v = s.values[i % Math.max(1, s.values.length)] ?? 0;
+            return Number((v * (0.95 + (i % 4) * 0.025)).toFixed(2));
+          }),
+        }));
+      }
+    }
+
+    const baseTitle = spec.chartTitle || base?.title || `${spec.title} 趋势图`;
+    const dynamicTitle = tcPeriod
+      ? baseTitle.replace(/（按[日周月]）/, `（按${tcPeriod}）`)
+      : baseTitle;
+
+    return {
+      type: base?.type || 'line',
+      title: tcGroup ? `${dynamicTitle} · 按${tcGroup}` : dynamicTitle,
+      labels,
+      series,
+    };
+  }, [spec, cols, filteredRows, tcPeriod, tcGroup]);
 
   if (!spec) {
     return (
@@ -721,6 +919,57 @@ export const MomImportedPageTab: React.FC<MomImportedPageTabProps> = ({
       setFormModal(null);
       onShowToast('修改已保存并更新至列表', 'success');
     }
+  };
+
+  const handleCustomFormSubmit = (values: Record<string, string>, keepOpen: boolean) => {
+    if (!formModal || !spec) return;
+    const mapped: Record<string, string> = {};
+    const formFields = (spec.form?.groups || []).flatMap((g) => g.fields || []);
+    cols.forEach((c) => {
+      if (values[c.key] !== undefined) {
+        mapped[c.key] = values[c.key];
+      } else {
+        const byLabel = formFields.find(
+          (f) => f.label === c.title || c.title.includes(f.label) || f.label.includes(c.title)
+        );
+        if (byLabel && values[byLabel.key] !== undefined) {
+          mapped[c.key] = values[byLabel.key];
+        }
+      }
+    });
+    if (formModal.mode === 'create') {
+      const newRow: RowRecord = {
+        __id: `${spec.id}-new-${Date.now()}`,
+      };
+      cols.forEach((c) => {
+        newRow[c.key] = mapped[c.key] ?? (c.type === 'switch' ? '启用' : '-');
+      });
+      setBaseRows((prev) => [newRow, ...prev]);
+      if (!keepOpen) setFormModal(null);
+      onShowToast(
+        keepOpen ? `已保存 1 条${spec.title}记录，可继续录入` : `已新增 1 条${spec.title}记录`,
+        'success'
+      );
+    } else if (formModal.row) {
+      const targetId = formModal.row.__id;
+      setBaseRows((prev) =>
+        prev.map((r) => (r.__id === targetId ? { ...r, ...mapped } : r))
+      );
+      if (!keepOpen) setFormModal(null);
+      onShowToast('修改已保存并更新至列表', 'success');
+    }
+  };
+
+  const toggleCellSwitch = (rowId: string, colKey: string, colTitle: string) => {
+    setBaseRows((prev) =>
+      prev.map((r) => {
+        if (r.__id !== rowId) return r;
+        const curOn = isSwitchOnValue(r[colKey]);
+        const nextVal = curOn ? '停用' : '启用';
+        return { ...r, [colKey]: nextVal };
+      })
+    );
+    onShowToast(`已切换「${colTitle}」开关状态`, 'success');
   };
 
   const runToolbarAction = (actionCode: string, label: string) => {
@@ -904,13 +1153,327 @@ export const MomImportedPageTab: React.FC<MomImportedPageTabProps> = ({
   const filters = spec.filters || [];
   const actions = (spec.actions || []).filter((a) => a.a !== 'query');
   const rowActions = spec.rowActions && spec.rowActions.length ? spec.rowActions : ['详情'];
+  const isTableChart = spec.reportLayout === 'table-chart';
+  const isCustomTrace = !!spec.traceLayout;
+  const parsedBaseline =
+    tcBaseline.trim() !== '' && !Number.isNaN(Number(tcBaseline)) ? Number(tcBaseline) : null;
+
+  const renderMainTableCard = (compact?: boolean) => (
+    <div className="bg-white border border-[#E5E9F0] rounded-2xl shadow-xs overflow-hidden">
+      <div className="px-4 py-3 border-b border-[#EEF2F7] bg-[#F8FAFC] flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <Layers className="w-4 h-4 text-[#165DFF]" />
+          <span className="text-xs font-bold text-[#1E40AF]">
+            {spec.arch === 'dashboard' ? '看板明细数据' : `${spec.title} 明细`}
+          </span>
+          <span className="px-2 py-0.5 text-[11px] font-mono tabular-nums bg-white text-[#475569] rounded border border-[#E2E8F0]">
+            共 {filteredRows.length} 条
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {selectedRows.length > 0 && (
+            <div className="flex items-center gap-1.5 bg-[#EFF6FF] border border-[#BFDBFE] px-2.5 py-1 rounded-lg text-xs">
+              <span className="text-[#1D4ED8] font-medium font-mono tabular-nums">
+                已选 {selectedRows.length} 条
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  exportRowsToCsv(spec.title, cols, selectedRows, '已选明细');
+                  onShowToast(`已导出 ${selectedRows.length} 条选中数据`, 'success');
+                }}
+                className="px-1.5 py-0.5 text-[11px] text-[#1D4ED8] hover:underline cursor-pointer whitespace-nowrap"
+              >
+                导出所选
+              </button>
+              <button
+                type="button"
+                onClick={() => runToolbarAction('audit', '批量审核')}
+                className="px-1.5 py-0.5 text-[11px] text-emerald-700 hover:underline cursor-pointer whitespace-nowrap"
+              >
+                批量审核
+              </button>
+              <button
+                type="button"
+                onClick={() => runToolbarAction('delete', '批量删除')}
+                className="px-1.5 py-0.5 text-[11px] text-[#EA580C] hover:underline cursor-pointer whitespace-nowrap"
+              >
+                批量删除
+              </button>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setColSettingsOpen(true)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#334155] bg-white border border-[#DCE3EE] rounded-lg hover:bg-[#F8FAFC] cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <Columns3 className="w-3.5 h-3.5 text-[#64748B]" />
+            <span>列设置</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-[#F8FAFC] border-b border-[#E5E9F0] text-[11px] font-semibold text-[#1E40AF]">
+              <th className="w-10 px-3 py-2.5 text-center sticky left-0 bg-[#F8FAFC] z-10">
+                <input
+                  type="checkbox"
+                  checked={allOnPageSelected}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setSelectedIds((prev) => {
+                      const next = { ...prev };
+                      pagedRows.forEach((r) => {
+                        next[r.__id] = checked;
+                      });
+                      return next;
+                    });
+                  }}
+                  className="rounded border-[#CBD5E1] cursor-pointer"
+                />
+              </th>
+              <th className="w-12 px-2 py-2.5 text-center font-mono">序号</th>
+              {visibleCols.map((col) => (
+                <th
+                  key={col.key}
+                  style={{
+                    minWidth: col.w
+                      ? `${Math.min(col.w, compact ? 160 : 220)}px`
+                      : compact
+                      ? '100px'
+                      : '120px',
+                  }}
+                  onClick={() => {
+                    if (sortCol === col.key) {
+                      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+                    } else {
+                      setSortCol(col.key);
+                      setSortDir('asc');
+                    }
+                  }}
+                  className="px-3 py-2.5 whitespace-nowrap cursor-pointer hover:text-[#165DFF] select-none"
+                >
+                  <div className="inline-flex items-center gap-1">
+                    <span>{col.title}</span>
+                    <ArrowDownUp
+                      className={`w-3 h-3 ${
+                        sortCol === col.key ? 'text-[#165DFF]' : 'text-[#CBD5E1]'
+                      }`}
+                    />
+                  </div>
+                </th>
+              ))}
+              {!isTableChart && (
+                <th className="px-3 py-2.5 text-right whitespace-nowrap sticky right-0 bg-[#F8FAFC] border-l border-[#E5E9F0] z-10">
+                  操作
+                </th>
+              )}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#EEF2F7] text-xs text-[#1E293B]">
+            {pagedRows.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={visibleCols.length + (isTableChart ? 2 : 3)}
+                  className="py-12 text-center text-xs text-[#64748B]"
+                >
+                  {spec.noData
+                    ? '当前条件下暂无业务数据记录'
+                    : '暂无符合条件的记录，可点击上方「重置」查看全部数据'}
+                </td>
+              </tr>
+            ) : (
+              pagedRows.map((row, rowIdx) => {
+                const absIdx = (safePage - 1) * pageSize + rowIdx;
+                const globalIdx = absIdx + 1;
+                const isChecked = !!selectedIds[row.__id];
+                const isActiveMaster = !!spec.subTable && activeMasterRowIdx === absIdx;
+                return (
+                  <tr
+                    key={row.__id}
+                    onClick={() => {
+                      if (spec.subTable) {
+                        setActiveMasterRowIdx(absIdx);
+                      }
+                    }}
+                    className={`transition-colors ${
+                      spec.subTable ? 'cursor-pointer' : ''
+                    } ${
+                      isActiveMaster
+                        ? 'bg-[#EFF6FF]'
+                        : isChecked
+                        ? 'bg-[#EFF6FF]/60'
+                        : 'hover:bg-[#F8FAFF]'
+                    }`}
+                  >
+                    <td
+                      onClick={(e) => e.stopPropagation()}
+                      className={`px-3 py-2 text-center sticky left-0 ${
+                        isActiveMaster ? 'bg-[#EFF6FF]' : 'bg-white'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) =>
+                          setSelectedIds((prev) => ({
+                            ...prev,
+                            [row.__id]: e.target.checked,
+                          }))
+                        }
+                        className="rounded border-[#CBD5E1] cursor-pointer"
+                      />
+                    </td>
+                    <td className="px-2 py-2 text-center font-mono tabular-nums text-[#64748B]">
+                      {globalIdx}
+                    </td>
+                    {visibleCols.map((col) => {
+                      const val = row[col.key];
+                      const strVal =
+                        val === undefined || val === null || val === '' ? '-' : String(val);
+                      if (col.type === 'switch') {
+                        const on = isSwitchOnValue(val);
+                        return (
+                          <td
+                            key={col.key}
+                            onClick={(e) => e.stopPropagation()}
+                            className="px-3 py-2 whitespace-nowrap"
+                          >
+                            <button
+                              type="button"
+                              role="switch"
+                              aria-checked={on}
+                              onClick={() => toggleCellSwitch(row.__id, col.key, col.title)}
+                              className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors cursor-pointer ${
+                                on ? 'bg-[#165DFF]' : 'bg-[#CBD5E1]'
+                              }`}
+                            >
+                              <span
+                                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+                                  on ? 'translate-x-4.5' : 'translate-x-1'
+                                }`}
+                              />
+                            </button>
+                          </td>
+                        );
+                      }
+                      const badgeCls = STATUS_BADGE_MAP[strVal];
+                      const isTagCol = col.type === 'tag' && strVal !== '-' && !badgeCls;
+                      const isNumeric =
+                        col.type === 'num' ||
+                        col.type === 'pct' ||
+                        typeof val === 'number' ||
+                        /^[+-]?\d[\d,.]*%?$/.test(strVal) ||
+                        /日期|时间|号|编码/.test(col.title);
+                      return (
+                        <td
+                          key={col.key}
+                          className={`px-3 py-2 whitespace-nowrap max-w-[260px] truncate ${
+                            isNumeric ? 'font-mono tabular-nums' : ''
+                          }`}
+                          title={strVal}
+                        >
+                          {badgeCls ? (
+                            <span
+                              className={`inline-block px-1.5 py-0.5 text-[11px] font-medium border rounded ${badgeCls}`}
+                            >
+                              {strVal}
+                            </span>
+                          ) : isTagCol ? (
+                            <span className="inline-block px-1.5 py-0.5 text-[11px] font-medium border rounded bg-[#F8FAFC] text-[#334155] border-[#DCE3EE]">
+                              {strVal}
+                            </span>
+                          ) : (
+                            strVal
+                          )}
+                        </td>
+                      );
+                    })}
+                    {!isTableChart && (
+                      <td
+                        onClick={(e) => e.stopPropagation()}
+                        className={`px-3 py-2 text-right whitespace-nowrap sticky right-0 border-l border-[#EEF2F7] ${
+                          isActiveMaster ? 'bg-[#EFF6FF]' : 'bg-white'
+                        }`}
+                      >
+                        <div className="inline-flex items-center justify-end gap-1.5">
+                          {rowActions.map((ra, raIdx) => (
+                            <button
+                              key={raIdx}
+                              type="button"
+                              onClick={() => handleRowAction(ra, row)}
+                              className={`px-1.5 py-0.5 text-[11px] font-medium rounded cursor-pointer transition whitespace-nowrap ${
+                                ra === '删除'
+                                  ? 'text-[#EA580C] hover:bg-orange-50'
+                                  : 'text-[#165DFF] hover:bg-[#EFF6FF]'
+                              }`}
+                            >
+                              {ra}
+                            </button>
+                          ))}
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="px-4 py-2.5 border-t border-[#EEF2F7] bg-[#F8FAFC] flex flex-wrap items-center justify-between gap-2 text-xs text-[#64748B]">
+        <div className="flex items-center gap-2 font-mono tabular-nums">
+          <span>
+            第 {safePage} / {totalPages} 页 · 共 {filteredRows.length} 条
+          </span>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(1);
+            }}
+            className="h-7 px-2 border border-[#DCE3EE] rounded-md bg-white text-xs text-[#334155] outline-none"
+          >
+            <option value={10}>10 条/页</option>
+            <option value={20}>20 条/页</option>
+            <option value={50}>50 条/页</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            disabled={safePage <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            className="px-2 py-1 border border-[#DCE3EE] rounded-md bg-white text-[#334155] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed hover:bg-[#F1F5F9]"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            disabled={safePage >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            className="px-2 py-1 border border-[#DCE3EE] rounded-md bg-white text-[#334155] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed hover:bg-[#F1F5F9]"
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-4">
       {/* Page Title & Metadata Strip */}
-      <div className="bg-white border border-[#E5E9F0] rounded-lg px-4 py-3.5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="bg-white border border-[#E5E9F0] rounded-2xl px-5 py-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
+            <span className="w-1 h-4 rounded-full bg-[#165DFF] shrink-0" />
             <h1 className="text-base font-bold text-[#0F172A]">{spec.title}</h1>
             <span className="px-2 py-0.5 text-[11px] font-medium bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE] rounded">
               {ARCH_LABEL[spec.arch] || '列表查询'}
@@ -920,646 +1483,624 @@ export const MomImportedPageTab: React.FC<MomImportedPageTabProps> = ({
             </span>
           </div>
           {spec.desc && (
-            <p className="text-xs text-[#64748B] mt-1 leading-relaxed">{spec.desc}</p>
+            <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed">{spec.desc}</p>
           )}
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => runToolbarAction('refresh', '刷新')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#334155] bg-white border border-[#DCE3EE] rounded-md hover:bg-[#F8FAFC] cursor-pointer whitespace-nowrap shrink-0"
-          >
-            <RefreshCw className="w-3.5 h-3.5 text-[#64748B]" />
-            <span>刷新</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => runToolbarAction('export', '导出')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#334155] bg-white border border-[#DCE3EE] rounded-md hover:bg-[#F8FAFC] cursor-pointer whitespace-nowrap shrink-0"
-          >
-            <Download className="w-3.5 h-3.5 text-[#64748B]" />
-            <span>导出 CSV</span>
-          </button>
-        </div>
+        {!isCustomTrace && (
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => runToolbarAction('refresh', '刷新')}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#334155] bg-white border border-[#DCE3EE] rounded-lg hover:bg-[#F8FAFC] cursor-pointer whitespace-nowrap shrink-0"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-[#64748B]" />
+              <span>刷新</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => runToolbarAction('export', '导出')}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#334155] bg-white border border-[#DCE3EE] rounded-lg hover:bg-[#F8FAFC] cursor-pointer whitespace-nowrap shrink-0"
+            >
+              <Download className="w-3.5 h-3.5 text-[#64748B]" />
+              <span>导出 CSV</span>
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Multi-Tab Strip */}
-      {spec.tabs && spec.tabs.length > 1 && (
-        <div className="bg-white border border-[#E5E9F0] rounded-lg px-4 pt-2 flex items-center gap-1 overflow-x-auto">
-          {spec.tabs.map((tabLabel, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => {
-                setActiveSubTab(idx);
-                onShowToast(`已切换至「${tabLabel}」页签`, 'info');
-              }}
-              className={`px-3.5 py-2 text-xs font-medium border-b-2 transition cursor-pointer whitespace-nowrap shrink-0 ${
-                activeSubTab === idx
-                  ? 'border-[#165DFF] text-[#165DFF] font-semibold'
-                  : 'border-transparent text-[#64748B] hover:text-[#0F172A]'
+      {/* Dedicated Trace Layout (p306 / p307 / p308) */}
+      {isCustomTrace && spec.traceLayout ? (
+        <MomTraceLayoutView spec={spec} layout={spec.traceLayout} onShowToast={onShowToast} />
+      ) : (
+        <>
+          {/* Multi-Tab Strip */}
+          {spec.tabs && spec.tabs.length > 1 && (
+            <div className="bg-white border border-[#E5E9F0] rounded-2xl px-4 pt-2 flex items-center gap-1 overflow-x-auto shadow-xs">
+              {spec.tabs.map((tabLabel, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setActiveSubTab(idx);
+                    onShowToast(`已切换至「${tabLabel}」页签`, 'info');
+                  }}
+                  className={`px-3.5 py-2 text-xs font-medium border-b-2 transition cursor-pointer whitespace-nowrap shrink-0 ${
+                    activeSubTab === idx
+                      ? 'border-[#165DFF] text-[#165DFF] font-semibold'
+                      : 'border-transparent text-[#64748B] hover:text-[#0F172A]'
+                  }`}
+                >
+                  {tabLabel}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Filter & Action Card */}
+          {(filters.length > 0 || actions.length > 0) && (
+            <div className="bg-white border border-[#E5E9F0] rounded-2xl p-4 shadow-xs space-y-3">
+              {filters.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {filters.map((f, idx) => {
+                    if (!moreFiltersOpen && idx >= 4) return null;
+                    return (
+                      <div key={idx} className="flex flex-col gap-1">
+                        <label className="text-[11px] font-semibold text-[#1E40AF]">
+                          {f.label}
+                        </label>
+                        {f.type === 'daterange' ? (
+                          <div className="flex items-center gap-1.5">
+                            <input
+                              type="date"
+                              value={dateRangeValues[idx]?.from ?? '2026-11-01'}
+                              onChange={(e) =>
+                                setDateRangeValues((prev) => ({
+                                  ...prev,
+                                  [idx]: {
+                                    from: e.target.value,
+                                    to: prev[idx]?.to ?? '2026-11-18',
+                                  },
+                                }))
+                              }
+                              className="h-8 flex-1 min-w-0 px-2 text-xs font-mono border border-[#DCE3EE] rounded-lg bg-white text-[#1E293B] focus:border-[#165DFF] outline-none"
+                            />
+                            <span className="text-xs text-[#94A3B8]">~</span>
+                            <input
+                              type="date"
+                              value={dateRangeValues[idx]?.to ?? '2026-11-18'}
+                              onChange={(e) =>
+                                setDateRangeValues((prev) => ({
+                                  ...prev,
+                                  [idx]: {
+                                    from: prev[idx]?.from ?? '2026-11-01',
+                                    to: e.target.value,
+                                  },
+                                }))
+                              }
+                              className="h-8 flex-1 min-w-0 px-2 text-xs font-mono border border-[#DCE3EE] rounded-lg bg-white text-[#1E293B] focus:border-[#165DFF] outline-none"
+                            />
+                          </div>
+                        ) : f.type === 'select' ? (
+                          <select
+                            value={filterValues[idx] ?? ''}
+                            onChange={(e) =>
+                              setFilterValues((prev) => ({ ...prev, [idx]: e.target.value }))
+                            }
+                            className="h-8 px-2.5 text-xs border border-[#DCE3EE] rounded-lg bg-white text-[#1E293B] focus:border-[#165DFF] outline-none"
+                          >
+                            <option value="">全部</option>
+                            {(f.options || [])
+                              .filter((o) => o !== '全部')
+                              .map((opt) => (
+                                <option key={opt} value={opt}>
+                                  {opt}
+                                </option>
+                              ))}
+                          </select>
+                        ) : (
+                          <input
+                            type="text"
+                            value={filterValues[idx] ?? ''}
+                            onChange={(e) =>
+                              setFilterValues((prev) => ({ ...prev, [idx]: e.target.value }))
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleQuery();
+                            }}
+                            placeholder={f.ph || `请输入${f.label}`}
+                            className="h-8 px-2.5 text-xs border border-[#DCE3EE] rounded-lg bg-white text-[#1E293B] placeholder-[#94A3B8] focus:border-[#165DFF] outline-none"
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Action Buttons Row */}
+              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#F1F5F9]">
+                {filters.length > 0 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleQuery}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium bg-[#165DFF] hover:bg-[#1E40AF] text-white rounded-lg transition cursor-pointer whitespace-nowrap shrink-0"
+                    >
+                      <Search className="w-3.5 h-3.5" />
+                      <span>查询</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white hover:bg-[#F8FAFC] text-[#334155] border border-[#DCE3EE] rounded-lg transition cursor-pointer whitespace-nowrap shrink-0"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-[#64748B]" />
+                      <span>重置</span>
+                    </button>
+                  </>
+                )}
+
+                {filters.length > 4 && (
+                  <button
+                    type="button"
+                    onClick={() => setMoreFiltersOpen((v) => !v)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-[#165DFF] hover:bg-[#EFF6FF] rounded-lg transition cursor-pointer whitespace-nowrap shrink-0"
+                  >
+                    <span>{moreFiltersOpen ? '收起条件' : '更多条件'}</span>
+                    {moreFiltersOpen ? (
+                      <ChevronUp className="w-3.5 h-3.5" />
+                    ) : (
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                )}
+
+                {actions.map((act, idx) => {
+                  const isDanger = act.a === 'delete' || act.t.includes('删除');
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => runToolbarAction(act.a, act.t)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition cursor-pointer whitespace-nowrap shrink-0 ${
+                        act.primary
+                          ? 'bg-[#165DFF] hover:bg-[#1E40AF] text-white'
+                          : isDanger
+                          ? 'bg-white hover:bg-orange-50 text-[#EA580C] border border-[#FDBA74]'
+                          : 'bg-white hover:bg-[#F8FAFC] text-[#334155] border border-[#DCE3EE]'
+                      }`}
+                    >
+                      {act.a === 'create' && <Plus className="w-3.5 h-3.5" />}
+                      {act.a === 'export' && <Download className="w-3.5 h-3.5" />}
+                      {act.a === 'import' && <Upload className="w-3.5 h-3.5" />}
+                      {act.a === 'print' && <Printer className="w-3.5 h-3.5" />}
+                      {act.a === 'fullscreen' && <Maximize2 className="w-3.5 h-3.5" />}
+                      {isDanger && <Trash2 className="w-3.5 h-3.5" />}
+                      <span>{act.t}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* KPI Cards */}
+          {spec.stats && spec.stats.length > 0 && (
+            <div
+              className={`grid gap-3 ${
+                spec.stats.length >= 6
+                  ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'
+                  : spec.stats.length === 4
+                  ? 'grid-cols-2 lg:grid-cols-4'
+                  : 'grid-cols-2 sm:grid-cols-3'
               }`}
             >
-              {tabLabel}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Filter & Action Card */}
-      {(filters.length > 0 || actions.length > 0) && (
-        <div className="bg-white border border-[#E5E9F0] rounded-lg p-4 shadow-xs space-y-3">
-          {filters.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {filters.map((f, idx) => {
-                if (!moreFiltersOpen && idx >= 4) return null;
+              {spec.stats.map((st, idx) => {
+                const rawDelta = String(st.delta || (st.tone === 'danger' ? '-0.4' : '+1.8'));
+                const isNeg = rawDelta.startsWith('-');
+                const isInverseMetric = /不良|超期|停机|退货|报废|异常|缺陷|损耗/.test(st.label);
+                const isPositive = isInverseMetric ? isNeg : !isNeg;
                 return (
-                  <div key={idx} className="flex flex-col gap-1">
-                    <label className="text-[11px] font-medium text-[#475569]">
-                      {f.label}
-                    </label>
-                    {f.type === 'daterange' ? (
-                      <div className="flex items-center gap-1.5">
-                        <input
-                          type="date"
-                          value={dateRangeValues[idx]?.from ?? '2026-11-01'}
-                          onChange={(e) =>
-                            setDateRangeValues((prev) => ({
-                              ...prev,
-                              [idx]: {
-                                from: e.target.value,
-                                to: prev[idx]?.to ?? '2026-11-18',
-                              },
-                            }))
-                          }
-                          className="h-8 flex-1 min-w-0 px-2 text-xs font-mono border border-[#DCE3EE] rounded-md bg-white text-[#1E293B] focus:border-[#165DFF] outline-none"
-                        />
-                        <span className="text-xs text-[#94A3B8]">~</span>
-                        <input
-                          type="date"
-                          value={dateRangeValues[idx]?.to ?? '2026-11-18'}
-                          onChange={(e) =>
-                            setDateRangeValues((prev) => ({
-                              ...prev,
-                              [idx]: {
-                                from: prev[idx]?.from ?? '2026-11-01',
-                                to: e.target.value,
-                              },
-                            }))
-                          }
-                          className="h-8 flex-1 min-w-0 px-2 text-xs font-mono border border-[#DCE3EE] rounded-md bg-white text-[#1E293B] focus:border-[#165DFF] outline-none"
-                        />
-                      </div>
-                    ) : f.type === 'select' ? (
-                      <select
-                        value={filterValues[idx] ?? ''}
-                        onChange={(e) =>
-                          setFilterValues((prev) => ({ ...prev, [idx]: e.target.value }))
-                        }
-                        className="h-8 px-2.5 text-xs border border-[#DCE3EE] rounded-md bg-white text-[#1E293B] focus:border-[#165DFF] outline-none"
+                  <div
+                    key={idx}
+                    className="bg-white border border-[#E5E9F0] rounded-2xl px-4 py-3.5 shadow-xs"
+                  >
+                    <div className="text-[11px] font-medium text-[#64748B] truncate">
+                      {st.label}
+                    </div>
+                    <div className="mt-1 flex items-baseline gap-1">
+                      <span className="text-xl font-bold text-[#0F172A] font-mono tabular-nums">
+                        {st.value}
+                      </span>
+                      {st.unit && (
+                        <span className="text-xs text-[#64748B]">{st.unit}</span>
+                      )}
+                    </div>
+                    <div className="mt-1 flex items-center gap-1.5 text-[11px]">
+                      <span
+                        className={`font-mono tabular-nums font-semibold ${
+                          isPositive ? 'text-emerald-600' : 'text-rose-600'
+                        }`}
                       >
-                        <option value="">全部</option>
-                        {(f.options || [])
-                          .filter((o) => o !== '全部')
-                          .map((opt) => (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        value={filterValues[idx] ?? ''}
-                        onChange={(e) =>
-                          setFilterValues((prev) => ({ ...prev, [idx]: e.target.value }))
-                        }
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleQuery();
-                        }}
-                        placeholder={f.ph || `请输入${f.label}`}
-                        className="h-8 px-2.5 text-xs border border-[#DCE3EE] rounded-md bg-white text-[#1E293B] placeholder-[#94A3B8] focus:border-[#165DFF] outline-none"
-                      />
-                    )}
+                        {isNeg ? '▼' : '▲'} {rawDelta.replace(/^-/, '')}
+                      </span>
+                      <span className="text-[#94A3B8]">较昨日</span>
+                    </div>
                   </div>
                 );
               })}
             </div>
           )}
 
-          {/* Action Buttons Row */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#F1F5F9]">
-            {filters.length > 0 && (
-              <>
-                <button
-                  type="button"
-                  onClick={handleQuery}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#165DFF] hover:bg-[#1E40AF] text-white rounded-md transition cursor-pointer whitespace-nowrap shrink-0"
-                >
-                  <Search className="w-3.5 h-3.5" />
-                  <span>查询</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white hover:bg-[#F8FAFC] text-[#334155] border border-[#DCE3EE] rounded-md transition cursor-pointer whitespace-nowrap shrink-0"
-                >
-                  <RotateCcw className="w-3.5 h-3.5 text-[#64748B]" />
-                  <span>重置</span>
-                </button>
-              </>
-            )}
+          {/* Dashboard Charts */}
+          {spec.arch === 'dashboard' && spec.charts && spec.charts.length > 0 && (
+            <div
+              className={`grid gap-4 ${
+                spec.charts.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'
+              }`}
+            >
+              {spec.charts.map((ch, idx) => (
+                <MomSvgChart
+                  key={idx}
+                  chart={ch}
+                  svgRef={
+                    idx === 0
+                      ? (el) => {
+                          firstSvgRef.current = el;
+                        }
+                      : undefined
+                  }
+                />
+              ))}
+            </div>
+          )}
 
-            {filters.length > 4 && (
-              <button
-                type="button"
-                onClick={() => setMoreFiltersOpen((v) => !v)}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-[#165DFF] hover:bg-[#EFF6FF] rounded-md transition cursor-pointer whitespace-nowrap shrink-0"
-              >
-                <span>{moreFiltersOpen ? '收起条件' : '更多条件'}</span>
-                {moreFiltersOpen ? (
-                  <ChevronUp className="w-3.5 h-3.5" />
+          {/* Trace Timeline (Legacy non-traceLayout trace pages like p266) */}
+          {spec.arch === 'trace' && (
+            <div className="bg-white border border-[#E5E9F0] rounded-2xl shadow-xs overflow-hidden">
+              <div className="px-4 py-3 border-b border-[#EEF2F7] bg-[#F8FAFC] flex items-center justify-between gap-2">
+                <span className="text-xs font-bold text-[#1E40AF]">
+                  追溯链路（正向：原料 → 成品）
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    exportRowsToCsv(spec.title, cols, filteredRows, '追溯链路');
+                    onShowToast('追溯报告已导出为 CSV', 'success');
+                  }}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-white border border-[#DCE3EE] rounded-lg hover:bg-[#F8FAFC] text-[#334155] cursor-pointer whitespace-nowrap shrink-0"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#64748B]" />
+                  <span>导出追溯报告</span>
+                </button>
+              </div>
+              <div className="p-4">
+                {spec.trace?.nodes && spec.trace.nodes.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    {spec.trace.nodes.map((node, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setTraceNodeDrawer(node)}
+                        className="text-left p-3 rounded-xl border border-[#E5E9F0] hover:border-[#165DFF] hover:bg-[#F8FAFF] transition cursor-pointer flex items-start gap-3"
+                      >
+                        <span className="w-6 h-6 rounded bg-[#165DFF] text-white text-xs font-bold font-mono flex items-center justify-center shrink-0">
+                          {idx + 1}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-bold text-[#0F172A] truncate">
+                            {node.node}
+                          </div>
+                          <div className="text-[11px] text-[#475569] truncate mt-0.5">
+                            {node.obj}
+                          </div>
+                          <div className="text-[11px] text-[#64748B] font-mono tabular-nums mt-1">
+                            {node.time} · {node.qty} · {node.person}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 ) : (
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <div className="py-6 text-center text-xs text-[#64748B]">
+                    请在上方输入批次号后点击「查询」展开追溯节点
+                  </div>
                 )}
-              </button>
-            )}
+              </div>
+            </div>
+          )}
 
-            {actions.map((act, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => runToolbarAction(act.a, act.t)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition cursor-pointer whitespace-nowrap shrink-0 ${
-                  act.primary
-                    ? 'bg-[#165DFF] hover:bg-[#1E40AF] text-white'
-                    : 'bg-white hover:bg-[#F8FAFC] text-[#334155] border border-[#DCE3EE]'
-                }`}
-              >
-                {act.a === 'create' && <Plus className="w-3.5 h-3.5" />}
-                {act.a === 'export' && <Download className="w-3.5 h-3.5" />}
-                {act.a === 'import' && <Upload className="w-3.5 h-3.5" />}
-                {act.a === 'print' && <Printer className="w-3.5 h-3.5" />}
-                {act.a === 'fullscreen' && <Maximize2 className="w-3.5 h-3.5" />}
-                {act.a === 'delete' && <Trash2 className="w-3.5 h-3.5" />}
-                <span>{act.t}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* KPI Cards */}
-      {spec.stats && spec.stats.length > 0 && (
-        <div
-          className={`grid gap-3 ${
-            spec.stats.length >= 6
-              ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'
-              : spec.stats.length === 4
-              ? 'grid-cols-2 lg:grid-cols-4'
-              : 'grid-cols-2 sm:grid-cols-3'
-          }`}
-        >
-          {spec.stats.map((st, idx) => {
-            const rawDelta = String(st.delta || (st.tone === 'danger' ? '-0.4' : '+1.8'));
-            const isNeg = rawDelta.startsWith('-');
-            const isInverseMetric = /不良|超期|停机|退货|报废|异常|缺陷|损耗/.test(st.label);
-            const isPositive = isInverseMetric ? isNeg : !isNeg;
-            return (
-              <div
-                key={idx}
-                className="bg-white border border-[#E5E9F0] rounded-lg px-4 py-3 shadow-xs"
-              >
-                <div className="text-[11px] font-medium text-[#64748B] truncate">
-                  {st.label}
-                </div>
-                <div className="mt-1 flex items-baseline gap-1">
-                  <span className="text-xl font-bold text-[#0F172A] font-mono tabular-nums">
-                    {st.value}
+          {/* IOT 24h Acquisition Chart */}
+          {spec.arch === 'iot' && (
+            <div className="bg-white border border-[#E5E9F0] rounded-2xl shadow-xs overflow-hidden">
+              <div className="px-4 py-3 border-b border-[#EEF2F7] bg-[#F8FAFC] flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-[#165DFF]" />
+                  <span className="text-xs font-bold text-[#1E40AF]">
+                    设备采集曲线（近 24 小时）
                   </span>
-                  {st.unit && (
-                    <span className="text-xs text-[#64748B]">{st.unit}</span>
-                  )}
                 </div>
-                <div className="mt-1 flex items-center gap-1.5 text-[11px]">
+                <div className="flex items-center gap-2">
                   <span
-                    className={`font-mono tabular-nums font-semibold ${
-                      isPositive ? 'text-emerald-600' : 'text-rose-600'
+                    className={`px-2 py-0.5 text-[11px] font-medium rounded border ${
+                      iotAutoRefresh
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-slate-100 text-slate-600 border-slate-200'
                     }`}
                   >
-                    {isNeg ? '▼' : '▲'} {rawDelta.replace(/^-/, '')}
-                  </span>
-                  <span className="text-[#94A3B8]">较昨日</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Dashboard Charts */}
-      {spec.arch === 'dashboard' && spec.charts && spec.charts.length > 0 && (
-        <div
-          className={`grid gap-4 ${
-            spec.charts.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'
-          }`}
-        >
-          {spec.charts.map((ch, idx) => (
-            <MomSvgChart
-              key={idx}
-              chart={ch}
-              svgRef={
-                idx === 0
-                  ? (el) => {
-                      firstSvgRef.current = el;
-                    }
-                  : undefined
-              }
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Trace Timeline */}
-      {spec.arch === 'trace' && (
-        <div className="bg-white border border-[#E5E9F0] rounded-lg shadow-xs">
-          <div className="px-4 py-3 border-b border-[#EEF2F7] flex items-center justify-between gap-2">
-            <span className="text-xs font-bold text-[#0F172A]">
-              追溯链路（正向：原料 → 成品）
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                exportRowsToCsv(spec.title, cols, filteredRows, '追溯链路');
-                onShowToast('追溯报告已导出为 CSV', 'success');
-              }}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-white border border-[#DCE3EE] rounded-md hover:bg-[#F8FAFC] text-[#334155] cursor-pointer whitespace-nowrap shrink-0"
-            >
-              <Download className="w-3.5 h-3.5 text-[#64748B]" />
-              <span>导出追溯报告</span>
-            </button>
-          </div>
-          <div className="p-4">
-            {spec.trace?.nodes && spec.trace.nodes.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                {spec.trace.nodes.map((node, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setTraceNodeDrawer(node)}
-                    className="text-left p-3 rounded-lg border border-[#E5E9F0] hover:border-[#165DFF] hover:bg-[#F8FAFF] transition cursor-pointer flex items-start gap-3"
-                  >
-                    <span className="w-6 h-6 rounded bg-[#165DFF] text-white text-xs font-bold font-mono flex items-center justify-center shrink-0">
-                      {idx + 1}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-bold text-[#0F172A] truncate">
-                        {node.node}
-                      </div>
-                      <div className="text-[11px] text-[#475569] truncate mt-0.5">
-                        {node.obj}
-                      </div>
-                      <div className="text-[11px] text-[#64748B] font-mono tabular-nums mt-1">
-                        {node.time} · {node.qty} · {node.person}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="py-6 text-center text-xs text-[#64748B]">
-                请在上方输入批次号后点击「查询」展开追溯节点
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* IOT 24h Acquisition Chart */}
-      {spec.arch === 'iot' && (
-        <div className="bg-white border border-[#E5E9F0] rounded-lg shadow-xs">
-          <div className="px-4 py-3 border-b border-[#EEF2F7] flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-[#165DFF]" />
-              <span className="text-xs font-bold text-[#0F172A]">
-                设备采集曲线（近 24 小时）
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span
-                className={`px-2 py-0.5 text-[11px] font-medium rounded border ${
-                  iotAutoRefresh
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    : 'bg-slate-100 text-slate-600 border-slate-200'
-                }`}
-              >
-                {iotAutoRefresh ? '自动刷新：开启（3秒）' : '自动刷新：关闭'}
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setIotAutoRefresh((v) => {
-                    const next = !v;
-                    onShowToast(
-                      next ? '已开启 3 秒自动刷新采集曲线' : '已停止自动刷新',
-                      next ? 'success' : 'info'
-                    );
-                    return next;
-                  });
-                }}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-white border border-[#DCE3EE] rounded-md hover:bg-[#F8FAFC] text-[#334155] cursor-pointer whitespace-nowrap shrink-0"
-              >
-                {iotAutoRefresh ? (
-                  <>
-                    <Square className="w-3 h-3 text-rose-600" />
-                    <span>停止刷新</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-3 h-3 text-[#165DFF]" />
-                    <span>开启自动刷新</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-          <div className="p-3">
-            <MomSvgChart
-              chart={{
-                type: 'line',
-                title: `${spec.title} 24H 实时波动趋势`,
-                labels: Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`),
-                series: [{ name: '采集数值', data: iotSeries }],
-              }}
-              svgRef={(el) => {
-                firstSvgRef.current = el;
-              }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Data Table Card */}
-      {cols.length > 0 && (
-        <div className="bg-white border border-[#E5E9F0] rounded-lg shadow-xs overflow-hidden">
-          <div className="px-4 py-3 border-b border-[#EEF2F7] flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4 text-[#165DFF]" />
-              <span className="text-xs font-bold text-[#0F172A]">
-                {spec.arch === 'dashboard' ? '看板明细数据' : `${spec.title} 明细`}
-              </span>
-              <span className="px-2 py-0.5 text-[11px] font-mono tabular-nums bg-[#F1F5F9] text-[#475569] rounded border border-[#E2E8F0]">
-                共 {filteredRows.length} 条
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {selectedRows.length > 0 && (
-                <div className="flex items-center gap-1.5 bg-[#EFF6FF] border border-[#BFDBFE] px-2.5 py-1 rounded-md text-xs">
-                  <span className="text-[#1D4ED8] font-medium font-mono tabular-nums">
-                    已选 {selectedRows.length} 条
+                    {iotAutoRefresh ? '自动刷新：开启（3秒）' : '自动刷新：关闭'}
                   </span>
                   <button
                     type="button"
                     onClick={() => {
-                      exportRowsToCsv(spec.title, cols, selectedRows, '已选明细');
-                      onShowToast(`已导出 ${selectedRows.length} 条选中数据`, 'success');
+                      setIotAutoRefresh((v) => {
+                        const next = !v;
+                        onShowToast(
+                          next ? '已开启 3 秒自动刷新采集曲线' : '已停止自动刷新',
+                          next ? 'success' : 'info'
+                        );
+                        return next;
+                      });
                     }}
-                    className="px-1.5 py-0.5 text-[11px] text-[#1D4ED8] hover:underline cursor-pointer whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-white border border-[#DCE3EE] rounded-lg hover:bg-[#F8FAFC] text-[#334155] cursor-pointer whitespace-nowrap shrink-0"
                   >
-                    导出所选
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => runToolbarAction('audit', '批量审核')}
-                    className="px-1.5 py-0.5 text-[11px] text-emerald-700 hover:underline cursor-pointer whitespace-nowrap"
-                  >
-                    批量审核
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => runToolbarAction('delete', '批量删除')}
-                    className="px-1.5 py-0.5 text-[11px] text-rose-600 hover:underline cursor-pointer whitespace-nowrap"
-                  >
-                    批量删除
+                    {iotAutoRefresh ? (
+                      <>
+                        <Square className="w-3 h-3 text-rose-600" />
+                        <span>停止刷新</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-3 h-3 text-[#165DFF]" />
+                        <span>开启自动刷新</span>
+                      </>
+                    )}
                   </button>
                 </div>
-              )}
-
-              <button
-                type="button"
-                onClick={() => setColSettingsOpen(true)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#334155] bg-white border border-[#DCE3EE] rounded-md hover:bg-[#F8FAFC] cursor-pointer whitespace-nowrap shrink-0"
-              >
-                <Columns3 className="w-3.5 h-3.5 text-[#64748B]" />
-                <span>列设置</span>
-              </button>
+              </div>
+              <div className="p-3">
+                <MomSvgChart
+                  hideHeader
+                  chart={{
+                    type: 'line',
+                    title: `${spec.title} 24H 实时波动趋势`,
+                    labels: Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`),
+                    series: [{ name: '采集数值', data: iotSeries }],
+                  }}
+                  svgRef={(el) => {
+                    firstSvgRef.current = el;
+                  }}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-[#F8FAFC] border-b border-[#E5E9F0] text-[11px] font-semibold text-[#475569]">
-                  <th className="w-10 px-3 py-2.5 text-center sticky left-0 bg-[#F8FAFC] z-10">
-                    <input
-                      type="checkbox"
-                      checked={allOnPageSelected}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setSelectedIds((prev) => {
-                          const next = { ...prev };
-                          pagedRows.forEach((r) => {
-                            next[r.__id] = checked;
-                          });
-                          return next;
-                        });
-                      }}
-                      className="rounded border-[#CBD5E1] cursor-pointer"
-                    />
-                  </th>
-                  <th className="w-12 px-2 py-2.5 text-center font-mono">序号</th>
-                  {visibleCols.map((col) => (
-                    <th
-                      key={col.key}
-                      style={{ minWidth: col.w ? `${Math.min(col.w, 220)}px` : '120px' }}
-                      onClick={() => {
-                        if (sortCol === col.key) {
-                          setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
-                        } else {
-                          setSortCol(col.key);
-                          setSortDir('asc');
-                        }
-                      }}
-                      className="px-3 py-2.5 whitespace-nowrap cursor-pointer hover:text-[#165DFF] select-none"
-                    >
-                      <div className="inline-flex items-center gap-1">
-                        <span>{col.title}</span>
-                        <ArrowDownUp
-                          className={`w-3 h-3 ${
-                            sortCol === col.key ? 'text-[#165DFF]' : 'text-[#CBD5E1]'
-                          }`}
-                        />
-                      </div>
-                    </th>
-                  ))}
-                  <th className="px-3 py-2.5 text-right whitespace-nowrap sticky right-0 bg-[#F8FAFC] border-l border-[#E5E9F0] z-10">
-                    操作
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#EEF2F7] text-xs text-[#1E293B]">
-                {pagedRows.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={visibleCols.length + 3}
-                      className="py-12 text-center text-xs text-[#64748B]"
-                    >
-                      暂无符合条件的记录，可点击上方「重置」查看全部数据
-                    </td>
-                  </tr>
-                ) : (
-                  pagedRows.map((row, rowIdx) => {
-                    const globalIdx = (safePage - 1) * pageSize + rowIdx + 1;
-                    const isChecked = !!selectedIds[row.__id];
-                    return (
-                      <tr
-                        key={row.__id}
-                        className={`hover:bg-[#F8FAFF] transition-colors ${
-                          isChecked ? 'bg-[#EFF6FF]/60' : ''
-                        }`}
-                      >
-                        <td className="px-3 py-2 text-center sticky left-0 bg-white">
+          {/* Table-Chart Report Split Layout (11 Quality / Data Center Reports) */}
+          {isTableChart ? (
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+              <div className="xl:col-span-7 min-w-0">{cols.length > 0 && renderMainTableCard(true)}</div>
+              <div className="xl:col-span-5 min-w-0 space-y-4">
+                <div className="bg-white border border-[#E5E9F0] rounded-2xl shadow-xs overflow-hidden">
+                  <div className="px-4 py-3 border-b border-[#EEF2F7] bg-[#F8FAFC] flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="w-1 h-3.5 rounded-full bg-[#165DFF] shrink-0" />
+                      <span className="text-xs font-bold text-[#1E40AF] truncate">
+                        {effectiveTableChart?.title || spec.chartTitle || `${spec.title} 趋势`}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {spec.baseline !== undefined && (
+                        <div className="inline-flex items-center gap-1 bg-white border border-[#DCE3EE] rounded-lg px-2 py-0.5">
+                          <span className="text-[11px] font-medium text-[#64748B]">基线</span>
                           <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={(e) =>
-                              setSelectedIds((prev) => ({
-                                ...prev,
-                                [row.__id]: e.target.checked,
-                              }))
+                            type="text"
+                            value={tcBaseline}
+                            onChange={(e) => setTcBaseline(e.target.value)}
+                            onBlur={() =>
+                              onShowToast(
+                                `基线参照线已同步为 ${tcBaseline}${spec.baselineUnit || ''}`,
+                                'info'
+                              )
                             }
-                            className="rounded border-[#CBD5E1] cursor-pointer"
+                            className="w-12 text-xs font-mono text-right text-[#0F172A] outline-none"
                           />
-                        </td>
-                        <td className="px-2 py-2 text-center font-mono tabular-nums text-[#64748B]">
-                          {globalIdx}
-                        </td>
-                        {visibleCols.map((col) => {
-                          const val = row[col.key];
-                          const strVal = val === undefined || val === null ? '-' : String(val);
-                          const badgeCls = STATUS_BADGE_MAP[strVal];
-                          const isNumeric =
-                            typeof val === 'number' ||
-                            /^[+-]?\d[\d,.]*%?$/.test(strVal) ||
-                            /日期|时间|号|编码/.test(col.title);
-                          return (
-                            <td
-                              key={col.key}
-                              className={`px-3 py-2 whitespace-nowrap max-w-[260px] truncate ${
-                                isNumeric ? 'font-mono tabular-nums' : ''
+                          {spec.baselineUnit && (
+                            <span className="text-[11px] text-[#64748B]">{spec.baselineUnit}</span>
+                          )}
+                        </div>
+                      )}
+
+                      {spec.periods && spec.periods.length > 0 && (
+                        <div className="inline-flex border border-[#DCE3EE] rounded-lg overflow-hidden bg-white">
+                          {spec.periods.map((p) => (
+                            <button
+                              key={p}
+                              type="button"
+                              onClick={() => {
+                                setTcPeriod(p);
+                                onShowToast(`已切换统计周期：按${p}`, 'info');
+                              }}
+                              className={`px-2.5 py-1 text-[11px] font-medium cursor-pointer transition ${
+                                tcPeriod === p
+                                  ? 'bg-[#165DFF] text-white'
+                                  : 'text-[#475569] hover:text-[#0F172A]'
                               }`}
-                              title={strVal}
                             >
-                              {badgeCls ? (
-                                <span
-                                  className={`inline-block px-1.5 py-0.5 text-[11px] font-medium border rounded ${badgeCls}`}
-                                >
-                                  {strVal}
-                                </span>
-                              ) : (
-                                strVal
-                              )}
-                            </td>
-                          );
-                        })}
-                        <td className="px-3 py-2 text-right whitespace-nowrap sticky right-0 bg-white border-l border-[#EEF2F7]">
-                          <div className="inline-flex items-center justify-end gap-1.5">
-                            {rowActions.map((ra, raIdx) => (
-                              <button
-                                key={raIdx}
-                                type="button"
-                                onClick={() => handleRowAction(ra, row)}
-                                className={`px-1.5 py-0.5 text-[11px] font-medium rounded cursor-pointer transition whitespace-nowrap ${
-                                  ra === '删除'
-                                    ? 'text-rose-600 hover:bg-rose-50'
-                                    : 'text-[#165DFF] hover:bg-[#EFF6FF]'
-                                }`}
-                              >
-                                {ra}
-                              </button>
-                            ))}
-                          </div>
+                              {p}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {spec.chartGroup && spec.chartGroup.length > 0 && (
+                    <div className="px-4 py-2 border-b border-[#F1F5F9] flex items-center gap-1.5 bg-white">
+                      <span className="text-[11px] text-[#64748B] mr-1">分组维度:</span>
+                      {spec.chartGroup.map((g) => (
+                        <button
+                          key={g}
+                          type="button"
+                          onClick={() => {
+                            setTcGroup(g);
+                            onShowToast(`图表已按「${g}」维度重新汇总`, 'info');
+                          }}
+                          className={`px-2.5 py-1 text-[11px] font-medium rounded-md border cursor-pointer transition ${
+                            tcGroup === g
+                              ? 'bg-[#EFF6FF] border-[#93C5FD] text-[#165DFF]'
+                              : 'bg-white border-[#E2E8F0] text-[#475569] hover:bg-[#F8FAFC]'
+                          }`}
+                        >
+                          {g}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="p-3.5 space-y-4">
+                    {effectiveTableChart && (
+                      <MomSvgChart
+                        hideHeader
+                        chart={effectiveTableChart}
+                        baselineValue={parsedBaseline}
+                        baselineUnit={spec.baselineUnit}
+                        svgRef={(el) => {
+                          firstSvgRef.current = el;
+                        }}
+                      />
+                    )}
+                    {spec.chart2 && (
+                      <div className="pt-3 border-t border-[#EEF2F7]">
+                        <div className="text-xs font-bold text-[#1E40AF] mb-1.5">
+                          {spec.chart2.title || '不良项频次对比'}
+                        </div>
+                        <MomSvgChart hideHeader chart={spec.chart2} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            cols.length > 0 && renderMainTableCard(false)
+          )}
+
+          {/* Linked Master-Detail SubTable Card (12 Quality pages) */}
+          {spec.subTable && (
+            <div className="bg-white border border-[#E5E9F0] rounded-2xl shadow-xs overflow-hidden">
+              <div className="px-4 py-3 border-b border-[#EEF2F7] bg-[#F8FAFC] flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-1 h-3.5 rounded-full bg-[#165DFF]" />
+                  <span className="text-xs font-bold text-[#1E40AF]">
+                    {spec.subTable.title || '关联明细表'}
+                  </span>
+                  <span className="px-2 py-0.5 text-[11px] font-mono tabular-nums bg-white text-[#475569] rounded border border-[#E2E8F0]">
+                    共 {(spec.subTable.rows || []).length} 条
+                  </span>
+                </div>
+                {filteredRows[activeMasterRowIdx] && cols[0] && (
+                  <span className="text-[11px] text-[#64748B] font-mono truncate max-w-[320px]">
+                    当前主记录：{String(filteredRows[activeMasterRowIdx][cols[0].key] ?? `#${activeMasterRowIdx + 1}`)}
+                  </span>
+                )}
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-[#F8FAFC] border-b border-[#E5E9F0] text-[11px] font-semibold text-[#1E40AF]">
+                      <th className="w-12 px-2.5 py-2.5 text-center font-mono">序号</th>
+                      {(spec.subTable.cols || []).map((c) => (
+                        <th
+                          key={c.key}
+                          style={{ minWidth: c.w ? `${Math.min(c.w, 220)}px` : '115px' }}
+                          className="px-3 py-2.5 whitespace-nowrap"
+                        >
+                          {c.title}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#EEF2F7] text-xs text-[#1E293B]">
+                    {(spec.subTable.rows || []).length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={(spec.subTable.cols?.length || 1) + 1}
+                          className="py-10 text-center text-xs text-[#94A3B8]"
+                        >
+                          {spec.subTable.emptyText || '暂无明细数据'}
                         </td>
                       </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                    ) : (
+                      (spec.subTable.rows || []).map((sr, sIdx) => (
+                        <tr
+                          key={String((sr as Record<string, unknown>).__id ?? sIdx)}
+                          className="hover:bg-[#F8FAFF] transition-colors"
+                        >
+                          <td className="px-2.5 py-2 text-center font-mono tabular-nums text-[#64748B]">
+                            {sIdx + 1}
+                          </td>
+                          {(spec.subTable?.cols || []).map((c) => {
+                            const val = (sr as Record<string, unknown>)[c.key];
+                            const strVal =
+                              val === undefined || val === null || val === '' ? '-' : String(val);
+                            const badgeCls = STATUS_BADGE_MAP[strVal];
+                            const isNum =
+                              c.type === 'num' ||
+                              c.type === 'pct' ||
+                              typeof val === 'number' ||
+                              /^[+-]?\d[\d,.]*%?$/.test(strVal);
+                            return (
+                              <td
+                                key={c.key}
+                                className={`px-3 py-2 whitespace-nowrap max-w-[260px] truncate ${
+                                  isNum ? 'font-mono tabular-nums' : ''
+                                }`}
+                                title={strVal}
+                              >
+                                {badgeCls ? (
+                                  <span
+                                    className={`inline-block px-1.5 py-0.5 text-[11px] font-medium border rounded ${badgeCls}`}
+                                  >
+                                    {strVal}
+                                  </span>
+                                ) : (
+                                  strVal
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
-          {/* Pagination */}
-          <div className="px-4 py-2.5 border-t border-[#EEF2F7] bg-[#F8FAFC] flex flex-wrap items-center justify-between gap-2 text-xs text-[#64748B]">
-            <div className="flex items-center gap-2 font-mono tabular-nums">
-              <span>
-                第 {safePage} / {totalPages} 页 · 共 {filteredRows.length} 条
-              </span>
-              <select
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                  setPage(1);
+          {/* Report Auto Trend Chart (non-table-chart reports) */}
+          {reportChartSpec && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-end gap-2">
+                <span className="text-[11px] text-[#64748B]">报表图形切换:</span>
+                <button
+                  type="button"
+                  onClick={() => setReportChartType((t) => (t === 'bar' ? 'line' : 'bar'))}
+                  className="px-2.5 py-1 text-xs font-medium bg-white border border-[#DCE3EE] rounded-lg text-[#334155] hover:bg-[#F8FAFC] cursor-pointer"
+                >
+                  切换为{reportChartType === 'bar' ? '折线图' : '柱状图'}
+                </button>
+              </div>
+              <MomSvgChart
+                chart={reportChartSpec}
+                svgRef={(el) => {
+                  firstSvgRef.current = el;
                 }}
-                className="h-7 px-2 border border-[#DCE3EE] rounded bg-white text-xs text-[#334155] outline-none"
-              >
-                <option value={10}>10 条/页</option>
-                <option value={20}>20 条/页</option>
-                <option value={50}>50 条/页</option>
-              </select>
+              />
             </div>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                disabled={safePage <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="px-2 py-1 border border-[#DCE3EE] rounded bg-white text-[#334155] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed hover:bg-[#F1F5F9]"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                disabled={safePage >= totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="px-2 py-1 border border-[#DCE3EE] rounded bg-white text-[#334155] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed hover:bg-[#F1F5F9]"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Report Auto Trend Chart */}
-      {reportChartSpec && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-end gap-2">
-            <span className="text-[11px] text-[#64748B]">报表图形切换:</span>
-            <button
-              type="button"
-              onClick={() => setReportChartType((t) => (t === 'bar' ? 'line' : 'bar'))}
-              className="px-2.5 py-1 text-xs font-medium bg-white border border-[#DCE3EE] rounded-md text-[#334155] hover:bg-[#F8FAFC] cursor-pointer"
-            >
-              切换为{reportChartType === 'bar' ? '折线图' : '柱状图'}
-            </button>
-          </div>
-          <MomSvgChart
-            chart={reportChartSpec}
-            svgRef={(el) => {
-              firstSvgRef.current = el;
-            }}
-          />
-        </div>
+          )}
+        </>
       )}
 
       {/* Detail Drawer */}
@@ -1723,82 +2264,94 @@ export const MomImportedPageTab: React.FC<MomImportedPageTabProps> = ({
         </div>
       )}
 
-      {/* Create / Edit Modal */}
-      {formModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/45">
-          <div className="bg-white border border-[#E5E9F0] rounded-lg shadow-2xl w-full max-w-2xl overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-[#E5E9F0] flex items-center justify-between bg-[#F8FAFC]">
-              <span className="text-sm font-bold text-[#0F172A]">
-                {formModal.mode === 'create' ? `新增 · ${spec.title}` : `编辑 · ${spec.title}`}
-              </span>
-              <button
-                type="button"
-                onClick={() => setFormModal(null)}
-                className="p-1 text-[#64748B] hover:text-[#0F172A] cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[68vh] overflow-y-auto">
-              {cols.slice(0, 10).map((c, idx) => {
-                const isStatus = /状态|判定|等级|是否/.test(c.title);
-                return (
-                  <div key={c.key} className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-[#334155]">
-                      {c.title}
-                      {idx < 3 && <span className="text-rose-500 ml-1">*</span>}
-                    </label>
-                    {isStatus ? (
-                      <select
-                        value={formDraft[c.key] ?? ''}
-                        onChange={(e) =>
-                          setFormDraft((prev) => ({ ...prev, [c.key]: e.target.value }))
-                        }
-                        className="h-8 px-2.5 text-xs border border-[#DCE3EE] rounded-md bg-white text-[#1E293B] outline-none focus:border-[#165DFF]"
-                      >
-                        <option value="">请选择</option>
-                        {['启用', '停用', '草稿', '待审核', '已审核', '合格', '不合格'].map(
-                          (opt) => (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          )
-                        )}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        value={formDraft[c.key] ?? ''}
-                        onChange={(e) =>
-                          setFormDraft((prev) => ({ ...prev, [c.key]: e.target.value }))
-                        }
-                        placeholder={`请输入${c.title}`}
-                        className="h-8 px-2.5 text-xs border border-[#DCE3EE] rounded-md bg-white text-[#1E293B] outline-none focus:border-[#165DFF]"
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="px-5 py-3 border-t border-[#E5E9F0] bg-[#F8FAFC] flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setFormModal(null)}
-                className="px-3.5 py-1.5 text-xs font-medium bg-white border border-[#DCE3EE] text-[#334155] rounded-md hover:bg-[#F8FAFC] cursor-pointer"
-              >
-                取消
-              </button>
-              <button
-                type="button"
-                onClick={handleSubmitForm}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium bg-[#165DFF] text-white rounded-md hover:bg-[#1E40AF] cursor-pointer"
-              >
-                <Check className="w-3.5 h-3.5" />
-                <span>{formModal.mode === 'create' ? '提交新增' : '保存修改'}</span>
-              </button>
+      {/* Create / Edit Modal or Spec-driven Drawer/Modal Form */}
+      {formModal && spec.form ? (
+        <MomCustomFormOverlay
+          form={spec.form}
+          mode={formModal.mode}
+          pageTitle={spec.title}
+          initialValues={formModal.row}
+          onClose={() => setFormModal(null)}
+          onSubmit={handleCustomFormSubmit}
+          onShowToast={onShowToast}
+        />
+      ) : (
+        formModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/45">
+            <div className="bg-white border border-[#E5E9F0] rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
+              <div className="px-5 py-3.5 border-b border-[#E5E9F0] flex items-center justify-between bg-[#F8FAFC]">
+                <span className="text-sm font-bold text-[#0F172A]">
+                  {formModal.mode === 'create' ? `新增 · ${spec.title}` : `编辑 · ${spec.title}`}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setFormModal(null)}
+                  className="p-1 text-[#64748B] hover:text-[#0F172A] cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[68vh] overflow-y-auto">
+                {cols.slice(0, 10).map((c, idx) => {
+                  const isStatus = /状态|判定|等级|是否/.test(c.title);
+                  return (
+                    <div key={c.key} className="flex flex-col gap-1">
+                      <label className="text-xs font-semibold text-[#1E40AF]">
+                        {c.title}
+                        {idx < 3 && <span className="text-rose-500 ml-1">*</span>}
+                      </label>
+                      {isStatus ? (
+                        <select
+                          value={formDraft[c.key] ?? ''}
+                          onChange={(e) =>
+                            setFormDraft((prev) => ({ ...prev, [c.key]: e.target.value }))
+                          }
+                          className="h-8 px-2.5 text-xs border border-[#DCE3EE] rounded-lg bg-white text-[#1E293B] outline-none focus:border-[#165DFF]"
+                        >
+                          <option value="">请选择</option>
+                          {['启用', '停用', '草稿', '待审核', '已审核', '合格', '不合格'].map(
+                            (opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            )
+                          )}
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          value={formDraft[c.key] ?? ''}
+                          onChange={(e) =>
+                            setFormDraft((prev) => ({ ...prev, [c.key]: e.target.value }))
+                          }
+                          placeholder={`请输入${c.title}`}
+                          className="h-8 px-2.5 text-xs border border-[#DCE3EE] rounded-lg bg-white text-[#1E293B] outline-none focus:border-[#165DFF]"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="px-5 py-3 border-t border-[#E5E9F0] bg-[#F8FAFC] flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFormModal(null)}
+                  className="px-3.5 py-1.5 text-xs font-medium bg-white border border-[#DCE3EE] text-[#334155] rounded-lg hover:bg-[#F8FAFC] cursor-pointer"
+                >
+                  取消
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitForm}
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium bg-[#165DFF] text-white rounded-lg hover:bg-[#1E40AF] cursor-pointer"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>{formModal.mode === 'create' ? '提交新增' : '保存修改'}</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )
       )}
 
       {/* Column Settings Modal */}

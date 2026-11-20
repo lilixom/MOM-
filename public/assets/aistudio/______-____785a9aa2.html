@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>设备管理系统 · 昇兴三片罐MOM</title>
+  <style>
+/* ============ 基础 ============ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root{
+  --navy:#1f2d3d; --navy2:#233449; --navy3:#2c3d54;
+  --primary:#1890ff; --primary2:#337aff; --blue:#1f6fe0;
+  --bg:#f0f2f5; --card:#fff; --line:#e8e8e8; --line2:#f0f0f0;
+  --text:#303133; --sub:#606266; --muted:#909399;
+  --green:#52c41a; --orange:#fa8c16; --red:#f5222d;
+  --radius:4px;
+}
+html,body{ height:100%; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; color:var(--text); font-size:14px; }
+body{ background:var(--bg); overflow:hidden; }
+.hidden{ display:none !important; }
+svg{ fill:currentColor; }
+button{ font-family:inherit; cursor:pointer; }
+input,select{ font-family:inherit; outline:none; }
+::-webkit-scrollbar{ width:8px; height:8px; }
+::-webkit-scrollbar-thumb{ background:#c8cdd4; border-radius:4px; }
+::-webkit-scrollbar-track{ background:transparent; }
+
+/* ============ 登录页 ============ */
+.login-page{ position:fixed; inset:0; z-index:1000; overflow:hidden; }
+.login-bg{ position:absolute; inset:0; }
+.login-svg{ width:100%; height:100%; display:block; }
+.login-top{ position:absolute; top:0; left:0; right:0; padding:26px 46px; display:flex; justify-content:space-between; align-items:center; color:#fff; }
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-txt{ display:flex; flex-direction:column; line-height:1.1; }
+.brand-txt b{ font-size:20px; letter-spacing:2px; }
+.brand-txt span{ font-size:9px; letter-spacing:2px; opacity:.85; }
+.slogan{ font-size:14px; letter-spacing:3px; opacity:.9; }
+.login-center{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:360px; }
+.login-title{ display:flex; align-items:center; justify-content:center; gap:9px; color:#fff; font-size:17px; font-weight:600; margin-bottom:18px; text-shadow:0 1px 8px rgba(0,0,0,.3); }
+.login-logo{ width:22px; height:22px; background:#e1251b; border-radius:3px; display:inline-flex; align-items:center; justify-content:center; font-size:13px; }
+.login-card{ background:rgba(255,255,255,.96); border-radius:6px; padding:26px 26px 18px; box-shadow:0 12px 40px rgba(0,20,60,.35); }
+.field{ display:flex; align-items:center; height:42px; border:1px solid #d9dfe8; border-radius:4px; margin-bottom:14px; background:#fff; overflow:hidden; }
+.field:focus-within{ border-color:#3d8bff; box-shadow:0 0 0 2px rgba(61,139,255,.15); }
+.field .fi{ width:42px; display:flex; align-items:center; justify-content:center; color:#9aa7b8; }
+.field .fi svg{ width:17px; height:17px; }
+.field input,.field select{ flex:1; border:none; height:100%; font-size:14px; color:var(--text); background:transparent; }
+.field input::placeholder{ color:#b5bdc9; }
+.field select{ color:#606266; cursor:pointer; }
+.login-btn{ width:100%; height:42px; border:none; border-radius:4px; background:linear-gradient(90deg,#1f6fe0,#1f7bf0); color:#fff; font-size:15px; letter-spacing:4px; margin-top:4px; transition:.2s; }
+.login-btn:hover{ background:linear-gradient(90deg,#1a63cf,#1f6fe0); }
+.login-lang{ display:flex; align-items:center; justify-content:flex-end; gap:4px; color:#909399; font-size:12px; margin-top:14px; }
+.login-foot{ position:absolute; bottom:18px; left:0; right:0; text-align:center; color:rgba(255,255,255,.75); font-size:12px; letter-spacing:2px; }
+
+/* ============ 应用骨架 ============ */
+.app{ position:fixed; inset:0; display:flex; flex-direction:column; }
+.topbar{ height:48px; background:#152238; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 16px; flex-shrink:0; box-shadow:0 1px 4px rgba(0,0,0,.2); z-index:20; }
+.top-left,.top-right{ display:flex; align-items:center; gap:14px; min-width:280px; }
+.top-right{ justify-content:flex-end; }
+.top-brand{ display:flex; align-items:center; gap:7px; font-size:13px; }
+.top-org{ font-size:12px; color:#c8d4e4; }
+.top-title{ font-size:17px; font-weight:600; letter-spacing:1px; }
+.hello{ font-size:12px; color:#dbe4f0; }
+.top-ico{ position:relative; width:22px; height:22px; cursor:pointer; color:#dbe4f0; }
+.top-ico svg{ width:18px; height:18px; }
+.top-ico .dot{ position:absolute; top:-1px; right:-2px; width:7px; height:7px; background:#f5222d; border-radius:50%; border:1px solid #152238; }
+.top-avatar{ width:28px; height:28px; border-radius:50%; background:#337aff; display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; }
+.body-wrap{ flex:1; display:flex; min-height:0; }
+
+/* 侧边栏 */
+.sidebar{ width:210px; background:var(--navy); color:#c8d4e4; display:flex; flex-direction:column; flex-shrink:0; position:relative; transition:width .2s; overflow:hidden; }
+.sidebar.collapsed{ width:50px; }
+.side-collapse{ position:absolute; top:0; right:0; width:24px; height:100%; cursor:pointer; z-index:5; display:flex; align-items:center; }
+.side-collapse svg{ width:14px; height:14px; color:#7d8ba0; }
+.menu-tree{ flex:1; overflow-y:auto; overflow-x:hidden; padding-top:8px; }
+.menu-tree::-webkit-scrollbar{ width:0; }
+.menu-group{ }
+.menu-parent{ height:40px; display:flex; align-items:center; gap:10px; padding:0 14px 0 18px; cursor:pointer; font-size:13px; color:#cbd6e4; user-select:none; white-space:nowrap; border-left:3px solid transparent; }
+.menu-parent:hover{ background:var(--navy2); }
+.menu-parent .mi{ width:16px; height:16px; flex-shrink:0; opacity:.9; }
+.menu-parent .mtxt{ flex:1; }
+.menu-parent .arrow{ width:9px; height:9px; transition:transform .2s; opacity:.6; }
+.menu-parent.open .arrow{ transform:rotate(90deg); }
+.menu-parent.active{ background:#182234; border-left-color:var(--primary); color:#fff; }
+.menu-children{ overflow:hidden; background:#182234; }
+.menu-child{ height:36px; display:flex; align-items:center; padding:0 12px 0 44px; cursor:pointer; font-size:12.5px; color:#9fb0c6; white-space:nowrap; border-left:3px solid transparent; }
+.menu-child:hover{ background:var(--navy2); color:#fff; }
+.menu-child.active{ background:var(--primary); color:#fff; }
+.menu-child .cdot{ width:5px; height:5px; border-radius:50%; background:#6b7d96; margin-right:9px; flex-shrink:0; }
+.menu-child.active .cdot{ background:#fff; }
+.sidebar.collapsed .menu-parent{ padding-left:16px; }
+.sidebar.collapsed .menu-parent .mtxt,.sidebar.collapsed .menu-parent .arrow,.sidebar.collapsed .menu-children,.sidebar.collapsed .side-foot{ display:none; }
+.side-foot{ text-align:center; font-size:11px; color:#5c6b80; padding:10px 0; }
+
+/* 主内容 */
+.main{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.tabs-bar{ height:36px; background:#fff; display:flex; align-items:stretch; border-bottom:1px solid #e0e4ea; flex-shrink:0; overflow-x:auto; overflow-y:hidden; }
+.tabs-bar::-webkit-scrollbar{ height:0; }
+.tab{ display:flex; align-items:center; gap:6px; padding:0 12px 0 14px; font-size:12.5px; color:#606266; cursor:pointer; border-right:1px solid #eee; white-space:nowrap; position:relative; }
+.tab:hover{ background:#f7f9fc; }
+.tab.active{ color:var(--primary); background:#fff; }
+.tab.active::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--primary); }
+.tab .tclose{ font-size:15px; color:#aab; line-height:1; margin-left:4px; }
+.tab .tclose:hover{ color:#f5222d; }
+.content{ flex:1; overflow:auto; padding:14px; background:var(--bg); }
+
+/* ============ 通用组件 ============ */
+.card{ background:var(--card); border-radius:var(--radius); box-shadow:0 1px 3px rgba(0,0,0,.06); margin-bottom:14px; }
+.card-head{ padding:12px 16px; border-bottom:1px solid var(--line2); display:flex; align-items:center; justify-content:space-between; }
+.card-head h3{ font-size:14px; font-weight:600; display:flex; align-items:center; gap:7px; }
+.card-head h3::before{ content:""; width:3px; height:14px; background:var(--primary); border-radius:2px; }
+.card-body{ padding:14px 16px; }
+.panel-title{ font-size:14px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
+.panel-title::before{ content:""; width:3px; height:14px; background:var(--primary); border-radius:2px; }
+
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:5px; height:30px; padding:0 13px; border:1px solid #dcdfe6; background:#fff; color:#606266; border-radius:3px; font-size:12.5px; transition:.15s; white-space:nowrap; }
+.btn:hover{ border-color:var(--primary); color:var(--primary); }
+.btn-primary{ background:var(--primary); border-color:var(--primary); color:#fff; }
+.btn-primary:hover{ background:#0f7ff0; border-color:#0f7ff0; color:#fff; }
+.btn-danger{ color:#f5222d; border-color:#ffccc7; }
+.btn-danger:hover{ background:#fff2f0; border-color:#f5222d; color:#f5222d; }
+.btn-sm{ height:26px; padding:0 10px; font-size:12px; }
+.btn-text{ border:none; background:transparent; color:var(--primary); padding:0 5px; height:auto; }
+.btn-text:hover{ color:#0f7ff0; }
+.btn-text.red{ color:#f5222d; }
+
+/* 搜索表单 */
+.search-form{ padding:14px 16px 4px; }
+.search-row{ display:flex; flex-wrap:wrap; gap:12px 24px; align-items:flex-end; }
+.form-item{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.form-item > label{ font-size:12.5px; color:#606266; white-space:nowrap; }
+.form-item .control,.form-item input,.form-item select{ height:30px; border:1px solid #dcdfe6; border-radius:3px; padding:0 9px; font-size:12.5px; color:var(--text); background:#fff; min-width:160px; }
+.form-item input:focus,.form-item select:focus{ border-color:var(--primary); }
+.form-item input::placeholder{ color:#c0c4cc; }
+.input-group{ display:flex; align-items:center; }
+.input-group select{ height:30px; border:1px solid #dcdfe6; border-right:none; border-radius:3px 0 0 3px; padding:0 6px; font-size:12.5px; color:#606266; background:#f7f8fa; }
+.input-group input{ border-radius:0 3px 3px 0; }
+.search-actions{ display:flex; gap:8px; justify-content:flex-end; padding:0 16px 14px; }
+.search-actions .btn{ min-width:70px; }
+
+/* 工具条 */
+.toolbar{ display:flex; align-items:center; gap:8px; padding:10px 16px; border-bottom:1px solid var(--line2); flex-wrap:wrap; }
+.toolbar .spacer{ flex:1; }
+.toolbar .search-mini{ display:flex; align-items:center; border:1px solid #dcdfe6; border-radius:3px; height:30px; overflow:hidden; }
+.toolbar .search-mini input{ border:none; height:28px; padding:0 9px; width:160px; font-size:12.5px; }
+.toolbar .search-mini button{ border:none; background:var(--primary); color:#fff; height:30px; padding:0 12px; }
+
+/* 表格 */
+.table-wrap{ overflow:auto; }
+table.grid{ width:100%; border-collapse:collapse; font-size:12.5px; }
+table.grid th{ background:#fafafa; color:#5a6572; font-weight:600; text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
+table.grid th.sortable::after{ content:"⇅"; margin-left:5px; color:#c0c4cc; font-size:11px; }
+table.grid td{ padding:8px 10px; border-bottom:1px solid #f0f0f0; color:#515a6e; white-space:nowrap; }
+table.grid tr:hover td{ background:#f5faff; }
+table.grid tr.selected td{ background:#e6f4ff; }
+table.grid .cbx{ width:14px; height:14px; accent-color:var(--primary); cursor:pointer; }
+.link{ color:var(--primary); cursor:pointer; }
+.link:hover{ text-decoration:underline; }
+.link.red{ color:#f5222d; }
+.tag{ display:inline-block; padding:1px 8px; border-radius:3px; font-size:12px; line-height:19px; }
+.tag-orange{ background:#fff3e0; color:#fa8c16; border:1px solid #ffd8a8; }
+.tag-green{ background:#f0fdf4; color:#389e0d; border:1px solid #b7eb8f; }
+.tag-blue{ background:#e6f4ff; color:#1890ff; border:1px solid #91caff; }
+.tag-red{ background:#fff1f0; color:#f5222d; border:1px solid #ffa39e; }
+.tag-gray{ background:#f5f5f5; color:#8c8c8c; border:1px solid #d9d9d9; }
+.pagination{ display:flex; align-items:center; justify-content:flex-end; gap:6px; padding:12px 16px; font-size:12.5px; color:#606266; }
+.pg-btn{ min-width:28px; height:28px; border:1px solid #dcdfe6; background:#fff; border-radius:3px; color:#606266; display:inline-flex; align-items:center; justify-content:center; padding:0 7px; }
+.pg-btn:hover{ border-color:var(--primary); color:var(--primary); }
+.pg-btn.active{ background:var(--primary); border-color:var(--primary); color:#fff; }
+.pg-btn.disabled{ opacity:.5; cursor:not-allowed; }
+.pg-total{ margin-right:auto; color:#909399; }
+
+/* 统计卡片 */
+.stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:14px; }
+.stat-card{ background:#fff; border-radius:var(--radius); padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,.06); display:flex; align-items:center; gap:14px; }
+.stat-card .sicon{ width:46px; height:46px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0; }
+.stat-card .sicon svg{ width:24px; height:24px; }
+.stat-card .sinfo{ min-width:0; }
+.stat-card .snum{ font-size:24px; font-weight:700; line-height:1.1; color:#1f2d3d; }
+.stat-card .slabel{ font-size:12px; color:#909399; margin-top:5px; }
+.stat-card .strend{ font-size:11px; margin-top:3px; }
+.up{ color:#f5222d; } .down{ color:#52c41a; }
+
+/* 图表 */
+.chart-row{ display:flex; gap:14px; margin-bottom:14px; }
+.chart-box{ background:#fff; border-radius:var(--radius); box-shadow:0 1px 3px rgba(0,0,0,.06); padding:14px 16px; }
+.chart-box h4{ font-size:13px; font-weight:600; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+.chart-box h4::before{ content:""; width:3px; height:13px; background:var(--primary); border-radius:2px; }
+.chart-sub{ font-size:11px; color:#909399; margin-bottom:8px; }
+.chart-svg{ width:100%; display:block; }
+.legend{ display:flex; flex-wrap:wrap; gap:10px 18px; font-size:12px; color:#606266; margin-top:8px; }
+.legend .li{ display:flex; align-items:center; gap:6px; }
+.legend .lc{ width:10px; height:10px; border-radius:2px; }
+
+/* 两栏布局 */
+.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.col-38{ display:grid; grid-template-columns:38% 1fr; gap:14px; }
+.col-62{ display:grid; grid-template-columns:1fr 62%; gap:14px; }
+
+/* 抽屉 / 弹窗 */
+.drawer-mask,.modal-mask{ position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:100; }
+.drawer{ position:fixed; right:0; top:0; bottom:0; width:380px; background:#fff; z-index:101; display:flex; flex-direction:column; box-shadow:-2px 0 12px rgba(0,0,0,.15); }
+.drawer-head{ height:42px; background:#1f2d3d; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 14px; font-size:14px; }
+.drawer-head span{ cursor:pointer; font-size:20px; line-height:1; }
+.drawer-tabs{ display:flex; border-bottom:1px solid var(--line); padding:0 14px; gap:20px; height:38px; align-items:center; }
+.drawer-tabs span{ font-size:12.5px; color:#606266; cursor:pointer; height:38px; display:flex; align-items:center; border-bottom:2px solid transparent; }
+.drawer-tabs span.active{ color:var(--primary); border-bottom-color:var(--primary); }
+.drawer-body{ flex:1; overflow:auto; padding:12px 14px; }
+.msg-item{ border-bottom:1px solid var(--line2); padding:10px 0; }
+.msg-item .mt{ font-size:13px; font-weight:600; color:#303133; margin-bottom:4px; }
+.msg-item .md{ font-size:12px; color:#909399; line-height:1.6; }
+.msg-item .md a{ color:var(--primary); }
+.msg-item .mtime{ font-size:11px; color:#c0c4cc; text-align:right; margin-top:4px; }
+.drawer-foot{ height:44px; border-top:1px solid var(--line); display:flex; align-items:center; justify-content:center; gap:30px; color:var(--primary); font-size:12.5px; cursor:pointer; }
+.modal-mask{ display:flex; align-items:center; justify-content:center; z-index:200; }
+.modal{ width:560px; max-width:92vw; max-height:86vh; background:#fff; border-radius:5px; display:flex; flex-direction:column; box-shadow:0 8px 30px rgba(0,0,0,.2); }
+.modal.wide{ width:820px; }
+.modal-head{ height:44px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 16px; font-size:14px; }
+.modal-head span{ font-size:20px; cursor:pointer; color:#909399; }
+.modal-body{ padding:18px 20px; overflow:auto; }
+.modal-foot{ padding:12px 20px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:8px; }
+.mform-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; }
+.mform-item{ display:flex; flex-direction:column; gap:5px; }
+.mform-item label{ font-size:12.5px; color:#606266; }
+.mform-item label .req{ color:#f5222d; }
+.mform-item input,.mform-item select,.mform-item textarea{ height:32px; border:1px solid #dcdfe6; border-radius:3px; padding:0 9px; font-size:13px; color:var(--text); }
+.mform-item textarea{ height:70px; padding:8px 9px; resize:vertical; }
+.mform-item input:focus,.mform-item select:focus,.mform-item textarea:focus{ border-color:var(--primary); }
+.mform-full{ grid-column:1/-1; }
+
+.toast{ position:fixed; top:60px; left:50%; transform:translateX(-50%); background:#fff; border:1px solid #e0e4ea; box-shadow:0 4px 16px rgba(0,0,0,.12); padding:11px 20px; border-radius:4px; font-size:13px; z-index:500; display:flex; align-items:center; gap:8px; }
+.toast::before{ content:"✓"; color:var(--green); font-weight:700; }
+.toast.err::before{ content:"!"; color:var(--red); }
+
+/* 详情页 */
+.detail-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 24px; }
+.detail-item{ display:flex; padding:9px 0; border-bottom:1px dashed var(--line); font-size:13px; }
+.detail-item .dk{ width:110px; color:#909399; flex-shrink:0; }
+.detail-item .dv{ color:#303133; }
+
+/* 进度条 */
+.progress{ width:100%; height:8px; background:#f0f0f0; border-radius:4px; overflow:hidden; }
+.progress > i{ display:block; height:100%; background:var(--primary); border-radius:4px; }
+
+@media (max-width:1100px){
+  .stat-grid{ grid-template-columns:repeat(2,1fr); }
+  .col-38,.col-62,.two-col{ grid-template-columns:1fr; }
+}
+
+/* ============ 新增：真实系统搜索/表格布局 ============ */
+/* 搜索区栅格 */
+.search-form2{ padding:14px 16px 6px; }
+.sf-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 22px; }
+.sf-item{ display:flex; align-items:center; gap:8px; min-width:0; }
+.sf-item > label{ font-size:12.5px; color:#606266; width:82px; text-align:right; flex-shrink:0; white-space:nowrap; }
+.sf-item > select{ flex:1; min-width:0; height:30px; border:1px solid #dcdfe6; border-radius:3px; padding:0 8px; font-size:12.5px; color:#606266; background:#fff; }
+.sf-ctrl{ display:flex; flex:1; min-width:0; height:30px; }
+.sf-ctrl .op-sel{ height:30px; width:78px; flex-shrink:0; border:1px solid #dcdfe6; border-right:none; border-radius:3px 0 0 3px; padding:0 4px; font-size:12px; color:#606266; background:#f7f8fa; }
+.sf-ctrl input{ flex:1; min-width:0; height:30px; border:1px solid #dcdfe6; border-radius:0 3px 3px 0; padding:0 8px; font-size:12.5px; color:#303133; }
+.sf-ctrl input:focus,.sf-item > select:focus{ border-color:#1890ff; }
+/* 日期快捷：内容较宽（5个快捷按钮+起止日期），独占整行避免与相邻字段重叠 */
+.sf-date{ display:flex; align-items:center; gap:8px; grid-column:1 / -1; min-width:0; flex-wrap:wrap; }
+.sf-date > label{ font-size:12.5px; color:#606266; width:82px; text-align:right; flex-shrink:0; white-space:nowrap; }
+.date-quick{ display:flex; flex-shrink:0; }
+.date-quick span{ font-size:12px; color:#606266; padding:0 7px; height:30px; line-height:30px; cursor:pointer; border:1px solid #dcdfe6; border-right:none; }
+.date-quick span:first-child{ border-radius:3px 0 0 3px; }
+.date-quick span:last-child{ border-right:1px solid #dcdfe6; border-radius:0 3px 3px 0; }
+.date-quick span.sel{ background:#e6f4ff; color:#1890ff; border-color:#1890ff; }
+.date-range{ display:flex; align-items:center; gap:4px; min-width:0; }
+.date-range input{ width:104px; height:30px; border:1px solid #dcdfe6; border-radius:3px; padding:0 6px; font-size:12px; }
+.date-range span{ color:#c0c4cc; }
+/* radio 选项 */
+.sf-radio{ grid-column:span 1; }
+.radio-opts{ display:flex; flex-wrap:wrap; gap:0; flex:1; }
+.radio-opts span{ font-size:12px; color:#606266; padding:0 9px; height:30px; line-height:30px; cursor:pointer; border:1px solid #dcdfe6; border-right:none; }
+.radio-opts span:first-child{ border-radius:3px 0 0 3px; }
+.radio-opts span:last-child{ border-right:1px solid #dcdfe6; border-radius:0 3px 3px 0; }
+.radio-opts span.sel{ background:#e6f4ff; color:#1890ff; border-color:#1890ff; }
+.sf-actions{ display:flex; justify-content:flex-end; gap:8px; padding:10px 0 4px; }
+.sf-actions .btn{ min-width:60px; }
+.sf-actions .sf-icon{ min-width:30px; padding:0 8px; color:#909399; }
+/* 工具条 */
+.toolbar2{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 16px; border-bottom:1px solid var(--line2); flex-wrap:wrap; }
+.tb-left{ display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+.toolbar2 .btn{ height:28px; font-size:12px; padding:0 10px; }
+/* 统计条 */
+.stat-strip{ display:flex; gap:0; border-bottom:1px solid var(--line2); background:#fafcff; }
+.ss-item{ flex:1; display:flex; flex-direction:column; align-items:center; padding:9px 6px; border-right:1px solid #eef1f5; }
+.ss-item:last-child{ border-right:none; }
+.ss-item span{ font-size:11.5px; color:#909399; }
+.ss-item b{ font-size:17px; color:#1f2d3d; margin-top:2px; }
+/* 子标签页 */
+.subtabs{ display:flex; gap:0; border-bottom:1px solid var(--line); padding:0 16px; background:#fff; }
+.subtabs span{ font-size:12.5px; color:#606266; padding:9px 16px; cursor:pointer; border-bottom:2px solid transparent; }
+.subtabs span.active{ color:#1890ff; border-bottom-color:#1890ff; }
+.subtabs + .table-wrap table.grid th{ background:#f7f9fc; }
+@media(max-width:1200px){
+  .sf-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+/* ============ 真实系统表单：分组Tab + 类型化控件 ============ */
+.modal.xwide{ width:900px; }
+.real-form .form-tabs{ display:flex; gap:0; border-bottom:1px solid var(--line); margin:-18px -20px 16px; padding:0 20px; }
+.real-form .form-tabs span{ font-size:13px; color:#606266; padding:11px 18px; cursor:pointer; border-bottom:2px solid transparent; }
+.real-form .form-tabs span.active{ color:var(--primary); border-bottom-color:var(--primary); font-weight:600; }
+.fform-grid{ display:grid; grid-template-columns:1fr 1fr; gap:15px 22px; }
+.fform-item{ display:flex; align-items:flex-start; gap:10px; min-width:0; }
+.fform-item > label{ width:96px; text-align:right; flex-shrink:0; font-size:12.5px; color:#606266; line-height:32px; white-space:nowrap; }
+.fform-item > label .req{ color:#f5222d; font-style:normal; margin-right:3px; }
+.fform-ctrl{ flex:1; min-width:0; }
+.fform-ctrl input,.fform-ctrl select,.fform-ctrl textarea{ width:100%; height:32px; border:1px solid #dcdfe6; border-radius:3px; padding:0 9px; font-size:12.5px; color:#303133; background:#fff; }
+.fform-ctrl select{ appearance:none; background:#fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a0a8b5' fill='none'/%3E%3C/svg%3E") no-repeat right 9px center; padding-right:24px; }
+.fform-ctrl textarea{ height:64px; padding:7px 9px; resize:vertical; }
+.fform-ctrl input:focus,.fform-ctrl select:focus,.fform-ctrl textarea:focus{ border-color:var(--primary); outline:none; }
+.fform-ctrl input[readonly],.fform-ctrl textarea[readonly],.fform-ctrl select:disabled{ background:#f7f8fa; color:#606266; cursor:default; }
+.fform-ctrl input.fdate::after{ content:''; }
+.fform-full{ grid-column:1 / -1; }
+.fform-full .fform-ctrl textarea{ height:72px; }
+/* 图片上传 */
+.f-upload{ display:flex; gap:14px; align-items:flex-start; }
+.f-up-btn{ width:84px; height:84px; border:1px dashed #c8cdd6; border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#8a94a3; cursor:pointer; background:#fafcff; font-size:24px; flex-shrink:0; }
+.f-up-btn:hover{ border-color:var(--primary); color:var(--primary); }
+.f-up-btn span{ font-size:11px; margin-top:2px; }
+.f-up-hint{ font-size:11.5px; color:#909399; line-height:1.9; padding-top:6px; }
+/* 从属子表 */
+.fsubtable{ margin-top:18px; border-top:1px solid var(--line2); padding-top:14px; }
+.fsub-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; }
+.fsub-head b{ font-size:13px; color:#303133; }
+.fsub-head span{ display:flex; gap:7px; }
+.fsubtable .grid th{ background:#f7f9fc; }
+.fsub-empty{ text-align:center; padding:22px; color:#b5bdc9; }
+
+</style>
+</head>
+<body>
+
+<!-- ============ 登录页 ============ -->
+<div id="loginPage" class="login-page">
+  <div class="login-bg">
+    <svg class="login-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0a3fb0"/><stop offset="55%" stop-color="#0d5fe0"/><stop offset="100%" stop-color="#062c86"/>
+        </linearGradient>
+        <linearGradient id="city" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4db8ff" stop-opacity="0.0"/><stop offset="100%" stop-color="#4db8ff" stop-opacity="0.28"/>
+        </linearGradient>
+      </defs>
+      <rect width="1600" height="900" fill="url(#lg)"/>
+      <g stroke="#6fc0ff" stroke-opacity="0.18" fill="none" stroke-width="1">
+        <path d="M0 120 L220 40 L460 170 L700 60 L980 190 L1240 70 L1600 200"/>
+        <path d="M0 260 L260 160 L520 300 L820 150 L1100 290 L1380 160 L1600 260"/>
+        <path d="M120 0 L60 240 M400 0 L340 220 M700 0 L660 200 M980 0 L940 220 M1280 0 L1220 240"/>
+      </g>
+      <g fill="#8ad4ff" fill-opacity="0.35">
+        <circle cx="220" cy="40" r="4"/><circle cx="460" cy="170" r="4"/><circle cx="700" cy="60" r="4"/><circle cx="980" cy="190" r="4"/><circle cx="1240" cy="70" r="4"/>
+        <circle cx="260" cy="160" r="3"/><circle cx="520" cy="300" r="3"/><circle cx="820" cy="150" r="3"/><circle cx="1100" cy="290" r="3"/><circle cx="1380" cy="160" r="3"/>
+      </g>
+      <!-- skyline -->
+      <g fill="url(#city)" stroke="#5fc0ff" stroke-opacity="0.5" stroke-width="1">
+        <rect x="40" y="600" width="46" height="300"/><rect x="96" y="560" width="34" height="340"/>
+        <rect x="140" y="640" width="60" height="260"/><rect x="212" y="520" width="40" height="380"/>
+        <rect x="262" y="580" width="54" height="320"/><rect x="330" y="660" width="38" height="240"/>
+        <rect x="380" y="540" width="48" height="360"/><rect x="440" y="620" width="66" height="280"/>
+        <rect x="520" y="500" width="42" height="400"/><rect x="574" y="580" width="56" height="320"/>
+        <rect x="644" y="640" width="40" height="260"/><rect x="696" y="560" width="52" height="340"/>
+        <rect x="760" y="620" width="60" height="280"/><rect x="832" y="480" width="46" height="420"/>
+        <rect x="890" y="600" width="58" height="300"/><rect x="960" y="540" width="42" height="360"/>
+        <rect x="1014" y="640" width="64" height="260"/><rect x="1090" y="560" width="44" height="340"/>
+        <rect x="1146" y="610" width="54" height="290"/><rect x="1212" y="500" width="48" height="400"/>
+        <rect x="1272" y="580" width="60" height="320"/><rect x="1344" y="650" width="42" height="250"/>
+        <rect x="1398" y="560" width="54" height="340"/><rect x="1464" y="620" width="66" height="280"/>
+        <rect x="1542" y="540" width="46" height="360"/>
+      </g>
+      <!-- grid floor -->
+      <g stroke="#5fc0ff" stroke-opacity="0.22" stroke-width="1">
+        <path d="M0 760 L1600 760 M0 800 L1600 800 M0 850 L1600 850 M0 900 L1600 900"/>
+        <path d="M800 740 L-200 900 M800 740 L100 900 M800 740 L400 900 M800 740 L650 900 M800 740 L950 900 M800 740 L1200 900 M800 740 L1500 900 M800 740 L1800 900"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="login-top">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34"><g fill="#fff"><path d="M6 6h9v9H6zM19 6h9v9h-9zM6 19h9v9H6zM19 19h9v9h-9z" opacity=".92"/></g></svg>
+      <div class="brand-txt"><b>昇兴股份</b><span>SUNRISE GROUP</span></div>
+    </div>
+    <div class="slogan">诚信　品质　创新　共赢</div>
+  </div>
+
+  <div class="login-center">
+    <div class="login-title">
+      <span class="login-logo">昇</span>
+      <span>昇兴三片罐MOM系统</span>
+    </div>
+    <div class="login-card">
+      <div class="field">
+        <span class="fi">
+          <svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z"/></svg>
+        </span>
+        <input id="loginUser" type="text" placeholder="用户名" value="320125" autocomplete="off" />
+      </div>
+      <div class="field">
+        <span class="fi">
+          <svg viewBox="0 0 24 24"><path d="M17 9V7a5 5 0 0 0-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 0 1 6 0v2H9V7zm4 8a2 2 0 1 1-2-2 2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <input id="loginPwd" type="password" placeholder="密码" value="a123456" autocomplete="off" />
+      </div>
+      <div class="field">
+        <span class="fi">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        </span>
+        <select id="loginOrg">
+          <option>--请选择--</option>
+          <option selected>昇兴集团-中山制罐工厂</option>
+          <option>昇兴集团-成都制罐工厂</option>
+        </select>
+      </div>
+      <button id="loginBtn" class="login-btn">登 录</button>
+      <div class="login-lang">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-3.1a15 15 0 0 0-1.3-3.3A8 8 0 0 1 18.9 8zM12 4c.8 1.1 1.5 2.5 1.9 4h-3.8c.4-1.5 1.1-2.9 1.9-4zM5.1 14a8 8 0 0 1 0-4h3.6a19 19 0 0 0 0 4H5.1zm.9 2h3.1c.3 1.2.7 2.3 1.3 3.3A8 8 0 0 1 6 16zm3.1-8H6a8 8 0 0 1 4.4-3.3C9.8 5.7 9.4 6.8 9.1 8zM12 20c-.8-1.1-1.5-2.5-1.9-4h3.8c-.4 1.5-1.1 2.9-1.9 4zm2.2-6H9.8a17 17 0 0 1 0-4h4.4a17 17 0 0 1 0 4zm.7 5.3c.6-1 1-2.1 1.3-3.3h3.1a8 8 0 0 1-4.4 3.3zm1.6-5.3a19 19 0 0 0 0-4h3.6a8 8 0 0 1 0 4h-3.6z"/></svg>
+        中文
+      </div>
+    </div>
+  </div>
+  <div class="login-foot">昇兴股份</div>
+</div>
+
+<!-- ============ 主应用 ============ -->
+<div id="app" class="app hidden">
+
+  <!-- 顶部栏 -->
+  <header class="topbar">
+    <div class="top-left">
+      <span class="top-brand">
+        <svg width="20" height="20" viewBox="0 0 34 34"><g fill="#fff"><path d="M6 6h9v9H6zM19 6h9v9h-9zM6 19h9v9H6zM19 19h9v9h-9z"/></g></svg>
+        <b>昇兴股份</b>
+      </span>
+      <span class="top-org" id="topOrg">【昇兴集团-中山制罐工厂】</span>
+    </div>
+    <div class="top-title">设备管理系统</div>
+    <div class="top-right">
+      <span class="hello">你好，李元龙</span>
+      <span class="top-ico" title="消息" onclick="App.openMessages()">
+        <svg viewBox="0 0 24 24"><path d="M12 22a2.2 2.2 0 0 0 2.2-2.2H9.8A2.2 2.2 0 0 0 12 22zm7-6v-5.5a7 7 0 0 0-5.5-6.8V3a1.5 1.5 0 0 0-3 0v.7A7 7 0 0 0 5 10.5V16l-2 2v1h18v-1l-2-2z"/></svg>
+        <i class="dot"></i>
+      </span>
+      <span class="top-ico" title="全屏" onclick="App.toggleFullscreen()"><svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4V4zm10 0h6v6h-2V6h-4V4zM4 14h2v4h4v2H4v-6zm14 0h2v6h-6v-2h4v-4z"/></svg></span>
+      <span class="top-avatar" onclick="App.userMenu(event)">李</span>
+    </div>
+  </header>
+
+  <div class="body-wrap">
+    <!-- 左侧菜单 -->
+    <aside class="sidebar" id="sidebar">
+      <div class="side-collapse" onclick="App.toggleSidebar()" title="收起/展开">
+        <svg viewBox="0 0 24 24"><path d="M6 6h12v2H6V6zm0 5h12v2H6v-2zm0 5h12v2H6v-2z"/></svg>
+      </div>
+      <nav id="menuTree" class="menu-tree"></nav>
+      <div class="side-foot">v2.6.8</div>
+    </aside>
+
+    <!-- 内容区 -->
+    <main class="main">
+      <div class="tabs-bar" id="tabsBar">
+        <div class="tab active" data-page="home" onclick="App.switchTab('home')">
+          <span>首页</span>
+        </div>
+      </div>
+      <div class="content" id="content"></div>
+    </main>
+  </div>
+</div>
+
+<!-- 消息抽屉 -->
+<div class="drawer-mask hidden" id="msgMask" onclick="App.closeMessages()"></div>
+<div class="drawer hidden" id="msgDrawer">
+  <div class="drawer-head"><b>消息列表</b><span onclick="App.closeMessages()">×</span></div>
+  <div class="drawer-tabs"><span class="active">基础信息</span><span>预警信息</span></div>
+  <div class="drawer-body" id="msgBody"></div>
+  <div class="drawer-foot"><span onclick="App.readAll()">全部已读</span></div>
+</div>
+
+<!-- 通用弹窗 -->
+<div class="modal-mask hidden" id="modalMask">
+  <div class="modal" id="modal">
+    <div class="modal-head"><b id="modalTitle">标题</b><span onclick="App.closeModal()">×</span></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<!-- 提示 -->
+<div id="toast" class="toast hidden"></div>
+
+<script>
+/* ============================================================
+ *  设备管理系统 · 交互原型
+ *  参考昇兴三片罐MOM系统 (10.13.113.33:8080) 设计语言实现
+ * ============================================================ */
+
+/* ---------- 图标库 ---------- */
+const ICONS = {
+  config:'<svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm7.4-3.5c0-.5-.05-1-.13-1.47l2.03-1.58-2-3.46-2.39.96a7.6 7.6 0 0 0-2.55-1.48L14.1 2h-4l-.36 2.57a7.6 7.6 0 0 0-2.55 1.48l-2.39-.96-2 3.46 2.03 1.58a8 8 0 0 0 0 2.94l-2.03 1.58 2 3.46 2.39-.96c.78.65 1.64 1.14 2.55 1.48L10.1 22h4l.36-2.57a7.6 7.6 0 0 0 2.55-1.48l2.39.96 2-3.46-2.03-1.58c.08-.47.13-.97.13-1.47z"/></svg>',
+  asset:'<svg viewBox="0 0 24 24"><path d="M12 3 2 8v2h20V8L12 3zm0 2.5L17.9 8H6.1L12 5.5zM4 11v8h3v-8H4zm6.5 0v8h3v-8h-3zM16 11v2.5l4-2V11h-4zm0 4v5h4v-5h-4z"/></svg>',
+  maintain:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-2h2v2zm1.8-7.3-.9.9A4 4 0 0 0 10 14h-.1l-.9.9-1.4-1.4.9-.9a6 6 0 0 1 3.8-3.8l.9-.9 1.5 1.4z"/></svg>',
+  spare:'<svg viewBox="0 0 24 24"><path d="M20 6h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM10 4h4v2h-4V4zm10 15H4V8h16v11zM9 12h6v2H9v-2z"/></svg>',
+  tool:'<svg viewBox="0 0 24 24"><path d="M22 5.7 18.3 2 12 8.3 5.7 2 2 5.7 8.3 12 2 18.3 5.7 22 12 15.7 18.3 22 22 18.3 15.7 12 22 5.7zM12 13.4l-1.4-1.4L6.4 8 8.2 6.2l4 4L14.8 12l-2.8 1.4z"/></svg>',
+  data:'<svg viewBox="0 0 24 24"><path d="M4 20h16v-2H4v2zM6 16h3V8H6v8zm5 0h3V4h-3v12zm5 0h3v-6h-3v6z"/></svg>',
+  chevron:'<svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>'
+};
+
+/* ---------- 菜单结构（按需求精简） ---------- */
+const MENU = [
+  { id:'config', name:'配置中心', icon:'config', children:[
+    { id:'team', name:'班组管理' },{ id:'bom', name:'设备BOM' },
+    { id:'faultList', name:'故障明细表' },{ id:'eqTypePart', name:'设备类型部位' }
+  ]},
+  { id:'asset', name:'资产管理', icon:'asset', children:[
+    { id:'ledger', name:'设备台账' }
+  ]},
+  { id:'maint', name:'维保管理', icon:'maintain', children:[
+    { id:'maintainPlan', name:'保养计划' },{ id:'checkPlan', name:'检验计划' },
+    { id:'maintain', name:'设备保养' },{ id:'inspect', name:'设备点检/巡检' },
+    { id:'repair', name:'设备维修' },{ id:'kbList', name:'维修知识库' }
+  ]},
+  { id:'spare', name:'备件管理', icon:'spare', children:[
+    { id:'sparePurchase', name:'备件采购' },{ id:'spareIn', name:'备件入库' },{ id:'spareStock', name:'备件库存' },
+    { id:'spareCheck', name:'备件盘点' },{ id:'spareUse', name:'备件领用' },{ id:'keyComp', name:'关键组件' }
+  ]},
+  { id:'tool', name:'工装管理', icon:'tool', children:[
+    { id:'toolArchive', name:'工装建档' },{ id:'toolLedger', name:'工装台账' },
+    { id:'toolScrap', name:'工装报废' },{ id:'toolHistory', name:'工装履历' }
+  ]},
+  { id:'analysis', name:'数据分析', icon:'data', children:[
+    { id:'board', name:'设备管理看板' },{ id:'mttr', name:'MTTR' },
+    { id:'mtbf', name:'MTBF' },{ id:'energy', name:'能耗明细表' }
+  ]}
+];
+
+/* ---------- 名称映射 ---------- */
+const NAME_MAP = {};
+MENU.forEach(g=>g.children.forEach(c=>NAME_MAP[c.id]=c.name));
+/* ============================================================
+ *  数据层 —— 依据原系统真实采集结果构建
+ * ============================================================ */
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rnd(0,a.length-1)];
+const pad=(n,l=6)=>String(n).padStart(l,'0');
+const d8=()=>`${rnd(2025,2026)}-${pad(rnd(1,12),2)}-${pad(rnd(1,28),2)}`;
+const dts=()=>`${d8()} ${pad(rnd(8,20),2)}:${pad(rnd(0,59),2)}:${pad(rnd(0,59),2)}`;
+
+const ORG='昇兴集团-中山制罐工厂';
+const EQNUM=['1020000149-3','1020000149-2','1020000149-1','PGB-01','GCB-01','1020000019','1010000006','1020000048-2','1020000048-3','1020000048','1020000101','1020000119','1020000067','1020000024','1020000031','1020000071','1020000070'];
+const EQNAME=['DE线自动贴标机','B线自动贴标机','A线自动贴标机','品管部','工程部','1号吸干机','一期电房','2号空压机','3号空压机','1号空压机','D线高频电阻焊机','A线高频电阻焊机','A线翻边缩颈组合机','A线全自动送盖机一拖一','A线全喷烘干炉','A线内全喷涂机','E线高频电阻焊机'];
+const EQRows=[
+ ['1020000149-3','在用','A','DE线自动贴标机','P560-R3ZU-400R','贴标机','昇兴机械'],
+ ['1020000149-2','在用','A','B线自动贴标机','P560-R3ZU-400R','贴标机','昇兴机械'],
+ ['1020000149-1','在用','A','A线自动贴标机','P560-R3ZU-400R','贴标机','昇兴机械'],
+ ['PGB-01','在用','A','品管部','品管部','安灯设备','昇兴'],
+ ['GCB-01','在用','A','工程部','工程部','安灯设备','昇兴'],
+ ['1020000019','在用','A','1号吸干机','干燥机285','干燥机','不详'],
+ ['1010000006','在用','A','一期电房','2000KVA','电房','中山顺行机电'],
+ ['1020000048-2','在用','A','2号空压机','ZT75-8 Classic','空压机','阿特拉斯'],
+ ['1020000048-3','在用','A','3号空压机','ZT90VSD-8.6 Classic','空压机','阿特拉斯'],
+ ['1020000048','在用','A','1号空压机','ZT75VSD-8.6 Classic','空压机','阿特拉斯'],
+ ['1020000101','在用','A','D线高频电阻焊机','其他','电阻焊机','昇兴机械'],
+ ['1020000119','在用','其他','E线高频电阻焊机','1080FB','电阻焊机','昇兴机械'],
+ ['1020000067','在用','A','A线高频电阻焊机','1080FB','电阻焊机','昇兴机械'],
+ ['1020000024','在用','A','A线翻边缩颈组合机','HY-S82HN','缩颈翻边组合机','昇兴机械'],
+ ['1020000031','在用','A','A线全自动送盖机一拖一','其他','自动加盖机','昇兴机械'],
+ ['1020000071','在用','A','A线全喷烘干炉','KG-800','烘房','昇兴机械'],
+ ['1020000070','在用','A','A线内全喷涂机','4B-12126','内全喷机','昇兴机械'],
+];
+const mkRows=(n,fn)=>Array.from({length:n},(_,i)=>fn(i));
+
+/* ---------- 各页面真实数据集 ---------- */
+/* ============================================================
+ *  表单定义（按真实系统结构）
+ *  字段格式：FD(label, key, type, opts)
+ *    type: text/select/date/number/textarea/upload
+ *  分组：groups:[{name, fields:[]}]
+ *  子表：subtable:{title, cols:[], rows:[]}
+ * ============================================================ */
+const FD=(label,key,type,opts,extra)=>({label,key,type:type||'text',opts:opts||[],...extra});
+
+const FORMS = {
+  /* ===== 配置中心 ===== */
+  team:{ title:'班组', groups:[
+    {name:'基础信息',fields:[
+      FD('班组编码','code','text',null,{required:true}),
+      FD('班组名称','name','text',null,{required:true}),
+      FD('所属部门','dept','select',['生产部','设备部','品管部','工程部','仓储部'],{required:true}),
+      FD('班组长','leader','select',['黄田兴','刘起飞','朱和全','邓先元','孙运妹']),
+      FD('班组人数','count','number'),
+      FD('班次','shift','select',['白班','夜班','长白班']),
+      FD('联系电话','phone','text'),
+      FD('状态','status','select',['启用','停用'])
+    ]}
+  ]},
+  bom:{ title:'设备BOM', groups:[
+    {name:'基础信息',fields:[
+      FD('组织机构','org','select',[ORG],{required:true}),
+      FD('设备编码','code','text',null,{required:true}),
+      FD('设备名称','name','text',null,{required:true}),
+      FD('设备型号','model','select',['4B-12126','HY-SPM-800','KG-800','1080FB','其他']),
+      FD('设备类型','type','select',['电阻焊机','提升机','自动加盖机','检漏机','缩颈翻边组合机']),
+      FD('设备类别','cat','select',['A','B','C']),
+      FD('安装地点','loc','text')
+    ]}
+  ],subtabs:['备件','工装'],subCols:[FD('料号','code'),FD('名称','name'),FD('规格','spec'),FD('数量','qty')],subRows:[]},
+  faultList:{ title:'标题', titlePrefix:'添加', groups:[
+    {name:'基础信息',fields:[
+      FD('故障编码','code','text',null,{required:true}),
+      FD('设备类型','type','select',['电阻焊机','提升机','自动加盖机','检漏机']),
+      FD('故障代码','fcode','text',null,{required:true}),
+      FD('故障现象','phenom','textarea'),
+      FD('故障原因','reason','textarea'),
+      FD('故障原因代码','rcode','text'),
+      FD('维修方式','fix','select',['自行维修','委外维修','更换备件']),
+      FD('故障部位','part','select',['输送一','整体','缩颈','上料系统'])
+    ]}
+  ]},
+  eqTypePart:{ title:'标题', titlePrefix:'新增', groups:[
+    {name:'基础信息',fields:[
+      FD('设备类型','type','select',['电阻焊机','提升机','自动加盖机','检漏机','缩颈翻边组合机'],{required:true})
+    ]}
+  ],subtable:{title:'设备部位',cols:[FD('部位编码','code'),FD('部位名称','name'),FD('备注','remark')],rows:[]}},
+
+  /* ===== 资产管理 ===== */
+  ledger:{ title:'设备台账', titlePrefix:'+新增', groups:[
+    {name:'基础信息',fields:[
+      FD('设备编码','code','text',null,{required:true}),
+      FD('设备状态','status','select',['在用','待启用','维修中','封存','报废'],{required:true}),
+      FD('设备名称','name','text',null,{required:true}),
+      FD('设备类型','type','select',['电阻焊机','提升机','自动加盖机','检漏机','缩颈翻边组合机'],{required:true}),
+      FD('设备型号','model','select',['4B-12126','HY-SPM-800','KG-800','1080FB','其他'],{required:true}),
+      FD('设备类别','cat','select',['A','B','C'],{required:true}),
+      FD('出厂编号','sn','text'),
+      FD('出厂年月','date','date'),
+      FD('总功率','power','number'),
+      FD('设备原值','value','number'),
+      FD('投产时间','prod','date'),
+      FD('存放位置','loc','select',['DE线','B线','A线','一期电房','品管部','工程部','制罐车间','印刷车间']),
+      FD('所属部门','dept','select',['0405_生产部','设备部','品管部','工程部','仓储部'],{required:true}),
+      FD('制造厂商','maker','text',null,{required:true}),
+      FD('供应商','supplier','text'),
+      FD('有效标识','valid','select',['有效','无效']),
+      FD('资产编号','asset','text',null,{required:true}),
+      FD('购买日期','buy','date',null,{required:true})
+    ]},
+    {name:'料站信息',fields:[
+      FD('设备图片','pic','upload',null,{hint:'图片大小限制：10MB　最大图片数：9　图片支持格式：.jpg,.png,.jpeg,.bmp,.gif,.tif',full:true}),
+      FD('备注','remark','textarea',null,{full:true})
+    ]}
+  ]},
+
+  /* ===== 维保管理 ===== */
+  maintainPlan:{ title:'保养计划', groups:[
+    {name:'基础信息',fields:[
+      FD('计划编号','no','text',null,{required:true}),
+      FD('设备名称','name','select',EQNAME,{required:true}),
+      FD('设备编码','code','text'),
+      FD('保养类型','type','select',['一级保养','二级保养','三级保养','日常点检'],{required:true}),
+      FD('保养周期','cycle','select',['周','月','两月','季度','半年','年']),
+      FD('计划日期','planDate','date',null,{required:true}),
+      FD('执行人','executor','select',['黄田兴','刘起飞','朱和全','邓先元','孙运妹']),
+      FD('所属部门','dept','select',['0405_生产部','设备部','品管部','工程部','仓储部']),
+      FD('保养内容','content','textarea',null,{full:true})
+    ]}
+  ]},
+  checkPlan:{ title:'检验计划', groups:[
+    {name:'基础信息',fields:[
+      FD('设备编码','code','text',null,{required:true}),
+      FD('设备名称','name','select',EQNAME,{required:true}),
+      FD('设备类别','cat','select',['A','B','C']),
+      FD('设备类型','type','select',['烘房','内全喷机','电阻焊机','提升机']),
+      FD('设备型号','model','text'),
+      FD('状态','status','select',['执行中','已停用']),
+      FD('检验项目','plan','textarea',null,{full:true}),
+      FD('项目类型','ptype','select',['清洁','点检','润滑','紧固']),
+      FD('检验周期','ctype','select',['周','两月','月','季度'])
+    ]}
+  ]},
+  maintain:{ title:'设备保养', groups:[
+    {name:'基础信息',fields:[
+      FD('保养工单号','no','text',null,{required:true}),
+      FD('单据状态','status','select',['待接单','执行中','已验证','已关结']),
+      FD('是否生成','produce','select',['是','否']),
+      FD('保养类型','cycle','select',['周保养','月度保养','年度保养','临时保养']),
+      FD('保养计划','plan','text'),
+      FD('设备编码','code','text',null,{required:true}),
+      FD('设备名称','name','select',EQNAME,{required:true}),
+      FD('设备型号','model','text')
+    ]}
+  ],subtabs:['执行记录','保养项目','更换备件'],subCols:[FD('项目','name'),FD('标准','std'),FD('结果','result')],subRows:[]},
+  inspect:{ title:'设备点检/巡检', groups:[
+    {name:'基础信息',fields:[
+      FD('点检单号','no','text',null,{required:true}),
+      FD('单据状态','status','select',['待接单','已完成','已关结']),
+      FD('是否生成','produce','select',['是','否']),
+      FD('点检类型','type','select',['点检','清洁','润滑']),
+      FD('点检计划','plan','text'),
+      FD('设备编码','code','text',null,{required:true}),
+      FD('设备名称','name','select',EQNAME,{required:true}),
+      FD('创建时间','ctime','date')
+    ]}
+  ],subtabs:['执行记录','检验项目'],subCols:[FD('项目','name'),FD('标准','std'),FD('结果','result')],subRows:[]},
+  kbList:{ title:'标题', titlePrefix:'添加', groups:[
+    {name:'基础信息',fields:[
+      FD('设备编码','code','text',null,{required:true}),
+      FD('设备名称','name','select',EQNAME,{required:true}),
+      FD('设备类型','type','select',['电阻焊机','提升机','自动加盖机','检漏机']),
+      FD('故障代码','fcode','select',['高低位置不对','故障停机','其他','开机准备']),
+      FD('故障部位','part','select',['输送一','整体','缩颈','上料系统']),
+      FD('故障现象','phenom','textarea',null,{full:true})
+    ]}
+  ]},
+
+  /* ===== 备件管理 ===== */
+  sparePurchase:{ title:'备件采购', groups:[
+    {name:'基础信息',fields:[
+      FD('采购单号','no','text',null,{required:true}),
+      FD('采购订单类型','ptype','select',['非生产性物料采购','费用采购'],{required:true}),
+      FD('申请部门','dept','text'),
+      FD('紧急标志','urgent','select',['紧急','一般']),
+      FD('附件','attach','upload',null,{full:true}),
+      FD('备注','remark','textarea',null,{full:true})
+    ]}
+  ]},
+  spareIn:{ title:'备件入库', groups:[
+    {name:'基础信息',fields:[
+      FD('入库类型','type','select',['个体','批量'],{required:true}),
+      FD('入库人员','user','select',['孙运妹','莫立连','黄文敬'],{required:true}),
+      FD('采购单号','no','text'),
+      FD('备件编码','code','text',null,{required:true}),
+      FD('备件料号','mat','text'),
+      FD('备件名称','name','text',null,{required:true}),
+      FD('备件规格','spec','text'),
+      FD('批次号','batch','text'),
+      FD('入库时间','ctime','date')
+    ]}
+  ]},
+  spareStock:{ title:'备件库存', groups:[
+    {name:'基础信息',fields:[
+      FD('组织机构','org','select',[ORG]),
+      FD('备件编码','code','text',null,{required:true}),
+      FD('备件料号','mat','text',null,{required:true}),
+      FD('备件名称','name','text',null,{required:true}),
+      FD('备件规格','spec','text'),
+      FD('库存类别','cat','select',['备件','易耗品','原材料']),
+      FD('仓库','wh','select',['主仓库','备件库','危化品库']),
+      FD('库位','loc','text'),
+      FD('物料数量','qty','number'),
+      FD('费用类别','fee','select',['备件费用','维修费用','其他'])
+    ]}
+  ]},
+  spareCheck:{ title:'备件盘点', groups:[
+    {name:'基础信息',fields:[
+      FD('盘点单号','no','text',null,{required:true}),
+      FD('盘点人','user','select',['孙运妹','莫立连','黄文敬']),
+      FD('计划盘点时间','ptime','date'),
+      FD('状态','status','select',['待接单','待盘点','盘点中','已完成','关结']),
+      FD('备注','remark','textarea',null,{full:true})
+    ]}
+  ],subtabs:['备件清单','备件明细','执行记录'],subCols:[FD('备件料号','code'),FD('备件名称','name'),FD('数量','qty')],subRows:[]},
+  spareUse:{ title:'备件领用', groups:[
+    {name:'基础信息',fields:[
+      FD('领用单号','no','text',null,{required:true}),
+      FD('领用类型','type','select',['保养','维修','易耗品']),
+      FD('设备编码','code','text'),
+      FD('设备名称','name','select',EQNAME),
+      FD('申请人','apply','select',['黄文敬','谢吉飞','杨华勇','孙运妹']),
+      FD('审核人','audit','select',['孙运妹','莫立连']),
+      FD('备注','remark','textarea',null,{full:true})
+    ]}
+  ]},
+  keyComp:{ title:'关键组件', groups:[
+    {name:'基础信息',fields:[
+      FD('组件编码','code','text',null,{required:true}),
+      FD('组件名称','name','text',null,{required:true}),
+      FD('设备编码','code2','text'),
+      FD('设备名称','ename','select',EQNAME),
+      FD('组件类别','cat','select',['电气','机械','气动','液压']),
+      FD('关键等级','level','select',['A级','B级','C级']),
+      FD('供应商','supplier','text'),
+      FD('备注','remark','textarea',null,{full:true})
+    ]}
+  ]},
+
+  /* ===== 工装管理 ===== */
+  toolArchive:{ title:'工装建档', groups:[
+    {name:'基础信息',fields:[
+      FD('工装编码','code','text',null,{required:true}),
+      FD('工装名称','name','text',null,{required:true}),
+      FD('工装类别','cat','select',['夹具','模具','刀具','检具','辅具'],{required:true}),
+      FD('工装型号','model','text'),
+      FD('规格','spec','text'),
+      FD('制造厂商','maker','text'),
+      FD('购买日期','buy','date'),
+      FD('存放位置','loc','text'),
+      FD('状态','status','select',['在库','在用','维修中','报废']),
+      FD('备注','remark','textarea',null,{full:true})
+    ]}
+  ]},
+  toolLedger:{ title:'工装台账', groups:[
+    {name:'基础信息',fields:[
+      FD('工装编码','code','text',null,{required:true}),
+      FD('工装名称','name','text',null,{required:true}),
+      FD('工装类别','cat','select',['夹具','模具','刀具','检具','辅具']),
+      FD('状态','status','select',['正常','维修中','报废']),
+      FD('保养状态','mstatus','select',['正常','待保养','逾期']),
+      FD('所属部门','dept','select',['生产部','设备部','品管部']),
+      FD('责任人','owner','select',['黄田兴','刘起飞','朱和全']),
+      FD('存放位置','loc','text')
+    ]}
+  ]},
+  toolScrap:{ title:'工装报废', groups:[
+    {name:'基础信息',fields:[
+      FD('报废单号','no','text',null,{required:true}),
+      FD('工装编码','code','text',null,{required:true}),
+      FD('工装名称','name','text'),
+      FD('报废原因','reason','select',['磨损超限','损坏无法修复','工艺变更','其他'],{required:true}),
+      FD('报废日期','date','date',null,{required:true}),
+      FD('申请人','apply','text'),
+      FD('备注','remark','textarea',null,{full:true})
+    ]}
+  ]},
+  toolHistory:{ title:'工装履历', groups:[
+    {name:'基础信息',fields:[
+      FD('工装编码','code','text',null,{required:true}),
+      FD('工装名称','name','text'),
+      FD('履历类型','type','select',['操作','维修','保养']),
+      FD('发生时间','date','date'),
+      FD('处理人','user','text'),
+      FD('内容','content','textarea',null,{full:true})
+    ]}
+  ]},
+  repair:{title:'标题',titlePrefix:'故障报修',groups:[
+    {name:'报修信息',fields:[
+      FD('设备编码','code','text',null,{required:true}),
+      FD('设备名称','name','select',EQNAME),
+      FD('故障类型','fault','select',['功能性不良','故障停机','高低位置不对','其他']),
+      FD('故障点位','part','select',['整体','输送一','缩颈','上料系统','上料系统']),
+      FD('故障编码','fcode','text'),
+      FD('故障时间','ftime','date',null,{required:true}),
+      FD('报修人','reporter','text'),
+      FD('报修时间','rtime','date'),
+      FD('申请部门','dept','select',['0405_生产部','设备部','品管部','工程部','仓储部'],{required:true}),
+      FD('紧急程度','level','select',['一般','重要','紧急'],{required:true}),
+      FD('故障现象','phenom','textarea',null,{required:true,full:true}),
+      FD('报修图片','pic','upload',null,{hint:'图片大小限制：50MB　最大图片数：9　图片支持格式：.jpg,.png,.jpeg,.bmp,.gif',full:true})
+    ]}
+  ]},
+};
+
+function getForm(id){
+  return FORMS[id]||{title:NAME_MAP[id]||'记录',titlePrefix:'新增',groups:[
+    {name:'基础信息',fields:[
+      FD('编码','code','text',null,{required:true}),
+      FD('名称','name','text',null,{required:true}),
+      FD('类型','type','select',['A类','B类','C类']),
+      FD('部门','dept','select',['生产部','设备部','品管部']),
+      FD('负责人','person','text'),
+      FD('日期','date','date'),
+      FD('状态','status','select',['正常','待处理','已完成']),
+      FD('备注','remark','textarea',null,{full:true})
+    ]}
+  ]};
+}
+
+
+const DATA = {
+  ledger: mkRows(119,i=>{const r=EQRows[i%EQRows.length];return{org:ORG,code:r[0],status:r[1],cat:r[2],name:r[3],model:r[4],type:r[5],maker:r[6],date:i<10?['','','','','','2014-07','2016-09','2017-01','2018-08','2021-06'][i]:`${rnd(2013,2023)}-${pad(rnd(1,12),2)}`};}),
+  bom: mkRows(119,i=>{const r=EQRows[i%EQRows.length];return{org:ORG,code:r[0],cat:r[2],type:r[5],model:r[4],name:r[3]};}),
+  faultList: [
+    {org:ORG,code:'JGJ',name:'自动加盖机',fcode:'JGJ-02-02J-01',phenom:'切纸滚筒不工作',cause:'有盖子卡在切刀处',ccode:'01',fix:'清理卡盖，重新供盖'},
+    {org:ORG,code:'QP',name:'内全喷机',fcode:'QP-03-05J-01',phenom:'涂料堆积',cause:'吸盘气管磨损老化',ccode:'01',fix:'更换气管'},
+    {org:ORG,code:'JGJ',name:'自动加盖机',fcode:'JGJ-03-04J-01',phenom:'备料槽卡盖',cause:'来料盖子长度有差异',ccode:'01',fix:'清理卡盖，重新供盖，调整备料槽间距'},
+    {org:ORG,code:'FK',name:'封口机',fcode:'FK-01-08J-01',phenom:'翻边脏污',cause:'罐内粉末脱落残留在拖罐盘内与罐子翻边摩擦',ccode:'01',fix:'清洁拖罐盘'},
+    {org:ORG,code:'SG',name:'收罐机',fcode:'SG-19-01D-01',phenom:'设备启动后有异响、冒烟或瞬间停机',cause:'电机或主轴抱死（机械卡滞）',ccode:'01',fix:'手动盘车检查机械阻力，分离负载进行空载测试'},
+    {org:ORG,code:'QP',name:'内全喷机',fcode:'QP-03-04J-01',phenom:'喷涂不均匀',cause:'吸盘磨损真空压力不足',ccode:'01',fix:'更换吸盘'},
+    {org:ORG,code:'SG',name:'收罐机',fcode:'SG-17-01D-01',phenom:'按下启动按钮无响应',cause:'急停开关未复位或触点粘连',ccode:'02',fix:'顺时针旋转复位急停开关，或更换损坏的触点组'},
+    {org:ORG,code:'SG',name:'收罐机',fcode:'SG-17-01D-01',phenom:'按下启动按钮无响应',cause:'控制回路保险丝或中间继电器损坏',ccode:'03',fix:'更换控制保险丝，检查并更换烧毁的继电器'},
+  ],
+  eqTypePart: ['贴标机','空压机','洗板机','电房','叉车','混盖检测仪','焊缝检测仪','自动加盖机','光检机','打包机','电阻焊机','检漏机','烘干炉','缩颈翻边组合机','裹包机','裁剪机','机械手臂','送盖机','提升机','冷却风送机','金属罐内部缺陷检测设备','全喷机','封口机','收罐机'].map(t=>({type:t})),
+  maintainPlan: [
+    {org:ORG,name:'检漏机年度保养',code:'1020000105',eq:'D线检漏机',type:'检漏机',model:'其他',dept:'0405_生产部',staff:'黄田兴, 刘起飞',status:'执行中'},
+    {org:ORG,name:'焊接机每周保养',code:'1020000101',eq:'D线高频电阻焊机',type:'焊接机',model:'其他',dept:'0405_生产部',staff:'刘起飞, 刘水洪, 吴嘉辉, 黄文敬',status:'执行中'},
+    {org:ORG,name:'电磁炉下半年保养',code:'1020000132',eq:'B线电磁烘干炉',type:'电磁烘干炉',model:'其他',dept:'0405_生产部',staff:'黄文敬, 刘水洪, 刘起飞, 吴嘉辉',status:'执行中'},
+    {org:ORG,name:'加盖机年度保养',code:'1020000033',eq:'DE线全自动送盖机一拖二',type:'自动加盖机',model:'其他',dept:'0405_生产部',staff:'黄田兴, 刘起飞, 朱和全',status:'执行中'},
+    {org:ORG,name:'检漏机上半年保养',code:'1020000105',eq:'D线检漏机',type:'检漏机',model:'其他',dept:'0405_生产部',staff:'邓先元, 李春松',status:'执行中'},
+    {org:ORG,name:'打包机-年度保养',code:'1020000009',eq:'A线悬臂裹包机',type:'打包机',model:'其他',dept:'0405_生产部',staff:'朱和全, 包小浩, 杨守营',status:'执行中'},
+  ].concat(mkRows(30,i=>({org:ORG,name:pick(['检漏机每周保养','焊接机每周保养','缩颈每周保养','打包机每周保养','全喷机每周保养']),code:pick(EQNUM),eq:pick(EQNAME),type:pick(['检漏机','焊接机','缩颈翻边组合机','打包机','内全喷机']),model:'其他',dept:'0405_生产部',staff:pick(['黄田兴, 刘起飞','刘起飞, 刘水洪','邓先元, 李春松','朱和全, 包小浩']),status:'执行中'}))),
+  checkPlan: [
+    ['1020000125','E线全喷烘干炉','A','烘房','KG-800','执行中','烘房风机焦油、烘炉炉灰清洁','清洁','1','两月'],
+    ['1020000071','A线全喷烘干炉','A','烘房','KG-800','执行中','烘房风机焦油、烘炉炉灰清洁','清洁','1','两月'],
+    ['1020000137','B线全喷烘干炉','A','烘房','KG-800','执行中','烘房风机焦油、烘炉炉灰清洁','清洁','1','两月'],
+    ['1020000107','D线全喷烘干炉','A','烘房','KG-800','执行中','烘房风机焦油、烘炉炉灰清洁','清洁','1','两月'],
+    ['1020000071','A线全喷烘干炉','A','烘房','KG-800','执行中','烘房更换过滤棉','清洁','1','周'],
+    ['1020000125','E线内全喷涂机','A','内全喷机','HY-SPM-800','执行中','全喷RTO抽废涂料过滤器清洁','清洁','1','两月'],
+  ].concat(mkRows(20,()=>['1020000070','A线内全喷涂机','A','内全喷机','4B-12126','执行中','全喷RTO抽废涂料过滤器清洁','清洁','1','两月']))
+    .map(r=>({org:ORG,code:r[0],name:r[1],cat:r[2],type:r[3],model:r[4],status:r[5],plan:r[6],ptype:r[7],cycle:r[8],ctype:r[9]})),
+  maintain: [
+    ['2026111800014','已关结','否','临时保养','','1020000119','','E线高频电阻焊机','1080FB'],
+    ['2026111800013','待接单','是','周保养','检漏机每周保养','1020000069','SA','A线检漏机','CI_60H'],
+    ['2026111800012','已验证','是','周保养','打包机每周保养','1020000009','SA','A线悬臂裹包机','MP402'],
+    ['2026111800011','待接单','是','周保养','缩颈每周保养','1020000024','SA','A线翻边缩颈组合机','HY-S82HN'],
+    ['2026111800010','待接单','是','周保养','全喷机每周保养','1020000070','SA','A线内全喷涂机','4B-12126'],
+    ['2026111800009','待接单','是','周保养','裁剪每周保养','1020000034','SA','A线裁剪机','YC-650'],
+    ['2026111800008','待接单','是','周保养','烘房每周保养','1020000071','SA','A线全喷烘干炉','KG-800'],
+    ['2026111800007','待接单','是','周保养','机械手臂每周保养','1020000040','SA','A线机械手臂','KYL0201406'],
+    ['2026111800006','已验证','是','周保养','打包机每周保养','1020000073','SA','A线全自动捆包机','A-72AO'],
+  ].concat(mkRows(15,i=>['202611180000'+(5-i),'待接单','是','周保养','点检每周保养',pick(EQNUM),'SA',pick(EQNAME),'其他']))
+    .map(r=>({no:r[0],status:r[1],produce:r[2],cycle:r[3],plan:r[4],code:r[5],line:r[6],name:r[7],model:r[8]})),
+  inspect: [
+    ['2026111700061','已完成','是','清洁','缩颈机/白班','2026-11-17 08:34:07','2026-11-17 10:31:06','1020000024','A线翻边缩颈组合机'],
+    ['2026111700060','已完成','是','点检','焊机/白班','2026-11-17 08:34:07','2026-11-19 11:04:19','1020000067','A线高频电阻焊机'],
+    ['2026111700059','已完成','是','清洁','罐内缺陷/白班','2026-11-17 08:34:07','2026-11-17 10:22:46','041221101-2','A线金属罐内部缺陷检测设备'],
+    ['2026111700058','待接单','是','清洁','前段罐路/夜班','2026-11-17 08:34:07','','1020000003','A线冷却风送机'],
+    ['2026111700057','已完成','是','点检','罐内缺陷/白班','2026-11-17 08:34:07','2026-11-17 10:22:52','041221101-2','A线金属罐内部缺陷检测设备'],
+    ['2026111700056','已完成','是','点检','机械手臂/白班','2026-11-17 08:34:07','2026-11-17 09:24:33','1020000040','A线机械手臂'],
+    ['2026111700055','待接单','是','清洁','前段罐路/夜班','2026-11-17 08:34:07','','1020000001','A线上下坡立罐'],
+  ].concat(mkRows(15,i=>['20261117000'+(54-i),'已完成','是',pick(['点检','清洁']),pick(['加盖机/白班','焊机/白班','缩颈机/白班']),'2026-11-17 08:34:07','2026-11-17 10:31:18',pick(EQNUM),pick(EQNAME)]))
+    .map(r=>({org:ORG,no:r[0],status:r[1],produce:r[2],type:r[3],plan:r[4],ctime:r[5],etime:r[6],code:r[7],name:r[8]})),
+  kbList: [
+    ['1020000067','A线高频电阻焊机','电阻焊机','高低位置不对','输送一','罐体输送异常推爪推不到'],
+    ['1020000076','A线组合式提升机','提升机','故障停机','整体','故障停机'],
+    ['1020000031','A线全自动送盖机一拖一','自动加盖机','其他','上料系统','其他'],
+    ['1020000139','A线缩颈反边机','缩颈翻边组合机','其他','缩颈','其他'],
+    ['1020000067','A线高频电阻焊机','电阻焊机','故障停机','整体','故障停机'],
+    ['1020000067','A线高频电阻焊机','电阻焊机','开机准备','整体','开机准备'],
+  ].map(r=>({org:ORG,code:r[0],name:r[1],type:r[2],model:r[0],spare:'',fcode:r[3],part:r[4],phenom:r[5]})),
+  sparePurchase: mkRows(30,i=>({org:ORG,no:['5200024579','5200024541','5300023265','5200024511','5300023264','5300023263','5200024510'][i]||`52000245${80+i}`,ptype:pick(['非生产性物料采购','费用采购']),attach:i%3===0?'附件':'',status:pick(['开立','开立','操作中','关结']),dept:'中山制罐管理员',creator:'中山制罐管理员',urgent:i%5===0?'紧急':'',ctime:`2026-11-${pad(rnd(17,19),2)} ${pad(rnd(8,18),2)}:${pad(rnd(0,59),2)}:${pad(rnd(0,59),2)}`})),
+  spareIn: [
+    ['5310003458','批量','孙运妹','YHP01650','烘炉纠偏铜套','','26B1900005'],
+    ['5310003458','批量','孙运妹','YHP01651','烘炉纠偏螺杆','','26B1900004'],
+    ['5300022998','批量','孙运妹','YHP01665','聚氨酯带钢PU同步带','HTD-8M-30MM','26B1900003'],
+    ['5200022830','批量','孙运妹','50080374','光电传感器,E3FB-DN23,NPN,12-24V','','26B1900002'],
+    ['5310003492','批量','孙运妹','YHP01672','维修铜线压遍箱，更换油封、两条轴','','26B1900001'],
+    ['5300022807','批量','孙运妹','YHP00510','盐酸','','20261102'],
+  ].concat(mkRows(20,()=>['5200024070','个体','孙运妹','50052886','感应器,XS618B1PAM12','','26B1300014']))
+    .map(r=>({org:ORG,no:r[0],type:r[1],user:r[2],code:r[3],name:r[4],spec:r[5],batch:r[6]})),
+  spareStock: [
+    ['26B1900005','YHP01650','烘炉纠偏铜套','','备件'],
+    ['26B1900004','YHP01651','烘炉纠偏螺杆','','备件'],
+    ['26B1900003','YHP01665','聚氨酯带钢PU同步带','HTD-8M-30MM','备件'],
+    ['26B1900002','50080374','光电传感器,E3FB-DN23,NPN,12-24V','','备件'],
+    ['26B1900001','YHP01672','维修铜线压遍箱，更换油封、两条轴','','备件'],
+    ['20261102','YHP00510','盐酸','','备件'],
+    ['26B1300014','50052886','感应器,XS618B1PAM12','','备件'],
+    ['26B1300013','50065253','熔断器,RT36-00 80A','','备件'],
+    ['26B1300012','50081038','三角带,A710Li','','备件'],
+    ['26B1300011','90010034','木柄油灰刀3寸 12支/包','','备件'],
+  ].concat(mkRows(20,i=>[`26B1300${pad(10+i,4)}`,pick(['90008730','YHP01637','50010021']),pick(['木柄油灰刀2寸 12支/包','纯棉纱','轴承6305']),'','备件']))
+    .map(r=>({org:ORG,batch:r[0],code:r[1],name:r[2],spec:r[3],cat:r[4]})),
+  spareCheck: [
+    ['2026111900001','关结','4','4.0','孙运妹','2026-11-19 09:30:36','2026-11-19 09:31:56','孙运妹','2026-11-19 13:56:27'],
+    ['2026013100001','盘点中','1332','108.0','孙运妹','2026-02-02 09:05:56','',''],
+    ['2026010800001','盘点中','1359','4.0','孙运妹','2026-01-21 15:19:19','',''],
+    ['2026010700002','关结','1','1','孙运妹','2026-01-07 15:04:26','2026-01-21 15:41:41','孙运妹','2026-01-21 15:41:41'],
+  ].map(r=>({org:ORG,no:r[0],status:r[1],kinds:r[2],qty:r[3],user:r[4],stime:r[5],etime:r[6],auditor:r[7],atime:r[8]})),
+  spareUse: [
+    ['2026111800002','已领用','','','易耗品','','孙运妹','孙运妹','','2026-11-18 14:05:46',''],
+    ['2026111800001','已领用','1020000119','E线高频电阻焊机','保养','','黄文敬','孙运妹','','2026-11-18 11:56:16',''],
+    ['2026111700001','已领用','1020000106','D线内全喷涂机','保养','','谢吉飞','莫立连','','2026-11-17 10:00:13',''],
+    ['2026111600004','已领用','','','易耗品','','杨华勇','莫立连','','2026-11-16 18:25:36',''],
+  ].concat(mkRows(15,i=>['202611160000'+(4-i),'已领用',pick(EQNUM),pick(EQNAME),pick(['保养','易耗品','维修']),'','黄文敬','孙运妹','','2026-11-16 12:23:37','']))
+    .map(r=>({no:r[0],status:r[1],code:r[2],name:r[3],type:r[4],back:r[5],apply:r[6],audit:r[7],send:r[8],atime:r[9],rtime:r[10]})),
+  keyComp: [
+    {code:'1250',name:'下焊轮,64M-447059,Φ57',type:'下机',line:'制罐A线',out:'42860',repair:'否',intime:'2026-10-31 01:57:20',user:'张德福',downtime:'2026-11-19 10:50:00',inout:'43128'}
+  ].concat(mkRows(6,i=>({code:String(1250+i),name:pick(['下焊轮,64M-447059,Φ57','上焊轮,64M-448052,Φ47']),type:'下机',line:pick(['制罐A线','制罐B线','制罐D线']),out:String(rnd(30000,50000)),repair:'否',intime:'2026-10-31 01:57:20',user:'张德福',downtime:'2026-11-19 10:50:00',inout:String(rnd(40000,50000))}))),
+  toolArchive: [
+    {org:ORG,code:'52001076',name:'下焊轮,64M-448052',spec:'Φ47',type:'FBB5700U焊机',rule:'1',gen:'',creator:'汪家周',ctime:'2025-04-11 17:17:26',modifier:''},
+    {org:ORG,code:'52001084',name:'下焊轮,64M-447059,Φ57',spec:'',type:'其他',rule:'1',gen:'工装条码',creator:'汪家周',ctime:'2025-04-11 17:14:30',modifier:''},
+  ],
+  toolLedger: [],
+  toolScrap: [],
+  toolHistory: [],
+  team: mkRows(12,i=>({org:ORG,code:`BZ${pad(i+1,3)}`,name:`${pick(['甲','乙','丙','丁'])}班-${pick(['生产','设备','品管'])}组`,dept:pick(['生产部','设备部','品管部','工程部']),leader:pick(['黄田兴','刘起飞','刘水洪','吴嘉辉','黄文敬','朱和全']),count:rnd(6,28),shift:pick(['白班(08:30-20:30)','夜班(20:30-08:30)']),status:'正常'})),
+  repair: [
+    {org:ORG,no:'2026111700003',status:'已关结',verify:'已修复',audit:'已审核',star:'2026-11-18 11:47:20',dtype:'维修',code:'1020000067',name:'A线高频电阻焊机',fault:'功能性不良',part:'整体',level:'一般',reporter:'李元龙',rtime:'2026-11-17 09:12:33',repairman:'黄田兴',dept:'0405_生产部',loc:'制罐A线',result:'已修复',etime:'2026-11-18 11:47:20'},
+    {org:ORG,no:'2026111700006',status:'已关结',verify:'已修复',audit:'已审核',star:'2026-11-18 11:02:20',dtype:'维修',code:'1020000076',name:'A线组合式提升机',fault:'故障停机',part:'整体',level:'紧急',reporter:'刘起飞',rtime:'2026-11-17 08:40:11',repairman:'邓先元',dept:'0405_生产部',loc:'制罐A线',result:'已修复',etime:'2026-11-18 11:02:20'},
+    {org:ORG,no:'2026111700005',status:'已关结',verify:'已修复',audit:'已审核',star:'2026-11-18 10:17:20',dtype:'维修',code:'1020000139',name:'A线缩颈反边机',fault:'功能性不良',part:'缩颈',level:'重要',reporter:'朱和全',rtime:'2026-11-17 07:55:02',repairman:'包小浩',dept:'0405_生产部',loc:'制罐A线',result:'已修复',etime:'2026-11-18 10:17:20'},
+    {org:ORG,no:'2026111700004',status:'维修中',verify:'',audit:'待审核',star:'',dtype:'维修',code:'1020000031',name:'A线全自动送盖机一拖一',fault:'功能性不良',part:'上料系统',level:'重要',reporter:'刘水洪',rtime:'2026-11-17 07:30:48',repairman:'杨守营',dept:'0405_生产部',loc:'制罐A线',result:'',etime:''},
+    {org:ORG,no:'2026111700002',status:'已关结',verify:'已修复',audit:'已审核',star:'2026-11-18 09:02:20',dtype:'维修',code:'1020000067',name:'A线高频电阻焊机',fault:'高低位置不对',part:'输送一',level:'一般',reporter:'李元龙',rtime:'2026-11-17 06:18:20',repairman:'黄田兴',dept:'0405_生产部',loc:'制罐A线',result:'已修复',etime:'2026-11-18 09:02:20'},
+    {org:ORG,no:'2026111700001',status:'已关结',verify:'已修复',audit:'已审核',star:'2026-11-18 08:47:20',dtype:'维修',code:'1020000067',name:'A线高频电阻焊机',fault:'故障停机',part:'整体',level:'紧急',reporter:'李元龙',rtime:'2026-11-17 05:40:10',repairman:'黄田兴',dept:'0405_生产部',loc:'制罐A线',result:'已修复',etime:'2026-11-18 08:47:20'},
+    {org:ORG,no:'2026111000017',status:'已关结',verify:'已修复',audit:'已审核',star:'2026-11-11 20:17:20',dtype:'维修',code:'1020000080',name:'B线高频电阻焊机',fault:'功能性不良',part:'整体',level:'一般',reporter:'邓先元',rtime:'2026-11-10 19:02:11',repairman:'刘起飞',dept:'0405_生产部',loc:'制罐B线',result:'已修复',etime:'2026-11-11 20:17:20'},
+    {org:ORG,no:'2026111000015',status:'已关结',verify:'已修复',audit:'已审核',star:'2026-11-11 19:02:20',dtype:'维修',code:'1020000138',name:'B线收罐机',fault:'故障停机',part:'整体',level:'重要',reporter:'谢吉飞',rtime:'2026-11-10 16:30:45',repairman:'莫立连',dept:'0405_生产部',loc:'制罐B线',result:'已修复',etime:'2026-11-11 19:02:20'},
+    {org:ORG,no:'2026111000016',status:'已关结',verify:'已修复',audit:'已审核',star:'2026-11-11 17:02:20',dtype:'维修',code:'1020000080',name:'B线高频电阻焊机',fault:'高低位置不对',part:'输送一',level:'一般',reporter:'刘起飞',rtime:'2026-11-10 15:22:08',repairman:'邓先元',dept:'0405_生产部',loc:'制罐B线',result:'已修复',etime:'2026-11-11 17:02:20'},
+    {org:ORG,no:'2026111000011',status:'待接单',verify:'',audit:'待审核',star:'',dtype:'维修',code:'1020000122',name:'E线封口机',fault:'功能性不良',part:'整体',level:'紧急',reporter:'杨华勇',rtime:'2026-11-10 14:10:36',repairman:'',dept:'0405_生产部',loc:'制罐E线',result:'',etime:''}
+  ].concat(mkRows(30,i=>({org:ORG,no:`20261110${pad(5+i,5)}`,status:pick(['已关结','已关结','维修中','待接单']),verify:pick(['已修复','已修复','']),audit:pick(['已审核','已审核','待审核']),star:pick(['2026-11-11 16:47:20','2026-11-12 09:20:11','']),dtype:'维修',code:pick(EQNUM),name:pick(EQNAME),fault:pick(['功能性不良','故障停机','高低位置不对','其他']),part:pick(['整体','输送一','缩颈','上料系统']),level:pick(['一般','重要','紧急']),reporter:pick(['李元龙','刘起飞','朱和全','谢吉飞','杨华勇']),rtime:'2026-11-10 13:00:00',repairman:pick(['黄田兴','邓先元','包小浩','莫立连']),dept:'0405_生产部',loc:pick(['制罐A线','制罐B线','制罐D线','制罐E线']),result:pick(['已修复','']),etime:'2026-11-11 16:47:20'}))),
+  energy: mkRows(40,i=>({org:ORG,date:`2026-11-${pad(rnd(1,18),2)}`,dept:pick(['生产部','设备部','品管部','工程部']),eq:pick(EQNAME),type:pick(['电能','压缩空气','水','蒸汽']),val:rnd(50,3000),unit:pick(['kWh','m³','吨']),cost:rnd(30,2500)}))
+};
+
+/* ---------- 页面定义：字段严格对齐原系统 ---------- */
+const COL=(t,k,o={})=>({t,k,...o});
+const F=(label,key,o={})=>({label,key,...o});
+const OP=(label,key,opts)=>F(label,key,{op:true,opts});  // 包含下拉 + 输入
+const SEL=(label,key,opts)=>F(label,key,{type:'select',opts});
+const ALL=(label,key,opts)=>F(label,key,{type:'radio',opts}); // ALL/BY 单选项
+const DATE=(label)=>F(label,'',{type:'date'});            // 今天/本周/本月/...
+
+const PAGES={
+  ledger:{type:'table',title:'设备台账',dataset:DATA.ledger,pageSize:10,total:119,
+    search:[SEL('组织机构','org',[ORG]),OP('设备名称','name'),OP('设备编码','code'),OP('存放位置','loc')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('设备编码','code',{sort:true}),COL('设备状态','status',{tag:true,sort:true}),COL('设备类别','cat',{sort:true}),COL('设备名称','name',{sort:true}),COL('设备型号','model',{sort:true}),COL('设备类型','type',{sort:true}),COL('制造厂商','maker',{sort:true}),COL('出厂年月','date',{sort:true}),COL('操作','_op')],
+    actions:['查看','修改','更多'],buttons:['+新增','-批量删除','导入','导出','导出点检保养']},
+
+  bom:{type:'table',title:'设备BOM',dataset:DATA.bom,pageSize:10,total:119,
+    search:[SEL('组织机构','org',[ORG]),OP('设备型号','model',['请选择']),OP('设备类型','type',['请选择']),OP('设备类别','cat',['请选择']),OP('设备资产编号','code'),OP('安装地点','loc')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('设备资产编号','code'),COL('设备类别','cat'),COL('设备类型','type'),COL('设备型号','model'),COL('操作','_op')],
+    actions:['备件关联','工装关联'],buttons:[],
+    subtabs:['设备关联','备件','工装'],
+    subCols:[COL('设备编号','code'),COL('设备名称','name'),COL('制造厂','maker'),COL('使用部门名称','dept'),COL('地点','loc')],subRows:[]},
+
+  faultList:{type:'table',title:'故障明细表',dataset:DATA.faultList,pageSize:10,total:944,
+    search:[SEL('组织机构','org',['',ORG]),OP('设备类型','type'),OP('故障现象','phenom'),OP('故障原因','cause'),OP('故障代码','fcode'),OP('故障部位','part')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('故障编码','type'),COL('设备类型','name'),COL('故障代码','fcode'),COL('故障现象','phenom'),COL('故障原因','cause'),COL('故障原因代码','ccode'),COL('维修方式','fix'),COL('操作','_op')],
+    actions:['修改'],buttons:['添加','删除','导入','导出']},
+
+  eqTypePart:{type:'table',title:'设备类型部位',dataset:DATA.eqTypePart,pageSize:10,total:24,
+    search:[SEL('组织机构','org',['',ORG]),OP('设备类型','type',['请选择'])],
+    cols:[COL('','_cb',{cb:true}),COL('设备类型','type'),COL('操作','_op')],
+    actions:['修改'],buttons:['新增','删除'],
+    subtabs:['设备类型','设备部位'],subCols:[COL('设备部位','part'),COL('操作','_op')],subRows:[]},
+
+  team:{type:'table',title:'班组管理',dataset:DATA.team,pageSize:10,total:12,
+    search:[SEL('组织机构','org',[ORG]),OP('班组编码','code'),OP('班组名称','name'),OP('所属部门','dept',['请选择'])],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('班组编码','code'),COL('班组名称','name'),COL('所属部门','dept'),COL('班组长','leader'),COL('人数','count'),COL('班次','shift'),COL('状态','status',{tag:true}),COL('操作','_op')],
+    actions:['查看','修改','删除'],buttons:['+新增','-批量删除','导入','导出']},
+
+  maintainPlan:{type:'table',title:'保养计划',dataset:DATA.maintainPlan,pageSize:10,total:495,
+    search:[SEL('组织机构','org',[ORG]),ALL('计划类型','ptype',['临时保养','周期','保养间隔','生产次数']),ALL('保养周期','cycle',['4小时','生产2天','小时','日','半月','两月','生产7天','周','月','季度','半年','全年','四个月']),OP('计划名称','name'),OP('设备编码','code'),OP('设备名称','eq'),OP('生产次数','num'),OP('保养人员','staff')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('计划名称','name'),COL('设备编号','code'),COL('设备名称','eq'),COL('设备类型','type'),COL('设备型号','model'),COL('使用部门','dept'),COL('保养人员','staff'),COL('计划状态','status',{tag:true}),COL('操作','_op')],
+    actions:['查看','修改','删除'],buttons:['+新增','-批量删除']},
+
+  checkPlan:{type:'table',title:'检验计划',dataset:DATA.checkPlan,pageSize:10,total:495,
+    search:[SEL('组织机构','org',[ORG]),OP('设备名称','name'),OP('设备编号','code'),OP('计划类型','ptype',['请选择']),OP('检验人员','user'),OP('计划名称','plan'),OP('计划状态','status',['请选择'])],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('设备编号','code'),COL('设备名称','name'),COL('设备类别','cat'),COL('设备类型','type'),COL('设备型号','model'),COL('计划状态','status',{tag:true}),COL('计划名称','plan'),COL('计划类型','ptype'),COL('周期','cycle'),COL('周期类型','ctype'),COL('操作','_op')],
+    actions:['查看','修改','删除'],buttons:['+新增','-批量删除','计划关结'],
+    subtabs:['检验计划','维护项目'],subCols:[COL('所属部位','part'),COL('项目描述','desc'),COL('维护方法','method'),COL('计划工时','hours'),COL('值域','range'),COL('上限值','max'),COL('下限值','min'),COL('单位','unit')],subRows:[]},
+
+  maintain:{type:'table',title:'设备保养',dataset:DATA.maintain,pageSize:10,total:1200,
+    search:[SEL('组织机构','org',[ORG]),DATE('创建时间'),DATE('保养完成时间'),OP('单据状态','status',['请选择']),OP('保养工单号','no'),OP('设备编号','code'),OP('设备名称','name'),OP('保养人员','user',['请选择']),OP('周期名称','cycle',['请选择']),OP('计划名称','plan'),OP('线别','line',['请选择'])],
+    cols:[COL('','_cb',{cb:true}),COL('保养工单号','no'),COL('单据状态','status',{tag:true}),COL('是否生产','produce'),COL('周期名称','cycle'),COL('计划名称','plan'),COL('设备编号','code'),COL('线别','line'),COL('设备名称','name'),COL('设备型号','model'),COL('操作','_op')],
+    actions:['查看','编辑'],buttons:['保养导出','一键未生产','保养报表','删除'],
+    subtabs:['执行记录','保养项目','更换备件'],subCols:[COL('保养工单号','no'),COL('项目','item'),COL('结果','result'),COL('保养人','user')],subRows:[]},
+
+  inspect:{type:'table',title:'设备点检/巡检',dataset:DATA.inspect,pageSize:10,total:1100,
+    search:[SEL('组织机构','org',[ORG]),DATE('创建时间'),OP('单据类型','type',['请选择']),OP('单据状态','status',['请选择']),OP('检验单号','no'),OP('设备编号','code'),OP('设备名称','name'),OP('计划名称','plan')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('检验工单号','no'),COL('单据状态','status',{tag:true}),COL('是否生产','produce'),COL('单据类型','type'),COL('计划名称','plan'),COL('创建时间','ctime'),COL('检验完成时间','etime'),COL('设备编号','code'),COL('设备名称','name'),COL('操作','_op')],
+    actions:['查看','编辑'],buttons:['点检导出','一键未生产','报表'],
+    subtabs:['执行记录','检验项目'],subCols:[COL('检验工单号','no'),COL('项目','item'),COL('结果','result'),COL('点检人','user')],subRows:[]},
+
+  kbList:{type:'table',title:'维修知识库',dataset:DATA.kbList,pageSize:10,total:6,
+    search:[SEL('组织机构','org',['',ORG]),DATE('创建时间'),OP('设备名称','name'),OP('故障现象','phenom'),OP('故障编码','fcode'),OP('设备型号','model',['请选择']),OP('故障部位','part',['请选择'])],
+    statRow:['知识库数量','被采用条数','故障类型','涉及设备类型','涉及设备数量'],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('设备编码','code'),COL('设备名称','name'),COL('设备类型','type'),COL('设备型号','model'),COL('更换备件','spare'),COL('故障编码','fcode'),COL('故障部位','part'),COL('故障现象','phenom'),COL('操作','_op')],
+    actions:['查看','修改','删除'],buttons:['+新增','-批量删除','导入','导出']},
+
+  sparePurchase:{type:'table',title:'备件采购',dataset:DATA.sparePurchase,pageSize:10,total:138,
+    search:[SEL('组织机构','org',[ORG]),DATE('创建时间'),ALL('状态','status',['开立','操作中','关结']),OP('采购单号','no'),OP('申请部门','dept',['请选择']),OP('采购订单类型','ptype',['请选择']),OP('备件料号','code')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('采购单号','no'),COL('采购订单类型','ptype'),COL('附件','attach'),COL('状态','status',{tag:true}),COL('申请部门','dept'),COL('创建人','creator'),COL('紧急标志','urgent'),COL('创建时间','ctime'),COL('操作','_op')],
+    actions:['查看','修改','删除'],buttons:['+新增','-批量删除','导入','导出','同步']},
+
+  spareIn:{type:'table',title:'备件入库',dataset:DATA.spareIn,pageSize:10,total:88,
+    search:[SEL('组织机构','org',['',ORG]),ALL('入库类型','type',['个体','批量']),DATE('生产日期'),DATE('入库时间'),OP('入库人员','user',['请选择']),OP('采购单号','no'),OP('备件编号','code'),OP('备件名称','name'),OP('备件料号','mat')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('采购单号','no'),COL('备件编码','code'),COL('入库类型','type'),COL('入库员','user'),COL('备件料号','mat'),COL('备件名称','name'),COL('备件规格','spec'),COL('批次号','batch'),COL('操作','_op')],
+    actions:['查看','修改'],buttons:['条码打印预览','+新增','-批量删除','打印','导出']},
+
+  spareStock:{type:'table',title:'备件库存',dataset:DATA.spareStock,pageSize:10,total:1600,
+    search:[SEL('组织机构','org',[ORG]),DATE('创建时间'),OP('备件编码','code',['请选择']),OP('备件名称','name'),OP('备件料号','mat',['请选择']),OP('批次号','batch'),OP('费用类别','fee',['请选择']),OP('仓库','wh',['请选择']),OP('物料数量','qty'),OP('物料规格','spec'),OP('备件料号','mat2',['请选择']),OP('库位','loc')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('备件编码','code'),COL('批次号','batch'),COL('备件料号','mat'),COL('备件名称','name'),COL('备件规格','spec'),COL('库存类别','cat'),COL('操作','_op')],
+    actions:['查看','库位移动','料号转换'],buttons:['导出','导入','删除','导出的(新)','打印'],
+    subtabs:['库存明细','库存汇总信息'],subCols:[COL('备件料号','mat'),COL('备件名称','name'),COL('规格','spec'),COL('库存数量','qty'),COL('仓库','wh')],subRows:[]},
+
+  spareCheck:{type:'table',title:'备件盘点',dataset:DATA.spareCheck,pageSize:10,total:4,
+    search:[SEL('组织机构','org',[ORG]),DATE('创建时间'),DATE('计划盘点时间'),ALL('状态','status',['待接单','待盘点','盘点中','已完成','待审核','关结']),OP('盘点人','user'),OP('盘点单号','no')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('盘点单号','no'),COL('单据状态','status',{tag:true}),COL('已盘点料号种数','kinds'),COL('已盘点数量','qty'),COL('盘点人','user'),COL('盘点开始时间','stime'),COL('盘点结束时间','etime'),COL('审核人','auditor'),COL('审核时间','atime'),COL('操作','_op')],
+    actions:['查看','盘点'],buttons:['+新增','-批量删除'],
+    subtabs:['备件清单','备件明细','执行记录'],subCols:[COL('备件料号','mat'),COL('备件名称','name'),COL('备件规格','spec'),COL('状态','status'),COL('库存数量','qty'),COL('盘点数量','cqty'),COL('盘点盈亏','diff')],subRows:[]},
+
+  spareUse:{type:'table',title:'备件领用',dataset:DATA.spareUse,pageSize:10,total:60,
+    search:[SEL('组织机构','org',[ORG]),ALL('单据状态','status',['待审核','审核通过','审核拒绝','待领用','已领用','关结']),DATE('申请时间'),OP('领用类型','type',['请选择']),OP('关联设备','code'),OP('领用单号','no'),OP('申请人','apply'),OP('审核人','audit'),OP('关联单号','rel'),OP('备件料号','mat')],
+    cols:[COL('','_cb',{cb:true}),COL('领用单号','no'),COL('单据状态','status',{tag:true}),COL('关联设备','code'),COL('设备名称','name'),COL('领用类型','type'),COL('归还时间','back'),COL('申请人','apply'),COL('审核人','audit'),COL('发料人','send'),COL('申请时间','atime'),COL('审核时间','rtime'),COL('操作','_op')],
+    actions:['查看','修改'],buttons:['审核通过','+新增','-批量删除','备件领用OA申请','导出'],
+    subtabs:['备件明细','执行记录'],subCols:[COL('备件料号','mat'),COL('备件名称','name'),COL('数量','qty')],subRows:[]},
+
+  keyComp:{type:'table',title:'关键组件',dataset:DATA.keyComp,pageSize:10,total:7,
+    search:[SEL('组织机构','org',[ORG]),OP('工装编码','code'),OP('操作类型','type',['请选择']),OP('产线','line',['请选择']),OP('是否外修','repair',['请选择']),OP('组件名称','name',['请选择']),OP('下机时间','downtime')],
+    cols:[COL('','_cb',{cb:true}),COL('工装编码','code'),COL('组件名称','name'),COL('操作类型','type'),COL('产线','line'),COL('上机产量/万罐','out'),COL('是否外修','repair'),COL('上机时间','intime'),COL('上机人','user'),COL('下机时间','downtime'),COL('下机产量/万罐','inout'),COL('操作','_op')],
+    actions:['删除','修改','下机'],buttons:['添加','删除','修改','外修','导出']},
+
+  toolArchive:{type:'table',title:'工装建档',dataset:DATA.toolArchive,pageSize:10,total:2,
+    search:[SEL('组织机构','org',[ORG]),OP('工装料号','code'),OP('工装名称','name'),OP('工装类型','type',['请选择'])],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('工装料号','code'),COL('工装名称','name'),COL('工装规格','spec'),COL('工装类型','type'),COL('条码校验规则','rule'),COL('条码生成规则','gen'),COL('创建人','creator'),COL('创建时间','ctime'),COL('修改人','modifier'),COL('操作','_op')],
+    actions:['查看','修改','删除'],buttons:['+新增','-批量删除']},
+
+  toolLedger:{type:'table',title:'工装台账',dataset:DATA.toolLedger,pageSize:10,total:0,
+    search:[SEL('组织机构','org',[ORG]),DATE('入库时间'),ALL('状态','status',['维修确认','在库','上线','报废','禁用','故障']),ALL('保养状态','maint',['正常','到期','过期']),OP('工装名称','name'),OP('工装编码','code')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('工装编码','code'),COL('状态','status'),COL('保养状态','maint'),COL('工装料号','mat'),COL('工装名称','name'),COL('工装规格','spec'),COL('工装类型','type'),COL('供应商','supplier'),COL('操作','_op')],
+    actions:[],buttons:['+新增','-批量删除','导入','导出','禁用','解禁','维修','维修确认','报废']},
+
+  toolScrap:{type:'table',title:'工装报废',dataset:DATA.toolScrap,pageSize:10,total:0,
+    search:[SEL('组织机构','org',[ORG]),DATE('报废时间'),OP('工装编码','code'),OP('工装料号','mat'),OP('报废类型','type',['请选择'])],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('工装编码','code'),COL('工装料号','mat'),COL('报废人','user'),COL('报废时间','time'),COL('报废类型','type'),COL('报废原因','reason'),COL('工装名称','name'),COL('工装规格','spec'),COL('工装类型','etype')],
+    actions:[],buttons:['新增报废','导出']},
+
+  toolHistory:{type:'table',title:'工装履历',dataset:DATA.toolHistory,pageSize:10,total:0,
+    search:[SEL('组织机构','org',[ORG]),ALL('工装状态','status',['维修确认','在库','上线','报废','禁用','故障']),ALL('操作类型','otype',['入库','禁用','解禁','报废']),OP('工装编码','code'),OP('工装料号','mat'),OP('工装类型','type',['请选择']),OP('供应商','supplier')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('工装编码','code'),COL('工装状态','status'),COL('工装料号','mat'),COL('工装类型','type'),COL('工装规格','spec'),COL('操作类型','otype'),COL('供应商','supplier'),COL('操作','_op')],
+    actions:[],buttons:[],
+    subtabs:['操作履历','维修履历','保养履历'],subCols:[COL('工装编码','code'),COL('操作类型','otype'),COL('时间','time'),COL('操作人','user')],subRows:[]},
+
+  repair:{type:'table',title:'设备维修',dataset:DATA.repair,pageSize:10,total:216,
+    search:[SEL('组织机构','org',[ORG]),DATE('报修时间'),DATE('维修结束时间'),OP('维修工单号','no'),OP('设备编号','code'),OP('单据状态','status',['请选择']),OP('故障类别','fault',['请选择']),OP('报修人','reporter'),OP('维修人','repairman'),OP('申请部门','dept'),OP('产品质量确认','verify',['请选择']),OP('存放位置','loc',['请选择']),OP('故障原因','reason')],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('维修工单号','no'),COL('单据状态','status',{tag:true}),COL('验证结果','verify',{tag:true}),COL('审核状态','audit',{tag:true}),COL('星级评价时间','star'),COL('单据类型','dtype'),COL('设备编码','code'),COL('设备名称','name'),COL('操作','_op')],
+    actions:['查看','审核','更多'],buttons:['故障报修','-批量删除','导出','测试推送','线长审核','主任审核','工程经理审核'],
+    subtabs:['执行记录','更换备件'],subCols:[COL('操作类型','otype'),COL('操作人','user'),COL('操作时间','time')],subRows:[]},
+
+  energy:{type:'table',title:'能耗明细表',dataset:DATA.energy,pageSize:10,total:40,
+    search:[SEL('组织机构','org',[ORG]),DATE('抄表时间'),OP('部门','dept',['请选择']),OP('设备','eq'),OP('能源类型','type',['请选择'])],
+    cols:[COL('','_cb',{cb:true}),COL('组织机构','org'),COL('日期','date'),COL('部门','dept'),COL('设备','eq'),COL('能源类型','type'),COL('用量','val'),COL('单位','unit'),COL('费用(元)','cost')],
+    actions:[],buttons:['导出']}
+};
+/* ============================================================
+ *  渲染引擎 —— 对齐原系统 UI
+ * ============================================================ */
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function tagClass(v){
+  const m={'在用':'tag-orange','维修中':'tag-red','封存':'tag-gray','待启用':'tag-blue','报废':'tag-gray',
+    '正常':'tag-green','库存不足':'tag-red','库存超上限':'tag-orange','已完成':'tag-green','已关结':'tag-gray',
+    '待接单':'tag-orange','进行中':'tag-blue','执行中':'tag-blue','已完成':'tag-green','已验证':'tag-green',
+    '待处理':'tag-orange','待审核':'tag-orange','审核通过':'tag-green','已领用':'tag-green','待领用':'tag-blue',
+    '开立':'tag-blue','操作中':'tag-orange','关结':'tag-gray','盘点中':'tag-blue','待盘点':'tag-orange',
+    '紧急':'tag-red','重要':'tag-orange','一般':'tag-green','在职':'tag-green','A级':'tag-green','B级':'tag-blue',
+    '临时保养':'tag-orange','周保养':'tag-blue','月保养':'tag-blue','年度保养':'tag-green','否':'tag-gray','是':'tag-green'};
+  return m[v]||'tag-blue';
+}
+const tag = v => `<span class="tag ${tagClass(v)}">${esc(v)}</span>`;
+
+/* ---------- SVG 图表 ---------- */
+const PALETTE=['#5470c6','#91cc75','#fac858','#ee6666','#73c0de','#3ba272','#fc8452','#9a60b4'];
+function pieChart(data, size=190){
+  const total=data.reduce((s,d)=>s+d.value,0)||1, cx=size/2, cy=size/2, r=size/2-8, ir=r*0.55;
+  let a0=-Math.PI/2, paths='';
+  data.forEach((d,i)=>{
+    const a1=a0+(d.value/total)*Math.PI*2, large=(a1-a0)>Math.PI?1:0;
+    const x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0),x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+    const xi1=cx+ir*Math.cos(a1),yi1=cy+ir*Math.sin(a1),xi0=cx+ir*Math.cos(a0),yi0=cy+ir*Math.sin(a0);
+    paths+=`<path d="M${x0} ${y0} A${r} ${r} 0 ${large} 1 ${x1} ${y1} L${xi1} ${yi1} A${ir} ${ir} 0 ${large} 0 ${xi0} ${yi0} Z" fill="${d.color||PALETTE[i%PALETTE.length]}"/>`;
+    a0=a1;
+  });
+  return `<svg class="chart-svg" viewBox="0 0 ${size} ${size}" style="max-width:${size}px;margin:0 auto">${paths}
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="13" fill="#303133" font-weight="700">${total}</text>
+    <text x="${cx}" y="${cy+12}" text-anchor="middle" font-size="11" fill="#909399">设备总数</text></svg>`;
+}
+function barChart(data, opt={}){
+  const w=opt.w||680,h=opt.h||230,pad={l:36,r:12,t:16,b:30},iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;
+  const max=Math.max(...data.map(d=>d.value),1),step=iw/data.length,bw=Math.min(step*0.55,36);
+  let g='';
+  for(let i=0;i<=4;i++){const y=pad.t+ih*(i/4);g+=`<line x1="${pad.l}" y1="${y}" x2="${w-pad.r}" y2="${y}" stroke="#eef0f3"/><text x="${pad.l-7}" y="${y+4}" text-anchor="end" font-size="10" fill="#a0a8b5">${Math.round(max*(4-i)/4)}</text>`;}
+  data.forEach((d,i)=>{
+    const bh=(d.value/max)*ih,x=pad.l+step*i+(step-bw)/2,y=pad.t+ih-bh;
+    g+=`<rect x="${x}" y="${y}" width="${bw}" height="${bh}" fill="${d.color||'#5470c6'}" rx="2"><title>${esc(d.name)}: ${d.value}</title></rect>`;
+    g+=`<text x="${pad.l+step*i+step/2}" y="${h-9}" text-anchor="middle" font-size="9.5" fill="#8a94a3">${esc(d.name)}</text>`;
+  });
+  return `<svg class="chart-svg" viewBox="0 0 ${w} ${h}">${g}</svg>`;
+}
+function lineChart(series, labels, opt={}){
+  const w=opt.w||680,h=opt.h||250,pad={l:40,r:14,t:18,b:28},iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;
+  const all=series.flatMap(s=>s.data),max=Math.max(...all,1);
+  let g='';
+  for(let i=0;i<=4;i++){const y=pad.t+ih*(i/4);g+=`<line x1="${pad.l}" y1="${y}" x2="${w-pad.r}" y2="${y}" stroke="#eef0f3"/><text x="${pad.l-7}" y="${y+4}" text-anchor="end" font-size="10" fill="#a0a8b5">${Math.round(max*(4-i)/4)}</text>`;}
+  labels.forEach((l,i)=>{const x=pad.l+iw*(labels.length===1?0:i/(labels.length-1));g+=`<text x="${x}" y="${h-8}" text-anchor="middle" font-size="9" fill="#8a94a3">${esc(l)}</text>`;});
+  series.forEach((s,si)=>{
+    const pts=s.data.map((v,i)=>[pad.l+iw*(labels.length===1?0:i/(labels.length-1)),pad.t+ih-(v/max)*ih]);
+    g+=`<path d="${pts.map((p,i)=>(i?'L':'M')+p[0]+' '+p[1]).join(' ')}" fill="none" stroke="${s.color||PALETTE[si]}" stroke-width="2"/>`;
+    pts.forEach(p=>g+=`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#fff" stroke="${s.color||PALETTE[si]}" stroke-width="2"/>`);
+  });
+  return `<svg class="chart-svg" viewBox="0 0 ${w} ${h}">${g}</svg>`;
+}
+function statCard(label,val,color,icon){
+  const paths={'M3:device':'<path d="M4 4h16v12H4V4zm2 2v8h12V6H6zM9 20h6v-4H9v4z"/>',
+    'M3:check':'<path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>',
+    'M3:tool':'<path d="M22 5.7 18.3 2 12 8.3 5.7 2 2 5.7 8.3 12 2 18.3 5.7 22 12 15.7 18.3 22 22 18.3 15.7 12 22 5.7z"/>',
+    'M3:chart':'<path d="M4 20h16v-2H4v2zM6 16h3V8H6v8zm5 0h3V4h-3v12zm5 0h3v-6h-3v6z"/>',
+    'M3:clock':'<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 11h-3V6h2v5h4v2h-3z"/>'};
+  return `<div class="stat-card"><div class="sicon" style="background:${color}"><svg viewBox="0 0 24 24">${paths[icon]||paths['M3:chart']}</svg></div><div class="sinfo"><div class="snum">${val}</div><div class="slabel">${label}</div></div></div>`;
+}
+
+/* ---------- 首页看板（真实系统首页） ---------- */
+function renderHome(){
+  const statusData=[{name:'在用',value:92,color:'#5470c6'},{name:'维修中',value:25,color:'#ee6666'},{name:'待启用',value:24,color:'#fac858'},{name:'封存',value:1,color:'#91cc75'}];
+  const faultDays=['11-06','11-07','11-08','11-09','11-10','11-11','11-12','11-13','11-14','11-15'];
+  const faultVals=[24,2,1,1,16,0,0,1,0,0];
+  const legend=statusData.map(d=>`<span class="li"><i class="lc" style="background:${d.color}"></i>${d.name} ${d.value} (${(d.value/142*100).toFixed(2)}%)</span>`).join('');
+  const rows=statusData.map(d=>`<tr><td>${d.name}</td><td>${d.value}</td><td>${(d.value/142*100).toFixed(2)}%</td></tr>`).join('')+
+    [['租赁',0,'0.00%'],['报废',0,'0.00%']].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+  return `
+  <div class="col-38">
+    <div class="chart-box"><h4>设备状态</h4>${pieChart(statusData)}<div class="legend" style="justify-content:center">${legend}</div></div>
+    <div class="card"><div class="card-head"><h3>常用操作</h3><span style="color:#909399;font-size:16px">⚙</span></div>
+      <div class="card-body" style="min-height:220px;color:#909399;font-size:12.5px">
+        <div style="text-align:center;padding:10px">还未配置常用操作，点击 <span class="link" onclick="App.toast('已跳转到配置')">此处</span> 立即添加</div>
+        <table class="grid" style="width:100%;margin-top:8px"><thead><tr><th>设备状态</th><th>设备数量</th><th>占比</th></tr></thead><tbody>${rows}</tbody></table>
+      </div></div>
+  </div>
+  <div class="card"><div class="card-head"><h3>设备故障报修统计</h3>
+      <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#606266">
+        <span>统计范围</span><input value="2026-11-04" style="height:26px;border:1px solid #dcdfe6;border-radius:3px;padding:0 7px;font-size:12px;width:108px"> 至
+        <input value="2026-11-18" style="height:26px;border:1px solid #dcdfe6;border-radius:3px;padding:0 7px;font-size:12px;width:108px">
+        <span class="radio-grp"><label class="active"><input type="radio" name="rg" checked>日</label><label><input type="radio" name="rg">周</label><label><input type="radio" name="rg">月</label></span>
+        <button class="btn btn-primary btn-sm" onclick="App.toast('统计数据已刷新')">查询</button>
+      </div></div>
+    <div class="card-body">${barChart(faultDays.map((d,i)=>({name:d,value:faultVals[i]})),{h:230})}</div></div>
+  <div class="col-62">
+    <div class="card"><div class="card-head"><h3>备件库存安全状态</h3></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+        ${[{n:'441',l:'高于上限',c:'#5470c6'},{n:'4',l:'低于下限',c:'#ee6666'},{n:'118',l:'库存正常',c:'#91cc75'},{n:'1600',l:'备件种类',c:'#fac858'}].map(s=>`<div style="display:flex;align-items:center;gap:14px">
+          <div style="width:52px;height:52px;border-radius:8px;background:${s.c};color:#fff;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 3v18h18V3H3zm2 2h14v14H5V5zm2 9l3-3 3 3 4-5 2 2v5H7v-2z"/></svg></div>
+          <div><div style="font-size:20px;font-weight:700;color:${s.c}">${s.n}种</div><div style="font-size:12px;color:#909399;margin-top:2px">${s.l}</div></div></div>`).join('')}
+      </div></div>
+    <div class="card"><div class="card-head"><h3>备件库存安全明细</h3><button class="btn btn-sm" onclick="App.go('spareStock')">查看全部</button></div>
+      <div class="table-wrap"><table class="grid"><thead><tr><th>备件料号</th><th>备件名称</th><th>最大安全库存</th><th>最小安全库存</th><th>实际库存</th><th>状态</th></tr></thead>
+      <tbody>${DATA.spareStock.slice(0,7).map((s,i)=>`<tr><td>${s.code}</td><td>${s.name}</td><td>50</td><td>5</td><td>${rnd(0,60)}</td><td>${tag(i<2?'库存不足':'正常')}</td></tr>`).join('')}</tbody></table></div></div>
+  </div>`;
+}
+
+/* ---------- 搜索表单渲染（真实系统：标签 + 包含下拉 + 输入，栅格排列） ---------- */
+function renderSearchField(f, st){
+  if(f.type==='date'){
+    return `<div class="sf-date"><label>${esc(f.label)}</label><div class="date-quick">${['今天','本周','本月','最近三个月','自定义'].map(x=>`<span class="${st['_q_'+f.label]===x?'sel':''}" onclick="App.setQuick('${f.label}','${x}')">${x}</span>`).join('')}</div>
+      <div class="date-range"><input placeholder="开始日期" value="${esc(st['_ds_'+f.label]||'')}"><span>~</span><input placeholder="结束日期" value="${esc(st['_de_'+f.label]||'')}"></div></div>`;
+  }
+  if(f.type==='radio'){
+    return `<div class="sf-item sf-radio"><label>${esc(f.label)}</label><div class="radio-opts">${['ALL',...(f.opts||[])].map((o,i)=>`<span class="${(st[f.key]||'ALL')===o?'sel':''}" onclick="App.setRadio('${f.key}','${o}')">${o==='ALL'?'ALL':o}</span>`).join('')}</div></div>`;
+  }
+  if(f.type==='select'){
+    return `<div class="sf-item"><label>${esc(f.label)}</label><select data-filter="${f.key}">${(f.opts||[]).map(o=>`<option value="${esc(o)}" ${st[f.key]===o?'selected':''}>${esc(o||'请选择')}</option>`).join('')}</select></div>`;
+  }
+  // OP: 包含下拉 + 输入 / 普通输入
+  const opKey='_op_'+f.key;
+  const selOpts=(f.opts&&f.opts.length)?f.opts:['包含','不包含','等于'];
+  return `<div class="sf-item"><label>${esc(f.label)}</label>
+    <div class="sf-ctrl"><select class="op-sel" data-op="${opKey}">${selOpts.map(o=>`<option ${st[opKey]===o?'selected':''}>${esc(o)}</option>`).join('')}</select>
+    <input type="text" data-filter="${f.key}" placeholder="${selOpts[0]==='请选择'?'请选择':'请输入'}" value="${esc(st[f.key]||'')}"></div></div>`;
+}
+
+/* ---------- 表格页面（真实布局） ---------- */
+function renderTable(cfg, id){
+  const st=App.filters[id]||(App.filters[id]={});
+  let data=cfg.dataset.slice();
+  (cfg.search||[]).forEach(f=>{
+    if(!f.key) return;
+    const v=st[f.key];
+    if(v!==undefined&&v!==''&&v!=null&&v!=='ALL') data=data.filter(r=>String(r[f.key]||'').toLowerCase().includes(String(v).toLowerCase()));
+  });
+  if(st._kw){const k=st._kw.toLowerCase();data=data.filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(k)));}
+  const total=cfg.total!=null?cfg.total:data.length, ps=cfg.pageSize||10;
+  const page=st._page||1, pages=Math.max(1,Math.ceil((data.length||1)/ps));
+  const rows=data.slice((page-1)*ps,page*ps);
+
+  const searchHtml=(cfg.search||[]).map(f=>renderSearchField(f,st)).join('');
+  const cols=cfg.cols||[];
+  const thead=cols.map(c=>{
+    if(c.cb) return '<th style="width:34px"><input type="checkbox" class="cbx" id="cbAll" onchange="App.toggleAll(this.checked)"></th>';
+    return `<th class="${c.sort?'sortable':''}" ${c.sort?`onclick="App.sortCol('${id}','${c.k}')"`:''}>${esc(c.t)}${c.k==='_op'?'<span style="float:right">⚙</span>':''}</th>`;
+  }).join('');
+  const tbody=rows.map((r,ri)=>'<tr>'+cols.map(c=>{
+    if(c.cb) return `<td><input type="checkbox" class="cbx row-cb" data-i="${(page-1)*ps+ri}" onchange="App.toggleRow()"></td>`;
+    if(c.k==='_op') return `<td class="op-cell">${(cfg.actions||[]).map(a=>`<span class="link" onclick="App.rowAction('${id}',${(page-1)*ps+ri},'${a}')">${a}</span>`).join('')}</td>`;
+    let v=r[c.k];
+    if(c.tag) v=tag(v);
+    else v=esc(v==null||v===''?'':v);
+    return `<td title="${esc(r[c.k])}">${v}</td>`;
+  }).join('')+'</tr>').join('');
+  const emptyRows=`<tr><td colspan="${cols.length}" style="text-align:center;padding:36px;color:#b5bdc9">暂无数据</td></tr>`;
+
+  // 子表格
+  let subHtml='';
+  if(cfg.subtabs&&cfg.subtabs.length){
+    const active=st._sub||cfg.subtabs[0];
+    const subCols=cfg.subCols||[], subRows=cfg.subRows||[];
+    const sHead=subCols.map(c=>`<th>${esc(c.t)}</th>`).join('');
+    const sBody=(subRows.length?subRows.map(r=>'<tr>'+subCols.map(c=>`<td>${esc(r[c.k]||'')}</td>`).join('')+'</tr>').join(''):`<tr><td colspan="${subCols.length}" style="text-align:center;padding:24px;color:#b5bdc9">暂无数据</td></tr>`);
+    subHtml=`<div class="subtabs">${cfg.subtabs.map(t=>`<span class="${active===t?'active':''}" onclick="App.setSub('${id}','${t}')">${t}</span>`).join('')}</div>
+      <div class="table-wrap"><table class="grid"><thead><tr>${sHead}</tr></thead><tbody>${sBody}</tbody></table></div>
+      <div class="pagination"><span class="pg-total">共计 0 条</span><button class="pg-btn disabled">‹</button><button class="pg-btn active">1</button><button class="pg-btn disabled">›</button><select style="height:28px;border:1px solid #dcdfe6;border-radius:3px;font-size:12px"><option>10 条/页</option></select></div>`;
+  }
+
+  // 统计条
+  const statHtml=cfg.statRow?`<div class="stat-strip">${cfg.statRow.map((s,i)=>`<div class="ss-item"><span>${s}</span><b>${[6,2,5,4,3][i]||0}</b></div>`).join('')}</div>`:'';
+
+  let pg=`<span class="pg-total">共计 ${total} 条</span>`;
+  pg+=`<button class="pg-btn ${page<=1?'disabled':''}" onclick="App.setPage('${id}',${page-1})">‹</button>`;
+  for(let i=Math.max(1,page-2);i<=Math.min(pages,page+2);i++) pg+=`<button class="pg-btn ${i===page?'active':''}" onclick="App.setPage('${id}',${i})">${i}</button>`;
+  if(pages>5) pg+=`<span>…</span><button class="pg-btn" onclick="App.setPage('${id}',${pages})">${pages}</button>`;
+  pg+=`<button class="pg-btn ${page>=pages?'disabled':''}" onclick="App.setPage('${id}',${page+1})">›</button>`;
+  pg+=`<select style="height:28px;border:1px solid #dcdfe6;border-radius:3px;font-size:12px"><option>${ps} 条/页</option><option>20 条/页</option><option>50 条/页</option></select>`;
+
+  const btns=(cfg.buttons||[]).map((b,i)=>{
+    const cls=(b.startsWith('+')||b==='添加'||b==='新增报废')?'btn-primary':(b.includes('删除')||b==='删除')?'btn-danger':'';
+    return `<button class="btn ${cls} btn-sm" onclick="App.toolBtn('${b}')">${b}</button>`;
+  }).join('');
+
+  return `
+  <div class="card">
+    <div class="search-form2">
+      <div class="sf-grid">${searchHtml}</div>
+      <div class="sf-actions"><button class="btn btn-sm" onclick="App.resetFilter('${id}')">重 置</button><button class="btn btn-primary btn-sm" onclick="App.doSearch('${id}')">查 询</button>
+        <button class="btn btn-sm sf-icon" title="刷新" onclick="App.refresh('${id}')">⚙</button><button class="btn btn-sm sf-icon" title="收起" onclick="App.toast('已收起查询条件')">⌃</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="toolbar2"><div class="tb-left">${btns}</div>
+      <div class="tb-right"><div class="search-mini"><input placeholder="关键字搜索" value="${esc(st._kw||'')}" onkeydown="if(event.key==='Enter')App.quickSearch('${id}',this.value)"><button onclick="App.quickSearch('${id}',this.previousElementSibling.value)">🔍</button></div></div></div>
+    ${statHtml}
+    <div class="table-wrap"><table class="grid"><thead><tr>${thead}</tr></thead><tbody>${tbody||emptyRows}</tbody></table></div>
+    <div class="pagination">${pg}</div>
+    ${subHtml}
+  </div>`;
+}
+
+/* ---------- 分析看板 / 图表页 ---------- */
+function renderDashboard(id){
+  const st=[{name:'在用',value:92,color:'#5470c6'},{name:'维修中',value:25,color:'#ee6666'},{name:'待启用',value:24,color:'#fac858'},{name:'封存',value:1,color:'#91cc75'}];
+  const leg=st.map(d=>`<span class="li"><i class="lc" style="background:${d.color}"></i>${d.name} ${d.value}</span>`).join('');
+  return `<div class="stat-grid">
+    ${statCard('设备总数','142','#5470c6','M3:device')}${statCard('在用设备','92','#52c41a','M3:check')}
+    ${statCard('本月维修','25 单','#f5222d','M3:tool')}${statCard('设备完好率','96.8%','#1890ff','M3:chart')}</div>
+    <div class="two-col">
+      <div class="chart-box"><h4>设备状态分布</h4>${pieChart(st,200)}<div class="legend" style="justify-content:center">${leg}</div></div>
+      <div class="chart-box"><h4>设备类别统计</h4>${barChart([{name:'制罐',value:38},{name:'贴标',value:26},{name:'空压',value:18},{name:'输送',value:22},{name:'检测',value:16},{name:'其他',value:22}])}</div></div>
+    <div class="chart-box"><h4>近12个月设备故障趋势</h4>${lineChart([{name:'故障次数',data:[18,22,15,28,20,14,25,19,16,23,17,12]}],['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'])}</div>`;
+}
+function renderChartPage(id){
+  const cfg={
+    mttr:{title:'平均维修时长 MTTR (小时)',unit:'h',data:[4.2,3.8,5.1,4.6,3.2,4.8,5.5,4.1,3.6,4.4,3.9,4.3],goal:4},
+    mtbf:{title:'平均故障间隔 MTBF (小时)',unit:'h',data:[168,182,175,190,205,198,212,220,208,225,218,230],goal:200}
+  }[id];
+  const labels=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const avg=(cfg.data.reduce((a,b)=>a+b,0)/cfg.data.length).toFixed(1);
+  return `<div class="stat-grid">
+    ${statCard('当前值',cfg.data[11]+cfg.unit,PALETTE[0],'M3:chart')}${statCard('年度均值',avg+cfg.unit,PALETTE[1],'M3:doc')}
+    ${statCard('目标值',cfg.goal+cfg.unit,'#52c41a','M3:check')}${statCard('同比','+3.2%',PALETTE[3],'M3:run')}</div>
+    <div class="chart-box"><div class="card-head" style="padding:0 0 12px;border:none"><h3>${esc(cfg.title)}</h3>
+      <div style="font-size:12px;color:#909399">统计周期：2026年　<button class="btn btn-sm" onclick="App.toast('数据已刷新')">查询</button></div></div>
+      ${lineChart([{name:'实际值',data:cfg.data,color:'#5470c6'},{name:'目标值',data:labels.map(()=>cfg.goal),color:'#91cc75'}],labels,{h:300})}
+      <div class="legend"><span class="li"><i class="lc" style="background:#5470c6"></i>实际值</span><span class="li"><i class="lc" style="background:#91cc75"></i>目标值</span></div></div>
+    <div class="chart-box"><h4>季度对比</h4>${barChart([
+      {name:'一季度',value:Math.round(cfg.data.slice(0,3).reduce((a,b)=>a+b,0)/3)},
+      {name:'二季度',value:Math.round(cfg.data.slice(3,6).reduce((a,b)=>a+b,0)/3)},
+      {name:'三季度',value:Math.round(cfg.data.slice(6,9).reduce((a,b)=>a+b,0)/3)},
+      {name:'四季度',value:Math.round(cfg.data.slice(9,12).reduce((a,b)=>a+b,0)/3)}],{h:220})}</div>`;
+}
+
+/* ---------- 页面获取 ---------- */
+function genericPage(id){
+  return {type:'table',title:NAME_MAP[id]||id,dataset:[],pageSize:10,
+    search:[SEL('组织机构','org',[ORG])],cols:[COL('','_cb',{cb:true}),COL('编码','code'),COL('名称','name'),COL('操作','_op')],actions:[],buttons:[]};
+}
+function getPage(id){
+  if(PAGES[id]) return PAGES[id];
+  if(id==='board') return {type:'dashboard',title:'设备管理看板'};
+  if(id==='mttr'||id==='mtbf') return {type:'chart',title:NAME_MAP[id]};
+  return genericPage(id);
+}
+/* ============================================================
+ *  App 控制器
+ * ============================================================ */
+const App={
+  tabs:[{id:'home',title:'首页'}], current:'home', filters:{}, sortState:{}, openGroups:new Set(),
+
+  init(){
+    document.getElementById('loginBtn').addEventListener('click',()=>this.login());
+    document.getElementById('loginPwd').addEventListener('keydown',e=>{if(e.key==='Enter')this.login();});
+    this.renderMenu(); this.renderTabs(); this.renderMessages();
+  },
+  login(){
+    const u=document.getElementById('loginUser').value.trim(), p=document.getElementById('loginPwd').value.trim();
+    if(!u||!p){this.toast('请输入用户名和密码',true);return;}
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('topOrg').textContent='【'+(document.getElementById('loginOrg').value||ORG)+'】';
+    this.go('home'); this.toast('登录成功，欢迎回来！');
+  },
+  logout(){document.getElementById('app').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');},
+
+  renderMenu(){
+    document.getElementById('menuTree').innerHTML=MENU.map(g=>`
+      <div class="menu-group">
+        <div class="menu-parent ${this.openGroups.has(g.id)?'open':''}" data-group="${g.id}" onclick="App.toggleGroup('${g.id}')">
+          <span class="mi">${ICONS[g.icon]}</span><span class="mtxt">${g.name}</span><span class="arrow">${ICONS.chevron}</span></div>
+        <div class="menu-children" id="children-${g.id}" style="${this.openGroups.has(g.id)?'':'display:none'}">
+          ${g.children.map(c=>`<div class="menu-child" data-id="${c.id}" onclick="App.go('${c.id}')"><span class="cdot"></span>${c.name}</div>`).join('')}
+        </div></div>`).join('');
+  },
+  toggleGroup(gid){
+    if(this.openGroups.has(gid))this.openGroups.delete(gid);else this.openGroups.add(gid);
+    const p=document.querySelector(`[data-group="${gid}"]`), c=document.getElementById('children-'+gid);
+    if(p)p.classList.toggle('open'); if(c)c.style.display=this.openGroups.has(gid)?'':'none';
+  },
+  toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');},
+
+  renderTabs(){
+    document.getElementById('tabsBar').innerHTML=this.tabs.map(t=>`
+      <div class="tab ${t.id===this.current?'active':''}" data-page="${t.id}" onclick="App.switchTab('${t.id}')">
+        <span>${esc(t.title)}</span>${t.id!=='home'?`<span class="tclose" onclick="event.stopPropagation();App.closeTab('${t.id}')">×</span>`:''}</div>`).join('');
+  },
+  switchTab(id){this.current=id;this.renderTabs();this.renderContent();this.syncMenu();},
+  closeTab(id){this.tabs=this.tabs.filter(t=>t.id!==id);if(this.current===id)this.current=this.tabs[this.tabs.length-1].id;this.renderTabs();this.renderContent();this.syncMenu();},
+  go(id){
+    if(!this.tabs.find(t=>t.id===id))this.tabs.push({id,title:NAME_MAP[id]||'首页'});
+    this.current=id;this.renderTabs();this.renderContent();this.syncMenu();
+    const g=MENU.find(g=>g.children.some(c=>c.id===id));
+    if(g&&!this.openGroups.has(g.id))this.toggleGroup(g.id);
+  },
+  syncMenu(){
+    document.querySelectorAll('.menu-child').forEach(c=>c.classList.toggle('active',c.dataset.id===this.current));
+    document.querySelectorAll('.menu-parent').forEach(p=>p.classList.remove('active'));
+  },
+
+  renderContent(){
+    const c=document.getElementById('content'), page=getPage(this.current);
+    if(page.type==='home')c.innerHTML=renderHome();
+    else if(page.type==='table')c.innerHTML=renderTable(page,this.current);
+    else if(page.type==='dashboard')c.innerHTML=renderDashboard(this.current);
+    else c.innerHTML=renderChartPage(this.current);
+    this.bindFilters(this.current);
+  },
+  refresh(){const c=document.getElementById('content'),page=getPage(this.current);if(page.type==='table')c.innerHTML=renderTable(page,this.current);this.bindFilters(this.current);this.toast('数据已刷新');},
+  bindFilters(id){
+    document.querySelectorAll('[data-filter]').forEach(el=>{
+      const h=()=>{(App.filters[id]||(App.filters[id]={}))[el.dataset.filter]=el.value;};
+      el.addEventListener('input',h);el.addEventListener('change',h);
+    });
+    document.querySelectorAll('[data-op]').forEach(el=>{el.addEventListener('change',()=>{(App.filters[id]||(App.filters[id]={}))[el.dataset.op]=el.value;});});
+  },
+  doSearch(id){this.filters[id]=this.filters[id]||{};this.filters[id]._page=1;this.renderContent();this.toast('查询完成');},
+  resetFilter(id){this.filters[id]={};this.renderContent();},
+  quickSearch(id,kw){this.filters[id]=this.filters[id]||{};this.filters[id]._kw=kw;this.filters[id]._page=1;this.renderContent();},
+  setPage(id,p){this.filters[id]=this.filters[id]||{};this.filters[id]._page=p;this.renderContent();},
+  setRadio(key,val){(this.filters[this.current]||(this.filters[this.current]={}))[key]=val;this.renderContent();},
+  setQuick(label,val){const f=this.filters[this.current]||(this.filters[this.current]={});f['_q_'+label]=val;
+    const today=new Date();const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1,2)}-${pad(d.getDate(),2)}`;
+    let s=fmt(today),e=fmt(today);
+    if(val==='本周'){const d=new Date(today);d.setDate(d.getDate()-((d.getDay()+6)%7));s=fmt(d);}
+    if(val==='本月'){s=fmt(new Date(today.getFullYear(),today.getMonth(),1));}
+    if(val==='最近三个月'){s=fmt(new Date(today.getFullYear(),today.getMonth()-3,1));}
+    f['_ds_'+label]=s;f['_de_'+label]=e;this.renderContent();},
+  setSub(id,t){(this.filters[id]||(this.filters[id]={}))._sub=t;this.renderContent();},
+  sortCol(id,k){
+    const s=this.sortState[id]||{};s.asc=s.k===k?!s.asc:true;s.k=k;this.sortState[id]=s;
+    const page=getPage(id);if(page.type==='table')page.dataset.sort((a,b)=>((a[k]>b[k])?1:(a[k]<b[k]?-1:0))*(s.asc?1:-1));
+    this.renderContent();this.toast(`已按「${k}」${s.asc?'升序':'降序'}排列`);
+  },
+  toggleAll(checked){document.querySelectorAll('.row-cb').forEach(cb=>cb.checked=checked);},
+  toggleRow(){const all=[...document.querySelectorAll('.row-cb')],cbAll=document.getElementById('cbAll');if(cbAll)cbAll.checked=all.length>0&&all.every(c=>c.checked);},
+
+  toolBtn(b){
+    if(b.includes('新增')||b==='添加'||b==='新增报废'){this.openForm(this.current,null,b);return;}
+    if(b.includes('删除')){this.batchDelete(this.current);return;}
+    if(b==='导出'){this.exportData(this.current);return;}
+    this.toast(b+'：演示功能');
+  },
+  rowAction(id,idx,action){
+    const page=getPage(id);if(page.type!=='table')return;const row=page.dataset[idx];if(!row)return;
+    if(action==='查看'){this.viewDetail(id,row);return;}
+    if(['修改','编辑','处理','执行','审批','审核','盘点','下机','外修','维修','库位移动','料号转换'].includes(action)){this.openForm(id,row,action);return;}
+    if(action==='删除'){this.confirm(`确定要删除「${row.name||row.no||row.code||'该记录'}」吗？删除后不可恢复。`,()=>{page.dataset.splice(idx,1);this.refresh();this.toast('删除成功');});return;}
+    this.toast(action+'：演示功能');
+  },
+  more(id,idx){this.showModal('更多操作',`<div style="display:flex;flex-direction:column;gap:8px">${['查看详细信息','编辑记录','复制新增','打印记录','导出PDF'].map(a=>`<button class="btn" style="justify-content:flex-start" onclick="App.toast('${a}：演示功能')">${a}</button>`).join('')}</div>`,'<button class="btn" onclick="App.closeModal()">取消</button>');},
+  viewDetail(id,row){
+    // 真实系统“查看”同样用分组表单展示，只读
+    this.showForm(id,row,'查看',true);
+  },
+  batchDelete(id){
+    const checked=[...document.querySelectorAll('.row-cb:checked')];
+    if(!checked.length){this.toast('请先选择要删除的记录',true);return;}
+    this.confirm(`确定要删除选中的 ${checked.length} 条记录吗？`,()=>{
+      const page=getPage(id),ps=page.pageSize||10,p=this.filters[id]?._page||1;
+      checked.map(c=>(p-1)*ps+parseInt(c.dataset.i)).sort((a,b)=>b-a).forEach(i=>page.dataset.splice(i,1));
+      this.refresh();this.toast(`已删除 ${checked.length} 条记录`);
+    });
+  },
+  exportData(id){
+    const page=getPage(id);if(page.type!=='table'){this.toast('当前页面不支持导出');return;}
+    const cols=page.cols.filter(c=>c.k&&!c.cb&&c.k!=='_op');
+    let csv=cols.map(c=>c.t).join(',')+'\n';
+    page.dataset.slice(0,100).forEach(r=>csv+=cols.map(c=>`"${String(r[c.k]||'').replace(/"/g,'""')}"`).join(',')+'\n');
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=(NAME_MAP[id]||id)+'.csv';a.click();this.toast('导出成功');
+  },
+
+  /* ---------- 真实系统表单：分组 Tab + 必填 + 类型化控件 + 保存三按钮 ---------- */
+  _formFieldHtml(f,row,readonly){
+    const v=row?(row[f.key]!=null?row[f.key]:''):'';
+    const req=f.required?'<i class="req">*</i>':'';
+    const full=f.full?' fform-full':'';
+    let ctl='';
+    if(f.type==='select'){
+      const opts=(f.opts||[]).map(o=>`<option ${String(v)===String(o)?'selected':''}>${esc(o)}</option>`).join('');
+      ctl=`<select name="${f.key}" ${readonly?'disabled':''}><option value="">请选择</option>${opts}</select>`;
+    } else if(f.type==='date'){
+      ctl=`<input type="text" class="fdate" name="${f.key}" value="${esc(v)}" placeholder="请选择日期" ${readonly?'readonly':''}>`;
+    } else if(f.type==='number'){
+      ctl=`<input type="number" name="${f.key}" value="${esc(v)}" ${readonly?'readonly':''}>`;
+    } else if(f.type==='textarea'){
+      ctl=`<textarea name="${f.key}" ${readonly?'readonly':''}>${esc(v)}</textarea>`;
+    } else if(f.type==='upload'){
+      ctl=`<div class="f-upload"><div class="f-up-btn">＋<span>点击上传</span></div><div class="f-up-hint">${esc(f.hint||'图片大小限制：10MB　最大图片数：9　图片支持格式：.jpg,.png,.jpeg,.bmp,.gif,.tif')}</div></div>`;
+    } else {
+      ctl=`<input type="text" name="${f.key}" value="${esc(v)}" ${readonly?'readonly':''}>`;
+    }
+    return `<div class="fform-item${full}"><label>${req}${esc(f.label)}</label><div class="fform-ctrl">${ctl}</div></div>`;
+  },
+  _subTableHtml(def,readonly){
+    if(!def) return '';
+    const cols=(def.cols||def.subCols||[]);
+    const rows=(def.rows||def.subRows||[]);
+    const head=cols.map(c=>`<th>${esc(c.label||c.t)}</th>`).join('');
+    const body=rows.length?rows.map(r=>'<tr>'+cols.map(c=>`<td>${esc(r[c.key||c.k]||'')}</td>`).join('')+'</tr>').join('')
+      :`<tr><td colspan="${cols.length}" class="fsub-empty">暂无数据</td></tr>`;
+    const addBtn=readonly?'':`<button class="btn btn-sm" onclick="App.formSubAdd()">＋新增</button><button class="btn btn-sm btn-danger" onclick="App.formSubDel()">－删除</button>`;
+    return `<div class="fsubtable"><div class="fsub-head"><b>${esc(def.title||'明细')}</b><span>${addBtn}</span></div>
+      <div class="table-wrap"><table class="grid"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div></div>`;
+  },
+  showForm(id,row,action,readonly){
+    const form=getForm(id);
+    const isEdit=!!row;
+    const prefix=form.titlePrefix||'+新增';
+    const verb=readonly?'查看':(isEdit?(action||'修改'):prefix);
+    const title=`${verb}-${form.title}`;
+    this._formCtx={id,row,form};
+
+    const groups=form.groups||[];
+    const hasTabs=groups.length>1;
+    const tabsHtml=hasTabs?`<div class="form-tabs">${groups.map((g,i)=>`<span class="${i===0?'active':''}" onclick="App.switchFTab(${i})">${esc(g.name)}</span>`).join('')}</div>`:'';
+    const panesHtml=groups.map((g,gi)=>`<div class="form-pane" data-pane="${gi}" style="${gi>0?'display:none':''}">
+      <div class="fform-grid">${(g.fields||[]).map(f=>this._formFieldHtml(f,row,readonly)).join('')}</div>
+      ${gi===0?this._subTableHtml(form.subtable||(form.subtabs?{title:form.subtabs[0],cols:form.subCols,rows:form.subRows}:null),readonly):''}
+    </div>`).join('');
+    const body=`<div class="real-form">${tabsHtml}<div class="form-panes">${panesHtml}</div></div>`;
+    const foot=readonly
+      ?`<button class="btn" onclick="App.closeModal()">关闭</button>`
+      :`<button class="btn" onclick="App.closeModal()">取消</button><button class="btn btn-primary" onclick="App.submitForm('${id}',false)">保存不退出</button><button class="btn btn-primary" onclick="App.submitForm('${id}',true)">保存并退出</button>`;
+    this.showModal(title,body,foot,'xwide');
+  },
+  openForm(id,row,action){ this.showForm(id,row,action,false); },
+  switchFTab(i){
+    document.querySelectorAll('.form-tabs span').forEach((s,j)=>s.classList.toggle('active',j===i));
+    document.querySelectorAll('.form-pane').forEach((p,j)=>p.style.display=j===i?'':'none');
+  },
+  formSubAdd(){ this.toast('子表明细：点击新增一行（演示）'); },
+  formSubDel(){ this.toast('子表明细：删除选中行（演示）'); },
+  submitForm(id,exit){
+    const data={};document.querySelectorAll('#modal [name]').forEach(el=>{if(!el.disabled)data[el.name]=el.value;});
+    const page=getPage(id);
+    if(page.type==='table'){
+      if(this._formCtx&&this._formCtx.row) Object.assign(this._formCtx.row,data);
+      else page.dataset.unshift({...data,org:ORG});
+    }
+    this.toast('保存成功');
+    if(exit){ this.closeModal(); this.refresh(); }
+  },
+
+  showModal(title,body,foot,wide){
+    document.getElementById('modalTitle').textContent=title;
+    document.getElementById('modalBody').innerHTML=body;
+    document.getElementById('modalFoot').innerHTML=foot||'<button class="btn btn-primary" onclick="App.closeModal()">知道了</button>';
+    const m=document.getElementById('modal');
+    m.classList.remove('wide','xwide');
+    if(wide==='xwide') m.classList.add('xwide');
+    else if(wide) m.classList.add('wide');
+    document.getElementById('modalMask').classList.remove('hidden');
+  },
+  closeModal(){document.getElementById('modalMask').classList.add('hidden');},
+  confirm(msg,cb){this._confirmCb=cb;this.showModal('操作确认',`<div style="padding:10px 0;font-size:14px;line-height:1.7">⚠ ${esc(msg)}</div>`,'<button class="btn" onclick="App.closeModal()">取消</button><button class="btn btn-primary" onclick="App.doConfirm()">确定</button>');},
+  doConfirm(){this.closeModal();if(this._confirmCb){this._confirmCb();this._confirmCb=null;}},
+  toast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.classList.toggle('err',!!err);t.classList.remove('hidden');clearTimeout(this._tt);this._tt=setTimeout(()=>t.classList.add('hidden'),2200);},
+  userMenu(e){
+    e.stopPropagation();
+    this.showModal('当前用户',`<div class="detail-grid">
+      <div class="detail-item"><span class="dk">姓名</span><span class="dv">李元龙</span></div>
+      <div class="detail-item"><span class="dk">工号</span><span class="dv">320125</span></div>
+      <div class="detail-item"><span class="dk">所属组织</span><span class="dv">${ORG}</span></div>
+      <div class="detail-item"><span class="dk">角色</span><span class="dv">设备管理员</span></div></div>`,
+      '<button class="btn" onclick="App.closeModal()">关闭</button><button class="btn btn-danger" onclick="App.logout();App.closeModal()">退出登录</button>');
+  },
+
+  renderMessages(){
+    const msgs=[
+      {t:'授权到期提醒',d:'软件授权期限还剩下 <a>9天23小时43分14秒</a>，请提前与授权厂商联系。',time:'2026-09-20 14:21:31'},
+      {t:'设备维修提醒',d:'设备 <a>DE线自动贴标机</a> 维修工单已超时未处理，请尽快安排维修人员。',time:'2026-11-16 09:30:12'},
+      {t:'备件库存预警',d:'备件 <a>轴承6305</a> 当前库存低于最小安全库存，请及时补充。',time:'2026-11-15 16:45:08'},
+      {t:'保养计划提醒',d:'设备 <a>1号空压机</a> 二级保养计划将于 3 日后到期。',time:'2026-11-14 11:20:35'}
+    ];
+    document.getElementById('msgBody').innerHTML=msgs.map(m=>`<div class="msg-item"><div class="mt">${m.t}</div><div class="md">${m.d}</div><div class="mtime">${m.time}</div></div>`).join('');
+  },
+  openMessages(){document.getElementById('msgMask').classList.remove('hidden');document.getElementById('msgDrawer').classList.remove('hidden');},
+  closeMessages(){document.getElementById('msgMask').classList.add('hidden');document.getElementById('msgDrawer').classList.add('hidden');},
+  readAll(){this.toast('已全部标记为已读');this.closeMessages();},
+  toggleFullscreen(){if(!document.fullscreenElement)document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();else document.exitFullscreen&&document.exitFullscreen();}
+};
+
+const extraStyle=document.createElement('style');
+extraStyle.textContent=`
+.radio-grp{display:inline-flex;border:1px solid #dcdfe6;border-radius:3px;overflow:hidden}
+.radio-grp label{padding:0 9px;height:26px;display:inline-flex;align-items:center;font-size:12px;cursor:pointer;border-right:1px solid #dcdfe6;background:#fff}
+.radio-grp label:last-child{border-right:none}
+.radio-grp label.active{background:#e6f4ff;color:#1890ff}
+.radio-grp input{display:none}
+.op-cell .link{margin-right:9px;white-space:nowrap}
+`;
+document.head.appendChild(extraStyle);
+window.addEventListener('DOMContentLoaded',()=>App.init());
+
+</script>
+</body>
+</html>

@@ -37,6 +37,7 @@ import {
   Package,
   PackageCheck,
   PackageSearch,
+  Palette,
   PieChart,
   Radio,
   Route,
@@ -95,6 +96,20 @@ const CUSTOM_PLAN_ITEMS: CustomMenuItem[] = [
   { id: 'tab-kit', label: '齐套分析', icon: Package, badge: '4' },
 ];
 
+const CUSTOM_PROCESS_ITEMS: CustomMenuItem[] = [
+  { id: 'tab-process-info', label: '工序信息', icon: GitBranch, badge: '25' },
+  { id: 'tab-process-param', label: '工序工艺参数', icon: Sliders, badge: '11' },
+  { id: 'tab-process-file', label: '工艺文件', icon: FileText, badge: '2' },
+  { id: 'tab-process-sheet', label: '工艺单', icon: ClipboardList, badge: '10' },
+  { id: 'tab-process-op-template', label: '工艺单工序模板', icon: Layers, badge: '10' },
+  { id: 'tab-process-sheet-template', label: '工艺单模板', icon: FileCog, badge: '4' },
+  { id: 'tab-can-spec-maint', label: '罐型规格维护', icon: Box, badge: '1' },
+  { id: 'tab-pack-list-config', label: '包材清单配置', icon: Package, badge: '111' },
+  { id: 'tab-process-op-config-item', label: '工艺单工序参数配置', icon: Settings2, badge: '71' },
+  { id: 'tab-coating-config', label: '涂料配置', icon: Palette, badge: '15' },
+  { id: 'tab-process-bom', label: '工艺单BOM', icon: Boxes, badge: '14' },
+];
+
 const MODULE_ICONS: Record<string, IconComponent> = {
   m0: Settings,
   m1: Warehouse,
@@ -102,6 +117,7 @@ const MODULE_ICONS: Record<string, IconComponent> = {
   m3: Cpu,
   m4: ShieldCheck,
   m5: BarChart2,
+  m6: Wrench,
 };
 
 const LEAF_ICON_POOL: Record<string, IconComponent[]> = {
@@ -142,7 +158,14 @@ function getGroupIcon(groupName: string): IconComponent {
   if (/看板/.test(groupName)) return Gauge;
   if (/追溯/.test(groupName)) return GitBranch;
   if (/IOT|采集/.test(groupName)) return Activity;
+  if (/资产/.test(groupName)) return Cpu;
+  if (/维保/.test(groupName)) return Wrench;
+  if (/备件/.test(groupName)) return Package;
+  if (/工装/.test(groupName)) return Settings2;
+  if (/配置中心/.test(groupName)) return Settings;
   if (/数据|分析|报表/.test(groupName)) return BarChart3;
+  if (/工作台/.test(groupName)) return Layers;
+  if (/过程管控/.test(groupName)) return SlidersHorizontal;
   if (/查询/.test(groupName)) return FileSearch;
   return FolderKanban;
 }
@@ -180,12 +203,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Track which top-level modules & nested groups are expanded
   const [openModules, setOpenModules] = useState<Record<string, boolean>>({
     'custom-base': true,
+    'custom-process': true,
     m2: true, // 计划管理 expanded by default
     m0: false,
     m1: false,
-    m3: false,
+    m3: true, // 生产管理 expanded so updated & newly imported menus are immediately visible
     m4: false,
     m5: false,
+    m6: true, // 设备管理 expanded so newly imported menus are immediately visible
   });
 
   const [openSubGroups, setOpenSubGroups] = useState<Record<string, boolean>>({
@@ -254,6 +279,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: it.id,
           label: it.label,
           path: '计划管理',
+          icon: it.icon,
+          badge: it.badge,
+        });
+      }
+    });
+    CUSTOM_PROCESS_ITEMS.forEach((it) => {
+      if (it.label.toLowerCase().includes(query) || '工艺管理'.includes(query)) {
+        matches.push({
+          id: it.id,
+          label: it.label,
+          path: '工艺管理',
           icon: it.icon,
           badge: it.badge,
         });
@@ -405,9 +441,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             />
                             <span className="truncate">{item.name}</span>
                           </div>
-                          <span className="text-[10px] font-mono text-[#7FA2E0] shrink-0 ml-1">
-                            {item.id}
-                          </span>
+                          {!item.id.startsWith('prod-') && (
+                            <span className="text-[10px] font-mono text-[#7FA2E0] shrink-0 ml-1">
+                              {item.id}
+                            </span>
+                          )}
                         </button>
                       );
                     })}
@@ -501,7 +539,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             type="text"
             value={menuSearch}
             onChange={(e) => setMenuSearch(e.target.value)}
-            placeholder="搜索菜单 / 页面 (274)"
+            placeholder="搜索菜单 / 页面 (312)"
             className="w-full h-8 pl-3 pr-8 rounded-md bg-[#113372] border border-[#244D97] text-xs text-white placeholder-[#8CA9DF] outline-none focus:border-[#5D95FF] transition"
           />
           {menuSearch ? (
@@ -611,6 +649,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             {/* 计划管理 (Merged Custom Scheduling Views + Imported m2 Items) */}
             {m2Module && renderImportedModule(m2Module, CUSTOM_PLAN_ITEMS)}
+
+            {/* 工艺管理 (Process Management) */}
+            <div className="space-y-1">
+              <button
+                type="button"
+                onClick={() => toggleModule('custom-process')}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                  openModules['custom-process']
+                    ? 'bg-[#103270] text-white'
+                    : 'text-[#B5CCF4] hover:bg-[#14397D] hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <GitBranch className="w-4 h-4 text-[#8EB0EC] shrink-0" />
+                  <span className="truncate">工艺管理</span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[10px] font-mono tabular-nums text-[#7FA2E0]">
+                    {CUSTOM_PROCESS_ITEMS.length}
+                  </span>
+                  {openModules['custom-process'] ? (
+                    <ChevronDown className="w-3.5 h-3.5 text-[#7FA2E0]" />
+                  ) : (
+                    <ChevronRight className="w-3.5 h-3.5 text-[#7FA2E0]" />
+                  )}
+                </div>
+              </button>
+              {openModules['custom-process'] && (
+                <div className="pl-2 space-y-0.5">
+                  {CUSTOM_PROCESS_ITEMS.map((it) => renderCustomButton(it))}
+                </div>
+              )}
+            </div>
 
             {/* 配置中心 / 仓库管理 / 生产管理 / 质量管理 / 数据中心 */}
             {otherModules.map((mod) => renderImportedModule(mod))}

@@ -674,6 +674,61 @@ export const MOM_IMPORTED_MENU: MomMenuModule[] = [
         ]
       },
       {
+        "name": "作业工作台",
+        "items": [
+          {
+            "id": "prod-batchReport",
+            "name": "批次报工",
+            "arch": "form"
+          },
+          {
+            "id": "prod-firstPass",
+            "name": "首工序过站",
+            "arch": "form"
+          },
+          {
+            "id": "prod-midPass",
+            "name": "中末工序过站",
+            "arch": "form"
+          },
+          {
+            "id": "prod-weighPass",
+            "name": "称重过站",
+            "arch": "form"
+          }
+        ]
+      },
+      {
+        "name": "过程管控",
+        "items": [
+          {
+            "id": "prod-ecn",
+            "name": "ECN信息",
+            "arch": "list"
+          },
+          {
+            "id": "prod-invalidTime",
+            "name": "无效时间",
+            "arch": "report"
+          },
+          {
+            "id": "prod-invalidTimeMgr",
+            "name": "无效时间管理",
+            "arch": "list"
+          }
+        ]
+      },
+      {
+        "name": "默认",
+        "items": [
+          {
+            "id": "prod-rework",
+            "name": "返修管理",
+            "arch": "form"
+          }
+        ]
+      },
+      {
         "name": "人员管理",
         "items": [
           {
@@ -684,6 +739,51 @@ export const MOM_IMPORTED_MENU: MomMenuModule[] = [
           {
             "id": "p145",
             "name": "葡萄图考核",
+            "arch": "list"
+          },
+          {
+            "id": "prod-weighInput",
+            "name": "物料称重投入",
+            "arch": "form"
+          },
+          {
+            "id": "p171",
+            "name": "合格证报工",
+            "arch": "form"
+          },
+          {
+            "id": "p172",
+            "name": "报废称重产出",
+            "arch": "form"
+          },
+          {
+            "id": "p173",
+            "name": "不良称重产出",
+            "arch": "form"
+          },
+          {
+            "id": "p174",
+            "name": "首套备料配置",
+            "arch": "config"
+          },
+          {
+            "id": "p175",
+            "name": "工站物料低位配置",
+            "arch": "config"
+          },
+          {
+            "id": "p176",
+            "name": "数据采集过站设置",
+            "arch": "iot"
+          },
+          {
+            "id": "p177",
+            "name": "交接班记录查询",
+            "arch": "list"
+          },
+          {
+            "id": "p178",
+            "name": "彩印还原记录",
             "arch": "list"
           }
         ]
@@ -745,46 +845,6 @@ export const MOM_IMPORTED_MENU: MomMenuModule[] = [
             "id": "p168",
             "name": "原材料投入回收日志",
             "arch": "list"
-          },
-          {
-            "id": "p171",
-            "name": "合格证报工",
-            "arch": "form"
-          },
-          {
-            "id": "p172",
-            "name": "报废称重产出",
-            "arch": "form"
-          },
-          {
-            "id": "p173",
-            "name": "不良称重产出",
-            "arch": "form"
-          },
-          {
-            "id": "p175",
-            "name": "工站物料低位配置",
-            "arch": "config"
-          },
-          {
-            "id": "p176",
-            "name": "数据采集过站设置",
-            "arch": "iot"
-          },
-          {
-            "id": "p177",
-            "name": "交接班记录查询",
-            "arch": "list"
-          },
-          {
-            "id": "p178",
-            "name": "彩印还原记录",
-            "arch": "list"
-          },
-          {
-            "id": "p174",
-            "name": "首套备料配置",
-            "arch": "config"
           }
         ]
       }
@@ -1366,6 +1426,16 @@ export const MOM_IMPORTED_MENU: MomMenuModule[] = [
         ]
       },
       {
+        "name": "默认",
+        "items": [
+          {
+            "id": "prod-downtime",
+            "name": "设备异常停机工时汇总",
+            "arch": "report"
+          }
+        ]
+      },
+      {
         "name": "数字大屏看板",
         "items": [
           {
@@ -1533,6 +1603,68 @@ export const MOM_IMPORTED_MENU: MomMenuModule[] = [
             "name": "能耗明细表",
             "arch": "list"
           }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m6",
+    "name": "设备管理",
+    "groups": [
+      {
+        "name": "配置中心",
+        "items": [
+          { "id": "eq-team", "name": "班组管理", "arch": "config" },
+          { "id": "eq-bom", "name": "设备BOM", "arch": "config" },
+          { "id": "eq-faultList", "name": "故障明细表", "arch": "list" },
+          { "id": "eq-eqTypePart", "name": "设备类型部位", "arch": "config" }
+        ]
+      },
+      {
+        "name": "资产管理",
+        "items": [
+          { "id": "eq-ledger", "name": "设备台账", "arch": "list" }
+        ]
+      },
+      {
+        "name": "维保管理",
+        "items": [
+          { "id": "eq-maintainPlan", "name": "保养计划", "arch": "list" },
+          { "id": "eq-checkPlan", "name": "检验计划", "arch": "list" },
+          { "id": "eq-maintain", "name": "设备保养", "arch": "form" },
+          { "id": "eq-inspect", "name": "设备点检/巡检", "arch": "form" },
+          { "id": "eq-repair", "name": "设备维修", "arch": "form" },
+          { "id": "eq-kbList", "name": "维修知识库", "arch": "list" }
+        ]
+      },
+      {
+        "name": "备件管理",
+        "items": [
+          { "id": "eq-sparePurchase", "name": "备件采购", "arch": "form" },
+          { "id": "eq-spareIn", "name": "备件入库", "arch": "form" },
+          { "id": "eq-spareStock", "name": "备件库存", "arch": "list" },
+          { "id": "eq-spareCheck", "name": "备件盘点", "arch": "form" },
+          { "id": "eq-spareUse", "name": "备件领用", "arch": "form" },
+          { "id": "eq-keyComp", "name": "关键组件", "arch": "list" }
+        ]
+      },
+      {
+        "name": "工装管理",
+        "items": [
+          { "id": "eq-toolArchive", "name": "工装建档", "arch": "config" },
+          { "id": "eq-toolLedger", "name": "工装台账", "arch": "list" },
+          { "id": "eq-toolScrap", "name": "工装报废", "arch": "form" },
+          { "id": "eq-toolHistory", "name": "工装履历", "arch": "list" }
+        ]
+      },
+      {
+        "name": "数据分析",
+        "items": [
+          { "id": "eq-home", "name": "设备管理首页", "arch": "dashboard" },
+          { "id": "eq-board", "name": "设备管理看板", "arch": "dashboard" },
+          { "id": "eq-mttr", "name": "MTTR", "arch": "report" },
+          { "id": "eq-mtbf", "name": "MTBF", "arch": "report" },
+          { "id": "eq-energy", "name": "能耗明细表", "arch": "list" }
         ]
       }
     ]
@@ -2544,64 +2676,64 @@ export const MOM_IMPORTED_LEAVES: Record<string, MomLeafMeta> = {
     "id": "p171",
     "name": "合格证报工",
     "module": "生产管理",
-    "group": "信息查询",
-    "path": "生产管理/合格证报工",
+    "group": "人员管理",
+    "path": "生产管理/人员管理/合格证报工",
     "arch": "form"
   },
   "p172": {
     "id": "p172",
     "name": "报废称重产出",
     "module": "生产管理",
-    "group": "信息查询",
-    "path": "生产管理/报废称重产出",
+    "group": "人员管理",
+    "path": "生产管理/人员管理/报废称重产出",
     "arch": "form"
   },
   "p173": {
     "id": "p173",
     "name": "不良称重产出",
     "module": "生产管理",
-    "group": "信息查询",
-    "path": "生产管理/不良称重产出",
+    "group": "人员管理",
+    "path": "生产管理/人员管理/不良称重产出",
     "arch": "form"
   },
   "p175": {
     "id": "p175",
     "name": "工站物料低位配置",
     "module": "生产管理",
-    "group": "信息查询",
-    "path": "生产管理/工站物料低位配置",
+    "group": "人员管理",
+    "path": "生产管理/人员管理/工站物料低位配置",
     "arch": "config"
   },
   "p176": {
     "id": "p176",
     "name": "数据采集过站设置",
     "module": "生产管理",
-    "group": "信息查询",
-    "path": "生产管理/数据采集过站设置",
+    "group": "人员管理",
+    "path": "生产管理/人员管理/数据采集过站设置",
     "arch": "iot"
   },
   "p177": {
     "id": "p177",
     "name": "交接班记录查询",
     "module": "生产管理",
-    "group": "信息查询",
-    "path": "生产管理/交接班记录查询",
+    "group": "人员管理",
+    "path": "生产管理/人员管理/交接班记录查询",
     "arch": "list"
   },
   "p178": {
     "id": "p178",
     "name": "彩印还原记录",
     "module": "生产管理",
-    "group": "信息查询",
-    "path": "生产管理/彩印还原记录",
+    "group": "人员管理",
+    "path": "生产管理/人员管理/彩印还原记录",
     "arch": "list"
   },
   "p174": {
     "id": "p174",
     "name": "首套备料配置",
     "module": "生产管理",
-    "group": "信息查询",
-    "path": "生产管理/首套备料配置",
+    "group": "人员管理",
+    "path": "生产管理/人员管理/首套备料配置",
     "arch": "config"
   },
   "p179": {
@@ -3659,5 +3791,41 @@ export const MOM_IMPORTED_LEAVES: Record<string, MomLeafMeta> = {
     "group": "IOT采集数据",
     "path": "数据中心/能耗明细表",
     "arch": "list"
-  }
+  },
+  "eq-team": { "id": "eq-team", "name": "班组管理", "module": "设备管理", "group": "配置中心", "path": "设备管理/配置中心/班组管理", "arch": "config" },
+  "eq-bom": { "id": "eq-bom", "name": "设备BOM", "module": "设备管理", "group": "配置中心", "path": "设备管理/配置中心/设备BOM", "arch": "config" },
+  "eq-faultList": { "id": "eq-faultList", "name": "故障明细表", "module": "设备管理", "group": "配置中心", "path": "设备管理/配置中心/故障明细表", "arch": "list" },
+  "eq-eqTypePart": { "id": "eq-eqTypePart", "name": "设备类型部位", "module": "设备管理", "group": "配置中心", "path": "设备管理/配置中心/设备类型部位", "arch": "config" },
+  "eq-ledger": { "id": "eq-ledger", "name": "设备台账", "module": "设备管理", "group": "资产管理", "path": "设备管理/资产管理/设备台账", "arch": "list" },
+  "eq-maintainPlan": { "id": "eq-maintainPlan", "name": "保养计划", "module": "设备管理", "group": "维保管理", "path": "设备管理/维保管理/保养计划", "arch": "list" },
+  "eq-checkPlan": { "id": "eq-checkPlan", "name": "检验计划", "module": "设备管理", "group": "维保管理", "path": "设备管理/维保管理/检验计划", "arch": "list" },
+  "eq-maintain": { "id": "eq-maintain", "name": "设备保养", "module": "设备管理", "group": "维保管理", "path": "设备管理/维保管理/设备保养", "arch": "form" },
+  "eq-inspect": { "id": "eq-inspect", "name": "设备点检/巡检", "module": "设备管理", "group": "维保管理", "path": "设备管理/维保管理/设备点检/巡检", "arch": "form" },
+  "eq-repair": { "id": "eq-repair", "name": "设备维修", "module": "设备管理", "group": "维保管理", "path": "设备管理/维保管理/设备维修", "arch": "form" },
+  "eq-kbList": { "id": "eq-kbList", "name": "维修知识库", "module": "设备管理", "group": "维保管理", "path": "设备管理/维保管理/维修知识库", "arch": "list" },
+  "eq-sparePurchase": { "id": "eq-sparePurchase", "name": "备件采购", "module": "设备管理", "group": "备件管理", "path": "设备管理/备件管理/备件采购", "arch": "form" },
+  "eq-spareIn": { "id": "eq-spareIn", "name": "备件入库", "module": "设备管理", "group": "备件管理", "path": "设备管理/备件管理/备件入库", "arch": "form" },
+  "eq-spareStock": { "id": "eq-spareStock", "name": "备件库存", "module": "设备管理", "group": "备件管理", "path": "设备管理/备件管理/备件库存", "arch": "list" },
+  "eq-spareCheck": { "id": "eq-spareCheck", "name": "备件盘点", "module": "设备管理", "group": "备件管理", "path": "设备管理/备件管理/备件盘点", "arch": "form" },
+  "eq-spareUse": { "id": "eq-spareUse", "name": "备件领用", "module": "设备管理", "group": "备件管理", "path": "设备管理/备件管理/备件领用", "arch": "form" },
+  "eq-keyComp": { "id": "eq-keyComp", "name": "关键组件", "module": "设备管理", "group": "备件管理", "path": "设备管理/备件管理/关键组件", "arch": "list" },
+  "eq-toolArchive": { "id": "eq-toolArchive", "name": "工装建档", "module": "设备管理", "group": "工装管理", "path": "设备管理/工装管理/工装建档", "arch": "config" },
+  "eq-toolLedger": { "id": "eq-toolLedger", "name": "工装台账", "module": "设备管理", "group": "工装管理", "path": "设备管理/工装管理/工装台账", "arch": "list" },
+  "eq-toolScrap": { "id": "eq-toolScrap", "name": "工装报废", "module": "设备管理", "group": "工装管理", "path": "设备管理/工装管理/工装报废", "arch": "form" },
+  "eq-toolHistory": { "id": "eq-toolHistory", "name": "工装履历", "module": "设备管理", "group": "工装管理", "path": "设备管理/工装管理/工装履历", "arch": "list" },
+  "eq-home": { "id": "eq-home", "name": "设备管理首页", "module": "设备管理", "group": "数据分析", "path": "设备管理/数据分析/设备管理首页", "arch": "dashboard" },
+  "eq-board": { "id": "eq-board", "name": "设备管理看板", "module": "设备管理", "group": "数据分析", "path": "设备管理/数据分析/设备管理看板", "arch": "dashboard" },
+  "eq-mttr": { "id": "eq-mttr", "name": "MTTR", "module": "设备管理", "group": "数据分析", "path": "设备管理/数据分析/MTTR", "arch": "report" },
+  "eq-mtbf": { "id": "eq-mtbf", "name": "MTBF", "module": "设备管理", "group": "数据分析", "path": "设备管理/数据分析/MTBF", "arch": "report" },
+  "eq-energy": { "id": "eq-energy", "name": "能耗明细表", "module": "设备管理", "group": "数据分析", "path": "设备管理/数据分析/能耗明细表", "arch": "list" },
+  "prod-batchReport": { "id": "prod-batchReport", "name": "批次报工", "module": "生产管理", "group": "作业工作台", "path": "生产管理/作业工作台/批次报工", "arch": "form" },
+  "prod-firstPass": { "id": "prod-firstPass", "name": "首工序过站", "module": "生产管理", "group": "作业工作台", "path": "生产管理/作业工作台/首工序过站", "arch": "form" },
+  "prod-midPass": { "id": "prod-midPass", "name": "中末工序过站", "module": "生产管理", "group": "作业工作台", "path": "生产管理/作业工作台/中末工序过站", "arch": "form" },
+  "prod-weighPass": { "id": "prod-weighPass", "name": "称重过站", "module": "生产管理", "group": "作业工作台", "path": "生产管理/作业工作台/称重过站", "arch": "form" },
+  "prod-ecn": { "id": "prod-ecn", "name": "ECN信息", "module": "生产管理", "group": "过程管控", "path": "生产管理/过程管控/ECN信息", "arch": "list" },
+  "prod-invalidTime": { "id": "prod-invalidTime", "name": "无效时间", "module": "生产管理", "group": "过程管控", "path": "生产管理/过程管控/无效时间", "arch": "report" },
+  "prod-invalidTimeMgr": { "id": "prod-invalidTimeMgr", "name": "无效时间管理", "module": "生产管理", "group": "过程管控", "path": "生产管理/过程管控/无效时间管理", "arch": "list" },
+  "prod-rework": { "id": "prod-rework", "name": "返修管理", "module": "生产管理", "group": "默认", "path": "生产管理/返修管理", "arch": "form" },
+  "prod-weighInput": { "id": "prod-weighInput", "name": "物料称重投入", "module": "生产管理", "group": "人员管理", "path": "生产管理/人员管理/物料称重投入", "arch": "form" },
+  "prod-downtime": { "id": "prod-downtime", "name": "设备异常停机工时汇总", "module": "数据中心", "group": "默认", "path": "数据中心/设备异常停机工时汇总", "arch": "report" }
 };
